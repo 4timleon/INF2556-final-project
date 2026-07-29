@@ -54,6 +54,7 @@ public class Player : MonoBehaviour {
 
         HandleMovement();
         HandleLook();
+        HandleFall();
     }
 
     private void HandleMovement() {
@@ -68,17 +69,14 @@ public class Player : MonoBehaviour {
                                     cameraForward * playerInputHandler.MovementInput.y;
 
         currentMovement.x = inputDirection.normalized.x * currentSpeed;
-        currentMovement.y = 0f;
         currentMovement.z = inputDirection.normalized.z * currentSpeed;
-
-        HandleFall();
 
         characterController.Move(currentMovement * Time.deltaTime);
     }
 
     private void HandleFall() {
         if (characterController.isGrounded) {
-            currentMovement.y = -0.2f;
+            currentMovement.y = -0.5f;
         } else {
             currentMovement.y += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
         }
