@@ -9,12 +9,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6653578582508165113}
+  - component: {fileID: 5212960914248510695}
+  - component: {fileID: 4706619951768627962}
   m_Layer: 0
   m_Name: Cell_Part_Inverted
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6653578582508165113
 Transform:
@@ -36,6 +38,47 @@ Transform:
   - {fileID: 7087024509312290268}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 178.225, z: 0}
+--- !u!65 &5212960914248510695
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3654264574649708386}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5.911244, y: 4.384033, z: 9.012547}
+  m_Center: {x: 2.4320798, y: 0.70578766, z: 6.8344073}
+--- !u!114 &4706619951768627962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3654264574649708386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 1
+  m_Area: 1
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1001 &669530799388741978
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -96,9 +139,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: cell_CeilingFloor
       objectReference: {fileID: 0}
+    - target: {fileID: 4041316831189740700, guid: 08c92548838e6344e8003a506b2ce6fa, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 6416046111706323853, guid: 08c92548838e6344e8003a506b2ce6fa, type: 3}
       propertyPath: m_VersionIndex
-      value: 71
+      value: 95
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -178,7 +225,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cell_Wall_Door
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8161734725636292321, guid: 66ee7ce560d1ddfd8a6047259e16ff94, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7795026078159937718, guid: 66ee7ce560d1ddfd8a6047259e16ff94, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -244,7 +296,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3975889091592197325, guid: 974273db81c28ed119a6ca3b119e836c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -310,7 +363,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3975889091592197325, guid: 974273db81c28ed119a6ca3b119e836c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -328,6 +382,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6653578582508165113}
     m_Modifications:
+    - target: {fileID: 2553421923568818494, guid: a91e9cc34f1914f8fb17877499386d83, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3810500054818105046, guid: a91e9cc34f1914f8fb17877499386d83, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.22426072
@@ -400,9 +458,17 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5050449538135717323, guid: a91e9cc34f1914f8fb17877499386d83, type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7322344438202482440, guid: a91e9cc34f1914f8fb17877499386d83, type: 3}
       propertyPath: m_Name
       value: cell_bars
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322344438202482440, guid: a91e9cc34f1914f8fb17877499386d83, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
