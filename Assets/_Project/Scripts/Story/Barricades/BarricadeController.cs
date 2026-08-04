@@ -7,7 +7,7 @@ public class BarricadeController : MonoBehaviour
     [SerializeField] private float repairAnimationDuration = 1f;
 
     [Header("References")]
-    [SerializeField] private GameObject[] plankVisuals;
+    [SerializeField] private Animator[] plankAnimators;
 
     private bool[] plankBroken;
     private float cooldownTimer;
@@ -22,7 +22,7 @@ public class BarricadeController : MonoBehaviour
     {
         if (!playerInRange) return;
 
-        if (cooldownTimer > 0)
+        if (cooldownTimer > 0f)
         {
             cooldownTimer -= Time.deltaTime;
             return;
@@ -54,22 +54,20 @@ public class BarricadeController : MonoBehaviour
     {
         plankBroken[index] = false;
 
-        if (plankVisuals != null && index < plankVisuals.Length && plankVisuals[index] != null)
-            plankVisuals[index].SetActive(true);
-
-        // TODO: hier ggf. Reparatur-Animation/Sound triggern
+        if (plankAnimators != null && index < plankAnimators.Length && plankAnimators[index] != null)
+            plankAnimators[index].SetTrigger("Repair");
     }
 
     public void BreakNextPlank()
     {
-        for(int i = plankBroken.Length - 1; i >= 0; i--)
+        for (int i = plankBroken.Length - 1; i >= 0; i--)
         {
             if (!plankBroken[i])
             {
                 plankBroken[i] = true;
 
-                if (plankVisuals != null && i < plankVisuals.Length && plankVisuals[i] != null)
-                    plankVisuals[i].SetActive(false);
+                if (plankAnimators != null && i < plankAnimators.Length && plankAnimators[i] != null)
+                    plankAnimators[i].SetTrigger("Break"); // du brauchst dafuer auch eine "Break"-Animation/Trigger im Animator
 
                 return;
             }
