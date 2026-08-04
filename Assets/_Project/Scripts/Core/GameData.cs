@@ -8,4 +8,7 @@ public static class GameData
     public static int Wave { get; set; }
 
     public static bool IsPowerOn { get; set; }
+
+    public static int PlayerHealth { get; set; }
+    public static int PlayerMaxHealth { get; set; } = 100;
 }
