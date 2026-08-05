@@ -1,95 +1,109 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ZombieAnimations : MonoBehaviour {
 
     [SerializeField] private Animator animator;
+    [SerializeField] private float locomotionBlendSpeed = 10f;
+    [SerializeField] private int idleAnimationsAmount;
+    [SerializeField] private int walkAnimationsAmount;
+    [SerializeField] private int runAnimationsAmount;
 
-    private bool isWalking = false;
-    private bool isRunning = false;
+    //Movement
+    private int speedHash = Animator.StringToHash("speed");
+    private int idleTypeHash = Animator.StringToHash("idleType");
+    private int walkTypeHash = Animator.StringToHash("walkType");
+    private int runTypeHash = Animator.StringToHash("runType");
 
-    private int walkingSpeed = Animator.StringToHash("walkSpeed");
-    private int runningSpeed = Animator.StringToHash("runSpeed");
-    private int isWalkingAnim = Animator.StringToHash("isWalking");
-    private int isRunningAnim = Animator.StringToHash("isRunning");
-    private int lostLeg = Animator.StringToHash("lostLeg");
-    private int isEating = Animator.StringToHash("isEating");
-    private int isScreaming = Animator.StringToHash("isScreaming");
-    private int isHit = Animator.StringToHash("isHit");
-    private int attackIndex = Animator.StringToHash("AttackIndex");
-    private int attack = Animator.StringToHash("Attack");
+    //Leg Lost
+    private int lostLegHash = Animator.StringToHash("lostLeg");
+    private int hasLostLegHash = Animator.StringToHash("hasLostLeg");
+
+    //Attack
+    private int attackIndexHash = Animator.StringToHash("AttackIndex");
+    private int attackHash = Animator.StringToHash("Attack");
+
+    //Death
+    private int deathIndexHash = Animator.StringToHash("deathIndex");
+    private int deathHash = Animator.StringToHash("death");
+
+    private int isEatingHash = Animator.StringToHash("isEating");
+    private int isScreamingHash = Animator.StringToHash("isScreaming");
+    private int isHitHash = Animator.StringToHash("isHit");
 
     private Zombie zombie;
+    private float currentBlendInput = 0;
+    private float idleIndex;
+    private float walkIndex;
+    private float runIndex;
 
     private void Start() {
         zombie = GetComponent<Zombie>();
+        idleIndex = Random.Range(0, idleAnimationsAmount);
+        walkIndex = Random.Range(0, walkAnimationsAmount);
+        runIndex = Random.Range(0, runAnimationsAmount);
     }
 
-    public void SetWalkSpeed(float value) {
-        animator.SetFloat(walkingSpeed, value);
+    private void Update() {
+        UpdateMovement();
     }
 
-    public void SetRunningSpeed(float value) {
-        animator.SetFloat(runningSpeed, value);
-    }
+    private void UpdateMovement() {
+        currentBlendInput = Mathf.Lerp(currentBlendInput, zombie.Speed, locomotionBlendSpeed * Time.deltaTime);
+        animator.SetFloat(speedHash, currentBlendInput);
 
-    public float GetWalkSpeed() {
-        return walkingSpeed;
-    }
-
-    public float GetRunningSpeed() {
-        return runningSpeed;
-    }
-
-    public void SetIsWalking(bool state) {
-        if (state) {
-            isWalking = true;
-        } else {
-            isWalking = false;
+        switch (zombie.CurrentMovementState) {
+            case Zombie.MovementState.Idle:
+                animator.SetFloat(idleTypeHash, idleIndex);
+                break;
+            case Zombie.MovementState.Walk:
+                animator.SetFloat(walkTypeHash, walkIndex);
+                break;
+            case Zombie.MovementState.Run:
+                animator.SetFloat(runTypeHash, runIndex);
+                break;
         }
-
-        animator.SetBool(isWalkingAnim, state);
-    }
-
-    public void SetIsRunning(bool state) {
-        if (state) {
-            isRunning = true;
-        } else {
-            isRunning = false;
-        }
-
-        animator.SetBool(isRunningAnim, state);
     }
 
     public void SetAttackIndex(int value) {
-        animator.SetInteger(attackIndex, value);
+        animator.SetInteger(attackIndexHash, value);
     }
 
     public void SetAttackTrigger() {
-        animator.SetTrigger(attack);
+        animator.SetTrigger(attackHash);
     }
 
-    public void SetLostLeg(bool state) {
-        animator.SetBool(lostLeg, state);
+    public void SetDeathIndex(int value) {
+        animator.SetInteger(deathIndexHash, value);
+    }
+
+    public void SetDeath() {
+        animator.SetTrigger(deathHash);
+    }
+
+    public void SetLostLeg() {
+        animator.SetTrigger(lostLegHash);
+        animator.SetTrigger(hasLostLegHash);
+        zombie.StopAgent();
     }
 
     public void SetIsEating(bool state) {
-        animator.SetBool(isEating, state);
+        animator.SetBool(isEatingHash, state);
     }
 
     public void SetIsScreaming(bool state) {
-        animator.SetBool(isScreaming, state);
+        animator.SetBool(isScreamingHash, state);
     }
 
     public void SetIsHit(bool state) {
-        animator.SetBool(isHit, state);
+        animator.SetBool(isHitHash, state);
     }
 
-    public bool GetIsWalking() {
-        return isWalking;
+    #region Animation Events
+    public void LostLegFinished() {
+        zombie.StartAgent(Zombie.MovementState.Walk);
     }
-
-    public bool GetIsRunning() {
-        return isRunning;
-    }
+    #endregion
 
 }
