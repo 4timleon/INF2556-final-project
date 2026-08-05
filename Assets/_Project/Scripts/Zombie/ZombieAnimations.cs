@@ -100,6 +100,10 @@ public class ZombieAnimations : MonoBehaviour {
         animator.SetBool(isHitHash, state);
     }
 
+    public void SetAnimator(bool state) {
+        animator.enabled = state;
+    }
+
     #region Animation Events
     public void LostLegFinished() {
         zombie.StartAgent(Zombie.MovementState.Walk);

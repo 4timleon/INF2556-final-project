@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,45 +21,64 @@ public enum BodyPartType {
 
 public class DetachController : MonoBehaviour {
 
-    [SerializeField] private Detach[] detachables;
+    [SerializeField] private List<Detach> detachables;
+    [SerializeField] private float damage = 10;
+    [SerializeField] private float headThreshold = 30;
+    [SerializeField] private float armThreshold = 20;
+    [SerializeField] private float legThreshold = 40;
+    [SerializeField] private Detach leftPalmBodyPart;
+    [SerializeField] private Detach rightPalmBodyPart;
 
-    private void Update() {
-        if (!Keyboard.current.spaceKey.wasPressedThisFrame) return;
+    private Zombie zombie;
+    private ZombieAnimations zombieAnimations;
 
-        Detach randomBodyPart = detachables[Random.Range(0, detachables.Length)];
-        randomBodyPart.DetachMesh();
+    private void Start() {
+        zombie = GetComponent<Zombie>();
+        zombieAnimations = GetComponent<ZombieAnimations>();
     }
 
-    public void BodyPartDetach(BodyPartType bodyPartType, Vector3 pushDirection) {
-        switch (bodyPartType) {
+    private void Update() {//Remove Later after shooting implemented
+        if (!Keyboard.current.spaceKey.wasPressedThisFrame || zombie.IsDead) return;
+
+        Detach randomBodyPart = detachables[Random.Range(0, detachables.Count)];
+        Hit(randomBodyPart, damage);
+    }
+
+    public void Hit(Detach bodyPart, float value) {
+        if (bodyPart.IsDetached) return;
+
+        zombie.TakeDamage(value);
+        bodyPart.TakeBodyPartDamage(value);
+
+        switch (bodyPart.BodyPartType) {
             case BodyPartType.Head:
+                if (bodyPart.DamageTaken >= headThreshold) {
+                    bodyPart.DetachMesh();
+                    zombie.SetNoHead();
+                }
                 break;
-            case BodyPartType.Body:
-                break;
-            case BodyPartType.BodyTop:
-                break;
-            case BodyPartType.Hip:
-                break;
-            case BodyPartType.LArmPalm:
+            case BodyPartType.LLegCalf or BodyPartType.RLegCalf:
+                if (bodyPart.DamageTaken >= legThreshold) {
+                    bodyPart.DetachMesh();
+                    zombieAnimations.SetLostLeg();
+                }
                 break;
             case BodyPartType.LForearm:
-                break;
-            case BodyPartType.LUpperarm:
-                break;
-            case BodyPartType.LLegCalf:
-                break;
-            case BodyPartType.LLegThigh:
-                break;
-            case BodyPartType.RArmPalm:
+                if (bodyPart.DamageTaken >= armThreshold) {
+                    bodyPart.DetachMesh();
+                    leftPalmBodyPart.gameObject.SetActive(false);
+                }
                 break;
             case BodyPartType.RForearm:
-                break;
-            case BodyPartType.RUpperarm:
-                break;
-            case BodyPartType.RLegCalf:
-                break;
-            case BodyPartType.RLegThigh:
+                if (bodyPart.DamageTaken >= armThreshold) {
+                    bodyPart.DetachMesh();
+                    rightPalmBodyPart.gameObject.SetActive(false);
+                }
                 break;
         }
+    }
+
+    public void RemoveFromList(Detach bodyPart) {//Remove Later after shooting implemented
+        detachables.Remove(bodyPart);
     }
 }

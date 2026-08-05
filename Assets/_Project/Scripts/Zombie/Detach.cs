@@ -10,38 +10,28 @@ public class Detach : MonoBehaviour {
     [SerializeField] private float pushForce = 3f;
     [SerializeField] private Vector3 pushDirection = new Vector3(-1f, 0.2f, 0f);
 
-    private ZombieAnimations zombieAnimations;
-    private float damageThreshold;
-    private bool isDetached = false;
+    public float DamageTaken { get; private set; }
+    public bool IsDetached { get; private set; } = false;
+    public BodyPartType BodyPartType => bodyPart;
 
     //Hit Variables for Debug
-    private SkinnedMeshRenderer skinnedMeshRenderer;
     private Color originalColor;
     private Material zombieMaterial;
     private readonly Color hitColor = Color.red;
 
-    private void Start() {
-        zombieAnimations = GetComponentInParent<ZombieAnimations>();
-        skinnedMeshRenderer.GetComponent<SkinnedMeshRenderer>();
+    private DetachController detachController;
 
-        if (skinnedMeshRenderer != null) {
-            zombieMaterial = skinnedMeshRenderer.material;
+    private void Start() {
+        detachController = GetComponentInParent<DetachController>();//Remove Later after shooting implemented
+
+        if (mesh != null) {
+            zombieMaterial = mesh.material;
             originalColor = zombieMaterial.color;
         }
-
     }
 
-    private void Update() {
-        //DetachMesh();
-    }
-
-    public void Hit() {
-        if (isDetached) return;
-
-        switch (bodyPart) {
-            case BodyPartType.Head:
-                break;
-        }
+    public void TakeBodyPartDamage(float value) {
+        DamageTaken += value;
 
         StopAllCoroutines();
         StartCoroutine(HitFeedback());
@@ -54,22 +44,19 @@ public class Detach : MonoBehaviour {
     }
 
     public void DetachMesh() {
-        if (bodyPart != BodyPartType.LLegCalf) {
-            return;
-        } else {
-            zombieAnimations.SetLostLeg();
+        mesh.enabled = false;
+
+        GameObject newMesh = Instantiate(detachedPrefab, mesh.bounds.center, mesh.rootBone.rotation);
+        Rigidbody rb = newMesh.GetComponentInChildren<Rigidbody>();
+
+        if (rb != null) {
+            rb.AddForce(pushDirection.normalized * pushForce, ForceMode.Impulse);
         }
 
-        if (damageThreshold >= 40 && isDetached == false) {
-            mesh.enabled = false;
+        IsDetached = true;
 
-            GameObject newMesh = Instantiate(detachedPrefab, mesh.bounds.center, mesh.rootBone.rotation);
-            Rigidbody rb = newMesh.GetComponentInChildren<Rigidbody>();
-
-            if (rb != null) {
-                rb.AddForce(pushDirection.normalized * pushForce, ForceMode.Impulse);
-            }
-        }
+        //Remove Later after shooting implemented
+        detachController.RemoveFromList(this);
     }
 
     private void DetachMesh(Vector3 pushDirection) {

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
 public class Zombie : MonoBehaviour {
@@ -15,6 +16,8 @@ public class Zombie : MonoBehaviour {
     [SerializeField] private Player player;
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private bool initial;
+    [SerializeField] private Rigidbody[] joints;
+    //[SerializeField] private Collider[] colliders;
 
     [Space]
     [Header("Zombie Movement Type")]
@@ -26,7 +29,6 @@ public class Zombie : MonoBehaviour {
     [Space]
     [Header("Attack")]
     [SerializeField] private float attackRange = 1.5f;
-    [SerializeField] private float attackCooldown = 1f;
     [SerializeField, Range(1f, 10f)] private float initialIdleWaitTime = 3f;
 
     [Space]
@@ -41,6 +43,7 @@ public class Zombie : MonoBehaviour {
 
     //Attack Variables
     private float nextAttackTime;
+    private float attackCooldown = 1f;
     private bool useFirstAttack = true;
     private int attackIndex = 0;
 
@@ -48,15 +51,25 @@ public class Zombie : MonoBehaviour {
     private bool initialWaitStarted;
     private bool initialWaitFinished;
 
+    //No Head variables
     private bool noHead = false;
+    private float nextDamageTaken = 1f;
+    private float damageCooldown = 1f;
+
+    //Death
+    public bool IsDead { get; private set; } = false;
 
     private void Start() {
         zombieAnimations = GetComponent<ZombieAnimations>();
+
+        foreach (var joint in joints) joint.isKinematic = true;
+
     }
 
     private void Update() {
         UpdateMovementState();
 
+        //Give Players time at the start
         if (initial && !initialWaitFinished) {
             if (!initialWaitStarted) {
                 initialWaitStarted = true;
@@ -70,9 +83,24 @@ public class Zombie : MonoBehaviour {
         }
 
         CheckPlayer();
+
+        if (Keyboard.current.digit1Key.wasPressedThisFrame) {
+            TakeDamage(100f);
+        }
+
+        //Damage Zombie if head is detached
+        if (noHead && !IsDead) {
+            if (Time.time >= nextDamageTaken) {
+                TakeDamage(5f);
+                nextDamageTaken = Time.time + damageCooldown;
+                //Debug.Log("Damage Taken! HP left: " + health);
+            }
+        }
     }
 
     #region Movement
+
+    //Check if Player is in attack range. If not then move
     private void CheckPlayer() {
         if (pauseMovement) {
             return;
@@ -130,26 +158,39 @@ public class Zombie : MonoBehaviour {
 
     }
 
-    public void TakeDamage() {
+    //Zombie Takes Damage by given value
+    public void TakeDamage(float value) {
+        if (IsDead) return;
 
-    }
+        health -= value;
 
-    public void Die() {
         if (health <= 0f) {
-            int deathIndex = Random.Range(0, 3);
-
-            StopAgent();
-            zombieAnimations.SetDeathIndex(deathIndex);
-            zombieAnimations.SetDeath();
+            Die();
         }
     }
 
+    //Starts one of 3 Death Animations and activates Ragdoll
+    public void Die() {
+        int deathIndex = Random.Range(0, 3);
+
+        StopAgent();
+
+        zombieAnimations.SetDeathIndex(deathIndex);
+        zombieAnimations.SetDeath();
+
+        IsDead = true;
+
+        StartCoroutine(StartRagdoll(1f));
+    }
+
+    //Stops the NavMesh Agent
     public void StopAgent() {
         agent.isStopped = true;
         pauseMovement = true;
         speed = 0;
     }
 
+    //Starts the NavMeshAgent and sets the speed
     public void StartAgent(MovementState state) {
         agent.isStopped = false;
         pauseMovement = false;
@@ -167,11 +208,22 @@ public class Zombie : MonoBehaviour {
         }
     }
 
+    public void SetNoHead() {
+        noHead = true;
+    }
+
     //Wait a few seconds before chasing the player and playing the walk animation
     private IEnumerator InitialWait() {
         yield return new WaitForSeconds(initialIdleWaitTime);
         initialWaitFinished = true;
         CurrentMovementState = MovementState.Walk;
         speed = slowSpeed;
+    }
+
+    private IEnumerator StartRagdoll(float seconds) {
+        yield return new WaitForSeconds(seconds);
+
+        zombieAnimations.SetAnimator(false);
+        foreach (var joint in joints) joint.isKinematic = false;
     }
 }
