@@ -49,6 +49,7 @@ public class DetachController : MonoBehaviour {
 
         zombie.TakeDamage(value);
         bodyPart.TakeBodyPartDamage(value);
+        zombieAnimations.SetIsHit();
 
         switch (bodyPart.BodyPartType) {
             case BodyPartType.Head:

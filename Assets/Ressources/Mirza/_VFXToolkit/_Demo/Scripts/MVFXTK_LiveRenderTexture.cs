@@ -4,14 +4,11 @@ using UnityEngine;
 
 using UnityEngine.Experimental.Rendering;
 
-namespace Mirza.VFXToolKit
-{
+namespace Mirza.VFXToolKit {
     [ExecuteInEditMode]
-    public class MVFXTK_LiveRenderTexture : MonoBehaviour
-    {
+    public class MVFXTK_LiveRenderTexture : MonoBehaviour {
         [System.Serializable]
-        public struct SendToMaterialData
-        {
+        public struct SendToMaterialData {
             public Material material;
             public string textureName;
         }
@@ -61,7 +58,7 @@ namespace Mirza.VFXToolKit
 
         [Space]
 
-        public Camera camera;
+        public Camera main;
 
         [Space]
 
@@ -71,8 +68,7 @@ namespace Mirza.VFXToolKit
 
         Component previousThisComponent;
 
-        void Awake()
-        {
+        void Awake() {
             // If new object (which may be a copy and carry over textures),
             // don't destroy textures, but ensure references are null so new ones will be created for THIS component,
             // while not destroying the old ones which would otherwise force the other component to recreate them, too.
@@ -82,32 +78,27 @@ namespace Mirza.VFXToolKit
 
             //print($"{name} - Nulling textures.");
         }
-        void Start()
-        {
+        void Start() {
 
         }
 
-        void DestroyTextures()
-        {
+        void DestroyTextures() {
             // Not sure if release is necessary before destroying.
             // CustomRenderTexture is first (just in case) since a CRT is always a RT, but an RT isn't always a CRT.
 
             // Remove before releasing/destroying to prevent an annoying error message.
 
-            if (camera)
-            {
-                camera.targetTexture = null;
+            if (main) {
+                main.targetTexture = null;
             }
 
             // OBLIDERATE.
 
-            if (customRenderTexture)
-            {
+            if (customRenderTexture) {
                 customRenderTexture.Release();
                 DestroyImmediate(customRenderTexture);
             }
-            if (renderTexture)
-            {
+            if (renderTexture) {
                 renderTexture.Release();
                 DestroyImmediate(renderTexture);
             }
@@ -115,18 +106,15 @@ namespace Mirza.VFXToolKit
             //print($"{name} - Destroying textures ({textures} / 2).");
         }
 
-        void OnDestroy()
-        {
+        void OnDestroy() {
             DestroyTextures();
         }
 
-        public Vector2Int GetDownsampledResolution()
-        {
+        public Vector2Int GetDownsampledResolution() {
             return new Vector2Int(Screen.width / downsampleLevel, Screen.height / downsampleLevel);
         }
 
-        void Update()
-        {
+        void Update() {
             // Update resolution.
 
             aspectResolution = GetDownsampledResolution();
@@ -151,17 +139,13 @@ namespace Mirza.VFXToolKit
 
             // Need new render texture if custom render texture is toggled and current render texture is not a custom render texture.
 
-            if (isCustomRenderTexture)
-            {
+            if (isCustomRenderTexture) {
                 destroyTextures = destroyTextures || renderTexture != customRenderTexture;
-            }
-            else
-            {
+            } else {
                 destroyTextures = destroyTextures || customRenderTexture != null;
             }
 
-            if (destroyTextures)
-            {
+            if (destroyTextures) {
                 DestroyTextures();
 
                 // Force editor to update so editor slots reflect internal state.
@@ -187,20 +171,15 @@ namespace Mirza.VFXToolKit
 
             // Create if null.
 
-            if (!renderTexture)
-            {
+            if (!renderTexture) {
                 //print($"{name} - Creating texture.");
 
-                if (!isCustomRenderTexture)
-                {
-                    renderTexture = new RenderTexture(resolution.x, resolution.y, 16, renderTextureFormat, 0)
-                    {
+                if (!isCustomRenderTexture) {
+                    renderTexture = new RenderTexture(resolution.x, resolution.y, 16, renderTextureFormat, 0) {
                         useMipMap = useMipMap,
                         autoGenerateMips = useMipMap
                     };
-                }
-                else
-                {
+                } else {
                     customRenderTexture = new CustomRenderTexture(resolution.x, resolution.y, renderTextureFormat);
 
                     renderTexture = customRenderTexture;
@@ -214,17 +193,15 @@ namespace Mirza.VFXToolKit
             renderTexture.name = name;
             renderTexture.filterMode = filterMode;
 
-            if (customRenderTexture)
-            {
+            if (customRenderTexture) {
                 customRenderTexture.material = updateMaterial;
                 customRenderTexture.updateMode = CustomRenderTextureUpdateMode.Realtime;
             }
 
             // Set as target for camera.
 
-            if (camera)
-            {
-                camera.targetTexture = renderTexture;
+            if (main) {
+                main.targetTexture = renderTexture;
             }
 
             // State change requiring refresh.

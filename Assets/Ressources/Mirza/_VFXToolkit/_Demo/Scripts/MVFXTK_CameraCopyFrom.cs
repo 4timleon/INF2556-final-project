@@ -2,17 +2,15 @@ using UnityEngine;
 
 using UnityEngine.Rendering.Universal;
 
-namespace Mirza.VFXToolKit
-{
+namespace Mirza.VFXToolKit {
     // This script copies *almost* all settings from the target camera.
     // Target texture and culling mask are preserved for specific rendering purposes.
 
     // It's typically used for that -> same camera view, different render and texture.
 
     [ExecuteAlways]
-    public class MVFXTK_CameraCopyFrom : MonoBehaviour
-    {
-        Camera camera;
+    public class MVFXTK_CameraCopyFrom : MonoBehaviour {
+        Camera main;
         public Camera target;
 
         public float priorityOffset = -1;
@@ -21,32 +19,29 @@ namespace Mirza.VFXToolKit
 
         public bool copyBackgroundType = true;
 
-        void LateUpdate()
-        {
-            if (!camera)
-            {
-                camera = GetComponent<Camera>();
+        void LateUpdate() {
+            if (!main) {
+                main = GetComponent<Camera>();
             }
 
-            RenderTexture targetTexture = camera.targetTexture;
-            int cullingMask = camera.cullingMask;
+            RenderTexture targetTexture = main.targetTexture;
+            int cullingMask = main.cullingMask;
 
-            CameraClearFlags backgroundType = camera.clearFlags;
-            Color backgroundColour = camera.backgroundColor;
+            CameraClearFlags backgroundType = main.clearFlags;
+            Color backgroundColour = main.backgroundColor;
 
             // ...
 
-            camera.CopyFrom(target);
+            main.CopyFrom(target);
 
-            camera.depth += priorityOffset;
+            main.depth += priorityOffset;
 
-            camera.targetTexture = targetTexture;
-            camera.cullingMask = cullingMask;
+            main.targetTexture = targetTexture;
+            main.cullingMask = cullingMask;
 
-            if (!copyBackgroundType)
-            {
-                camera.clearFlags = backgroundType;
-                camera.backgroundColor = backgroundColour;
+            if (!copyBackgroundType) {
+                main.clearFlags = backgroundType;
+                main.backgroundColor = backgroundColour;
             }
         }
     }

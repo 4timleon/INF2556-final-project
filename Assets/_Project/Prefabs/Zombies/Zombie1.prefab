@@ -284,6 +284,7 @@ GameObject:
   - component: {fileID: 4246142099439623975}
   - component: {fileID: 2940339246886851}
   - component: {fileID: 4968805560013919946}
+  - component: {fileID: 4739406808711192048}
   m_Layer: 6
   m_Name: Base HumanLLegCalf
   m_TagString: Untagged
@@ -322,11 +323,11 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.11845912
+  m_Radius: 0.08
   m_Height: 0.47383648
   m_Direction: 0
   m_Center: {x: -0.23691824, y: 0, z: 0}
@@ -403,6 +404,20 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &4739406808711192048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 718708696564122599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f971b15f487734abc60d0e81a87f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BodyPart
+  detachController: {fileID: 299561741151323952}
+  detachableBodyPart: {fileID: 461712138662642441}
 --- !u!1 &803799316254784344
 GameObject:
   m_ObjectHideFlags: 0
@@ -606,6 +621,7 @@ GameObject:
   - component: {fileID: 1001908787935267317}
   - component: {fileID: 7196873708930251350}
   - component: {fileID: 4901622905147793307}
+  - component: {fileID: 1679971327982984470}
   m_Layer: 6
   m_Name: Base HumanLArmForearm
   m_TagString: Untagged
@@ -644,11 +660,11 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.090620086
+  m_Radius: 0.065
   m_Height: 0.4531004
   m_Direction: 0
   m_Center: {x: -0.2265502, y: 0, z: 0}
@@ -725,6 +741,20 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &1679971327982984470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1477319741389668175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f971b15f487734abc60d0e81a87f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BodyPart
+  detachController: {fileID: 299561741151323952}
+  detachableBodyPart: {fileID: 6650131572980262061}
 --- !u!1 &1548363270174808903
 GameObject:
   m_ObjectHideFlags: 0
@@ -775,11 +805,11 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.117881805
+  m_Radius: 0.1
   m_Height: 0.39293933
   m_Direction: 0
   m_Center: {x: -0.19646966, y: 0, z: 0}
@@ -906,11 +936,11 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.11788205
+  m_Radius: 0.1
   m_Height: 0.39294016
   m_Direction: 0
   m_Center: {x: -0.19647008, y: 0, z: 0}
@@ -1069,12 +1099,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.043604568, y: 0.28194863, z: 0.3551364}
-  m_Center: {x: -0.021802284, y: 0.0031086057, z: 0.0000005066395}
+  m_Size: {x: 0.064887926, y: 0.2739845, z: 0.3551364}
+  m_Center: {x: -0.03244393, y: 0.04850451, z: 0.00000051089694}
 --- !u!54 &7847897007570709960
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1114,6 +1144,7 @@ GameObject:
   - component: {fileID: 1491944870315793214}
   - component: {fileID: 563366863608582155}
   - component: {fileID: 4648109399185063834}
+  - component: {fileID: 2649798641420865387}
   m_Layer: 6
   m_Name: Base HumanHead
   m_TagString: Untagged
@@ -1156,12 +1187,12 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.12429776
-  m_Center: {x: -0.12429776, y: 0, z: 0}
+  m_Center: {x: -0.03, y: 0.03, z: 0}
 --- !u!54 &563366863608582155
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1235,6 +1266,20 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &2649798641420865387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840469243636615951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f971b15f487734abc60d0e81a87f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BodyPart
+  detachController: {fileID: 299561741151323952}
+  detachableBodyPart: {fileID: 4014955484086613966}
 --- !u!1 &1918587762329072105
 GameObject:
   m_ObjectHideFlags: 0
@@ -1820,14 +1865,14 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.06643746
+  m_Radius: 0.055
   m_Height: 0.26574984
   m_Direction: 0
-  m_Center: {x: -0.13287492, y: 0, z: 0}
+  m_Center: {x: -0.13287492, y: 0.02, z: -0.01}
 --- !u!54 &8352645296069433324
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1945,6 +1990,7 @@ GameObject:
   - component: {fileID: 8471335067911500341}
   - component: {fileID: 575149007371337484}
   - component: {fileID: 7061632273499512371}
+  - component: {fileID: 2907264552759195973}
   m_Layer: 6
   m_Name: Base HumanRArmForearm
   m_TagString: Untagged
@@ -1983,11 +2029,11 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.09062246
+  m_Radius: 0.06
   m_Height: 0.4531123
   m_Direction: 0
   m_Center: {x: -0.22655615, y: 0, z: 0}
@@ -2064,6 +2110,20 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &2907264552759195973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3355302367417304662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f971b15f487734abc60d0e81a87f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BodyPart
+  detachController: {fileID: 299561741151323952}
+  detachableBodyPart: {fileID: 286865177976750519}
 --- !u!1 &3450443001331210565
 GameObject:
   m_ObjectHideFlags: 0
@@ -2666,7 +2726,7 @@ GameObject:
   - component: {fileID: 4832664285413691513}
   - component: {fileID: 1324514344304008527}
   - component: {fileID: 299561741151323952}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Zombie1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2737,21 +2797,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 638499f63b72dbf45abb4f9c9b9f6a56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  player: {fileID: 0}
   agent: {fileID: 1324514344304008527}
   initial: 1
   joints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 7847897007570709960}
+  - {fileID: 5254571360572058664}
+  - {fileID: 2940339246886851}
+  - {fileID: 4589153827198999022}
+  - {fileID: 4179241877128498445}
+  - {fileID: 173367563506706228}
+  - {fileID: 6548894605706164205}
+  - {fileID: 7196873708930251350}
+  - {fileID: 563366863608582155}
+  - {fileID: 8352645296069433324}
+  - {fileID: 575149007371337484}
   speed: 0
   slowSpeed: 0.75
   fastSpeed: 3
@@ -2785,16 +2844,16 @@ NavMeshAgent:
   m_GameObject: {fileID: 4493914613880827488}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.2
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 150
   m_StoppingDistance: 1.5
-  m_AutoTraverseOffMeshLink: 1
+  m_AutoTraverseOffMeshLink: 0
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 1.9
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -3106,6 +3165,7 @@ GameObject:
   - component: {fileID: 8386057221297223831}
   - component: {fileID: 4179241877128498445}
   - component: {fileID: 4802417917813609701}
+  - component: {fileID: 6267619172417174191}
   m_Layer: 6
   m_Name: Base HumanRCalf
   m_TagString: Untagged
@@ -3144,11 +3204,11 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.118451945
+  m_Radius: 0.08
   m_Height: 0.47380778
   m_Direction: 0
   m_Center: {x: -0.23690389, y: 0, z: 0}
@@ -3225,6 +3285,20 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &6267619172417174191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5542661683521872327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f971b15f487734abc60d0e81a87f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BodyPart
+  detachController: {fileID: 299561741151323952}
+  detachableBodyPart: {fileID: 5392231336505063497}
 --- !u!1 &5596428681940554170
 GameObject:
   m_ObjectHideFlags: 0
@@ -3615,14 +3689,14 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.066435784
+  m_Radius: 0.055
   m_Height: 0.26574314
   m_Direction: 0
-  m_Center: {x: -0.13287157, y: 0, z: 0}
+  m_Center: {x: -0.13287157, y: 0.02, z: 0}
 --- !u!54 &6548894605706164205
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3746,12 +3820,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.4986448, y: 0.25708464, z: 0.35513645}
-  m_Center: {x: -0.24932463, y: -0.04979758, z: 0.0000006109476}
+  m_Size: {x: 0.46485925, y: 0.25708464, z: 0.35513645}
+  m_Center: {x: -0.28791025, y: -0.049797542, z: 0.00000061398003}
 --- !u!54 &173367563506706228
 Rigidbody:
   m_ObjectHideFlags: 0

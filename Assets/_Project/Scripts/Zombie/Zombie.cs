@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -13,7 +14,6 @@ public class Zombie : MonoBehaviour {
     }
 
     [Header("References")]
-    [SerializeField] private Player player;
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private bool initial;
     [SerializeField] private Rigidbody[] joints;
@@ -39,6 +39,7 @@ public class Zombie : MonoBehaviour {
     public MovementState CurrentMovementState { get; private set; }
     private bool pauseMovement = false;
 
+    private Player player;
     private ZombieAnimations zombieAnimations;
 
     //Attack Variables
@@ -56,8 +57,16 @@ public class Zombie : MonoBehaviour {
     private float nextDamageTaken = 1f;
     private float damageCooldown = 1f;
 
+    //NavMesh link animation
+    private bool wasOnOffMeshLink = false;
+    private int jumpAreaID;
+
     //Death
     public bool IsDead { get; private set; } = false;
+
+    private void Awake() {
+        jumpAreaID = NavMesh.GetAreaFromName("Jump");
+    }
 
     private void Start() {
         zombieAnimations = GetComponent<ZombieAnimations>();
@@ -67,7 +76,8 @@ public class Zombie : MonoBehaviour {
     }
 
     private void Update() {
-        UpdateMovementState();
+        //UpdateMovementState();
+        HandleOffMeshLinkAnimation();
 
         //Give Players time at the start
         if (initial && !initialWaitFinished) {
@@ -100,18 +110,75 @@ public class Zombie : MonoBehaviour {
 
     #region Movement
 
-    //Check if Player is in attack range. If not then move
-    private void CheckPlayer() {
-        if (pauseMovement) {
-            return;
+    private void HandleOffMeshLinkAnimation() {
+        bool isOnLink = agent.isOnOffMeshLink;
+        if (isOnLink && !wasOnOffMeshLink) {
+            OffMeshLinkData link = agent.currentOffMeshLinkData;
+            StartCoroutine(DoOffMeshLink(link));
         }
 
+        wasOnOffMeshLink = isOnLink;
+    }
+
+    private IEnumerator DoOffMeshLink(OffMeshLinkData link) {
+        Vector3 realStartPos = link.startPos;
+        Vector3 realEndPos = link.endPos;
+
+        if (Vector3.Distance(transform.position, link.endPos) < Vector3.Distance(transform.position, link.startPos)) {
+            realStartPos = link.endPos;
+            realEndPos = link.startPos;
+        }
+
+        var dir = (realEndPos - realStartPos).normalized;
+        if (dir.sqrMagnitude < 0.001f) {
+            dir = transform.forward;
+        }
+
+        dir.y = 0;
+        if (dir != Vector3.zero) {
+            var targetRotation = Quaternion.LookRotation(dir);
+            transform.rotation = targetRotation;
+        }
+
+        if (ShouldJumpOnLink(link)) {
+            zombieAnimations.SetJumpTrigger();
+        }
+
+        var duration = 0.6f;
+        var time = 0f;
+
+        while (time < duration) {
+            time += Time.deltaTime;
+
+            float t = Mathf.Clamp01(time / duration);
+            float smoothT = Mathf.SmoothStep(0f, 1f, t);
+
+            transform.position = Vector3.Lerp(realStartPos, realEndPos, smoothT);
+            yield return null;
+        }
+
+        transform.position = realEndPos;
+        agent.CompleteOffMeshLink();
+    }
+
+    private bool ShouldJumpOnLink(OffMeshLinkData link) {
+        Debug.Log($"Link: {link}, Owner: {link.owner}, jumpAreaID: {jumpAreaID}");
+
+        if (link.owner is NavMeshLink navMeshLink) {
+            Debug.Log($"Check: {navMeshLink.area == jumpAreaID}");
+            return navMeshLink.area == jumpAreaID;
+        }
+
+        return false;
+    }
+
+    //Check if Player is in attack range. If not then move
+    private void CheckPlayer() {
         //Set Animations
         float sqrDistance = (player.transform.position - transform.position).sqrMagnitude;
-        if (sqrDistance <= attackRange * attackRange) {
+        if (sqrDistance <= attackRange * attackRange && !pauseMovement) {
             //Stop and Attack
-            agent.isStopped = true;
-            speed = 0;
+            StopAgent();
 
             if (Time.time >= nextAttackTime) {
                 Attack();
@@ -119,8 +186,8 @@ public class Zombie : MonoBehaviour {
             }
         } else {
             //Set Target
-            speed = slowSpeed;
-            agent.isStopped = false;
+            StartAgent(CurrentMovementState);
+
             agent.SetDestination(player.transform.position);
             agent.speed = speed;
         }
@@ -174,6 +241,7 @@ public class Zombie : MonoBehaviour {
         int deathIndex = Random.Range(0, 3);
 
         StopAgent();
+        StopMovement(true);
 
         zombieAnimations.SetDeathIndex(deathIndex);
         zombieAnimations.SetDeath();
@@ -186,14 +254,14 @@ public class Zombie : MonoBehaviour {
     //Stops the NavMesh Agent
     public void StopAgent() {
         agent.isStopped = true;
-        pauseMovement = true;
         speed = 0;
     }
 
     //Starts the NavMeshAgent and sets the speed
     public void StartAgent(MovementState state) {
+        CurrentMovementState = state;
+
         agent.isStopped = false;
-        pauseMovement = false;
 
         switch (state) {
             case MovementState.Walk:
@@ -206,6 +274,19 @@ public class Zombie : MonoBehaviour {
                 speed = runSpeed;
                 break;
         }
+    }
+
+    public void StopMovement(bool state) {
+        pauseMovement = state;
+    }
+
+    public void SetTarget(Player player) {
+        this.player = player;
+    }
+
+    public void SetSpeed(MovementState state) {
+        initial = false;
+        StartAgent(state);
     }
 
     public void SetNoHead() {

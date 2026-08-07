@@ -2,13 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mirza.VFXToolKit
-{
-    public class MFXTK_AnimateMaterialUV : MonoBehaviour
-    {
+namespace Mirza.VFXToolKit {
+    public class MFXTK_AnimateMaterialUV : MonoBehaviour {
         Material material;
 
-        public Vector2 animation = new(0.0f, 0.5f);
+        public Vector2 animate = new(0.0f, 0.5f);
         public string propertyName = "_MainTex";
 
         [Space]
@@ -16,29 +14,23 @@ namespace Mirza.VFXToolKit
         public bool sharedMaterial;
         Vector2 startOffset;
 
-        void Start()
-        {
-            if (!sharedMaterial)
-            {
+        void Start() {
+            if (!sharedMaterial) {
                 material = GetComponent<Renderer>().material;
-            }
-            else
-            {
+            } else {
                 material = GetComponent<Renderer>().sharedMaterial;
             }
 
             startOffset = material.GetTextureOffset(propertyName);
         }
 
-        void OnDisable()
-        {
+        void OnDisable() {
             material.SetTextureOffset(propertyName, startOffset);
         }
 
-        void Update()
-        {
+        void Update() {
             Vector2 offset = material.GetTextureOffset(propertyName);
-            offset += animation * Time.deltaTime;
+            offset += animate * Time.deltaTime;
 
             material.SetTextureOffset(propertyName, offset);
         }

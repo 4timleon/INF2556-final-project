@@ -24,6 +24,9 @@ public class ZombieAnimations : MonoBehaviour {
     private int attackIndexHash = Animator.StringToHash("AttackIndex");
     private int attackHash = Animator.StringToHash("Attack");
 
+    //Jump
+    private int jumpHash = Animator.StringToHash("Jump");
+
     //Death
     private int deathIndexHash = Animator.StringToHash("deathIndex");
     private int deathHash = Animator.StringToHash("death");
@@ -74,6 +77,10 @@ public class ZombieAnimations : MonoBehaviour {
         animator.SetTrigger(attackHash);
     }
 
+    public void SetJumpTrigger() {
+        animator.SetTrigger(jumpHash);
+    }
+
     public void SetDeathIndex(int value) {
         animator.SetInteger(deathIndexHash, value);
     }
@@ -86,6 +93,7 @@ public class ZombieAnimations : MonoBehaviour {
         animator.SetTrigger(lostLegHash);
         animator.SetTrigger(hasLostLegHash);
         zombie.StopAgent();
+        zombie.StopMovement(true);
     }
 
     public void SetIsEating(bool state) {
@@ -96,8 +104,8 @@ public class ZombieAnimations : MonoBehaviour {
         animator.SetBool(isScreamingHash, state);
     }
 
-    public void SetIsHit(bool state) {
-        animator.SetBool(isHitHash, state);
+    public void SetIsHit() {
+        animator.SetTrigger(isHitHash);
     }
 
     public void SetAnimator(bool state) {
@@ -107,6 +115,7 @@ public class ZombieAnimations : MonoBehaviour {
     #region Animation Events
     public void LostLegFinished() {
         zombie.StartAgent(Zombie.MovementState.Walk);
+        zombie.StopMovement(false);
     }
     #endregion
 
