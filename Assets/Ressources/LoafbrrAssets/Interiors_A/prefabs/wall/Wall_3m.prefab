@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3525915679099119229}
   - component: {fileID: 1786985765691017108}
   - component: {fileID: 4798230785724524123}
-  - component: {fileID: 4680871644287510936}
+  - component: {fileID: 6570336233310201265}
   m_Layer: 0
   m_Name: Wall_3m
   m_TagString: Untagged
@@ -59,6 +59,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -80,12 +85,14 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4680871644287510936
-MeshCollider:
+--- !u!65 &6570336233310201265
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -102,7 +109,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -1913002585857397920, guid: efd7a9b8104d825438596dfd274cb6de, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 3.000001, y: 3, z: 0.20000017}
+  m_Center: {x: 0.000015258789, y: 1.5, z: -0.0000038817525}

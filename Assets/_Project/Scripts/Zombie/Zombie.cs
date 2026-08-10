@@ -162,10 +162,7 @@ public class Zombie : MonoBehaviour {
     }
 
     private bool ShouldJumpOnLink(OffMeshLinkData link) {
-        Debug.Log($"Link: {link}, Owner: {link.owner}, jumpAreaID: {jumpAreaID}");
-
         if (link.owner is NavMeshLink navMeshLink) {
-            Debug.Log($"Check: {navMeshLink.area == jumpAreaID}");
             return navMeshLink.area == jumpAreaID;
         }
 
