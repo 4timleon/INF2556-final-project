@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: 379f75793ed1f734793b309ba15159f9, type: 2}
+  m_LightingDataAsset: {fileID: 112000000, guid: fe2224341661b1640b75c51ae8c265f5, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: b5b1532c2ae3c5a438efe09b2fea5df7, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -9445,12 +9445,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8784655134068729765, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
-      propertyPath: mouseSensitivity
-      value: 0.03
+      propertyPath: walkSpeed
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: -8784655134068729765, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
-      propertyPath: gravityMultiplier
-      value: 5
+      propertyPath: sprintMultiplier
+      value: 1.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 440410789529185910, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 247
       objectReference: {fileID: 0}
     - target: {fileID: 564833786845192365, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9458,7 +9462,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 564833786845192365, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 51.36
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 564833786845192365, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9492,29 +9496,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 936848410942018505, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
+      propertyPath: m_TranslationAtRest.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 936848410942018505, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
+      propertyPath: m_TranslationAtRest.z
+      value: 0.391
+      objectReference: {fileID: 0}
+    - target: {fileID: 936848410942018505, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
+      propertyPath: m_TranslationOffset.z
+      value: 0.30518037
+      objectReference: {fileID: 0}
     - target: {fileID: 5825356846951124935, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.056
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5825356846951124935, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.391
       objectReference: {fileID: 0}
     - target: {fileID: 6440766276049901043, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 6440766276049901043, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
-      propertyPath: m_Layer
-      value: 7
+    - target: {fileID: 8391643295767717880, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
+      propertyPath: m_Height
+      value: 2.75
       objectReference: {fileID: 0}
     - target: {fileID: 8391643295767717880, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
-      propertyPath: m_StepOffset
-      value: 0.5
+      propertyPath: m_Radius
+      value: 0.4
       objectReference: {fileID: 0}
-    - target: {fileID: -8784655134068729765, guid: cf13e6831bbb4ac489e980bdf751c92c, type: 3}
-      propertyPath: mouseSensitivity
-      value: 0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 7938216754347844857, guid: cf13e6831bbb4ac489e980bdf751c92c, type: 3}
-      propertyPath: m_RequiresDepthTextureOption
-      value: 2
+    - target: {fileID: 8391643295767717880, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
+      propertyPath: m_Center.y
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -41547,7 +41563,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3745317732543632013, guid: 1a67ae3422fcf054d9f666cedbd294b3, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3745317732543632013, guid: 1a67ae3422fcf054d9f666cedbd294b3, type: 3}
       propertyPath: currentWave

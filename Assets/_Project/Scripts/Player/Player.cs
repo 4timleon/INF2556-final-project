@@ -27,7 +27,7 @@ public class Player : MonoBehaviour {
 
     private Vector3 currentMovement;
     private float verticalRotation;
-    private float currentSpeed => walkSpeed * (playerInputHandler.SprintTriggered ? sprintMultiplier : 1f);
+    private float currentSpeed => walkSpeed * (GetIsSprinting() ? sprintMultiplier : 1f);
 
     //private Weapon weapon;
 
@@ -58,12 +58,7 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleMovement() {
-        Vector3 cameraForward = mainCamera.transform.forward;
-        Vector3 cameraRight = mainCamera.transform.right;
-        cameraForward.y = 0f;
-        cameraRight.y = 0f;
-        cameraForward = cameraForward.normalized;
-        cameraRight = cameraRight.normalized;
+        (Vector3 cameraRight, Vector3 cameraForward) = GetCameraDirection();
 
         Vector3 inputDirection = cameraRight * playerInputHandler.MovementInput.x +
                                     cameraForward * playerInputHandler.MovementInput.y;
@@ -106,6 +101,33 @@ public class Player : MonoBehaviour {
     public void SetCurrentWeapon(Weapon weapon) {
         this.weapon = weapon;
     } */
+
+    public (Vector3, Vector3) GetCameraDirection() {
+        Vector3 cameraForward = mainCamera.transform.forward;
+        Vector3 cameraRight = mainCamera.transform.right;
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+        cameraForward = cameraForward.normalized;
+        cameraRight = cameraRight.normalized;
+
+        return (cameraRight, cameraForward);
+    }
+
+    public bool GetIsSprinting() {
+        if (!playerInputHandler.SprintTriggered) {
+            return false;
+        }
+
+        (Vector3 cameraRight, Vector3 cameraForward) = GetCameraDirection();
+        Vector3 inputDirection = cameraRight * playerInputHandler.MovementInput.x +
+                                 cameraForward * playerInputHandler.MovementInput.y;
+
+        if (inputDirection.sqrMagnitude <= 0.0001f) {
+            return false;
+        }
+
+        return Vector3.Dot(inputDirection.normalized, cameraForward) > 0f;
+    }
 
     public PlayerInputHandler GetPlayerInputHandler() {
         return playerInputHandler;
