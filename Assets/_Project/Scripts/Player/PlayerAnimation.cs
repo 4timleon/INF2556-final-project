@@ -49,7 +49,12 @@ public class PlayerAnimation : MonoBehaviour {
         animator.SetFloat(inputXHash, currentBlendInput.x);
         animator.SetFloat(inputYHash, currentBlendInput.y);
         animator.SetFloat(sprintMagnitudeHash, currentBlendInput.magnitude);
-        animator.SetFloat(rotationMismatchHash, player.RotationMismatch);
+
+        if (player.IsIdling) {
+            animator.SetFloat(rotationMismatchHash, player.RotationMismatch);
+        } else {
+            animator.SetFloat(rotationMismatchHash, 0f);
+        }
     }
 
 }

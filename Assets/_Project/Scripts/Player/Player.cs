@@ -33,6 +33,7 @@ public class Player : MonoBehaviour {
     [SerializeField] private float health = 100;
     [SerializeField] private float preDeathTimer = 60f;
 
+    public bool IsIdling { get; private set; } = false;
     public float RotationMismatch { get; private set; } = 0f;
     public bool IsRotatingToTarget { get; private set; } = false;
 
@@ -119,15 +120,12 @@ public class Player : MonoBehaviour {
 
         playerTargetRotation.x += transform.eulerAngles.x + mouseSensitivity * playerInputHandler.LookInput.x;
 
-        bool isIdling = playerInputHandler.MovementInput == Vector2.zero;
+        IsIdling = playerInputHandler.MovementInput == Vector2.zero;
 
         //Rotate if not idle
-        if (!isIdling) {
+        if (!IsIdling) {
             RotatePlayerToTarget();
-        }
-
-        //If rotation mismatch not within threshold or rotate to Target Timer is true then rotate
-        if (Mathf.Abs(RotationMismatch) > rotationThreshold || rotatingToTargetTimer > 0) {
+        } else if (Mathf.Abs(RotationMismatch) > rotationThreshold || rotatingToTargetTimer > 0) {//If rotation mismatch not within threshold or rotate to Target Timer is true then rotate
             UpdateIdleRotation(rotationThreshold);
         }
 
