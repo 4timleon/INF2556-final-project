@@ -11,6 +11,7 @@ public class Player : MonoBehaviour {
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private AudioListener audioListener;
+    [SerializeField] private Transform aimtarget;
     [SerializeField] private Transform weaponSocket;
     [SerializeField] private bool cursorVisible = false;
 
@@ -23,13 +24,44 @@ public class Player : MonoBehaviour {
     [SerializeField] private float mouseSensitivity = 0.1f;
     [SerializeField] private float upDownLookRange = 80f;
 
+    [Header("Rotation")]
+    [SerializeField] private float playerModelRotationSpeed = 10f;
+    [SerializeField] private float rotateToTargetTime = 0.25f;
+    [SerializeField] private float rotationThreshold = 30;
+
+    [Header("Health")]
+    [SerializeField] private float health = 100;
+    [SerializeField] private float preDeathTimer = 60f;
+
+    public float RotationMismatch { get; private set; } = 0f;
+    public bool IsRotatingToTarget { get; private set; } = false;
+
+    //References
+    private PlayerAnimation playerAnimation;
+
     public Transform WeaponSocket => weaponSocket;
 
     private Vector3 currentMovement;
+    private float horizontalRotation;
     private float verticalRotation;
     private float currentSpeed => walkSpeed * (GetIsSprinting() ? sprintMultiplier : 1f);
 
     //private Weapon weapon;
+
+    private bool isInPreDeath = false;
+    private bool isDead = false;
+
+    //Camera Variables
+    private Vector2 cameraRotation = Vector2.zero;
+    private Vector2 playerTargetRotation = Vector2.zero;
+
+    //Rotation Variables
+    private bool isRotatingClockwise = false;
+    private float rotatingToTargetTimer = 0f;
+
+    private void Awake() {
+        playerAnimation = GetComponent<PlayerAnimation>();
+    }
 
     private void Start() {
         Cursor.visible = cursorVisible;
@@ -53,8 +85,11 @@ public class Player : MonoBehaviour {
         //if (!IsOwner) return;
 
         HandleMovement();
-        HandleLook();
         HandleFall();
+    }
+
+    private void LateUpdate() {
+        HandleLook();
     }
 
     private void HandleMovement() {
@@ -77,17 +112,53 @@ public class Player : MonoBehaviour {
         }
     }
 
+    #region Rotation
     private void HandleLook() {
-        float mouseXRotation = playerInputHandler.LookInput.x * mouseSensitivity;
-        float mouseYRotation = playerInputHandler.LookInput.y * mouseSensitivity;
+        cameraRotation.x += playerInputHandler.LookInput.x * mouseSensitivity;
+        cameraRotation.y = Mathf.Clamp(cameraRotation.y - playerInputHandler.LookInput.y * mouseSensitivity, -upDownLookRange, upDownLookRange);
 
-        //Horizontal Camera Rotation
-        transform.Rotate(0, mouseXRotation, 0);
+        playerTargetRotation.x += transform.eulerAngles.x + mouseSensitivity * playerInputHandler.LookInput.x;
 
-        //Vertical Camera Rotation
-        verticalRotation = Mathf.Clamp(verticalRotation - mouseYRotation, -upDownLookRange, upDownLookRange);
-        mainCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
+        bool isIdling = playerInputHandler.MovementInput == Vector2.zero;
+
+        //Rotate if not idle
+        if (!isIdling) {
+            RotatePlayerToTarget();
+        }
+
+        //If rotation mismatch not within threshold or rotate to Target Timer is true then rotate
+        if (Mathf.Abs(RotationMismatch) > rotationThreshold || rotatingToTargetTimer > 0) {
+            UpdateIdleRotation(rotationThreshold);
+        }
+
+        mainCamera.transform.rotation = Quaternion.Euler(cameraRotation.y, cameraRotation.x, 0f);
+
+        //Get angle between camera and player
+        Vector3 cameraForwardProjectedXZ = new Vector3(mainCamera.transform.forward.x, 0f, mainCamera.transform.forward.z).normalized;
+        Vector3 crossProd = Vector3.Cross(transform.forward, cameraForwardProjectedXZ);
+        float sign = Mathf.Sign(Vector3.Dot(crossProd, transform.up));
+        RotationMismatch = sign * Vector3.Angle(transform.forward, cameraForwardProjectedXZ);
     }
+
+    private void UpdateIdleRotation(float rotationThreshold) {
+        //Start new rotation direction
+        if (Mathf.Abs(RotationMismatch) > rotationThreshold) {
+            rotatingToTargetTimer = rotateToTargetTime;
+            isRotatingClockwise = RotationMismatch > rotationThreshold;
+        }
+        rotatingToTargetTimer -= Time.deltaTime;
+
+        if (isRotatingClockwise && RotationMismatch > 0f ||
+            !isRotatingClockwise && RotationMismatch < 0f) {
+            RotatePlayerToTarget();
+        }
+    }
+
+    private void RotatePlayerToTarget() {
+        Quaternion targetRotationX = Quaternion.Euler(0f, playerTargetRotation.x, 0f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotationX, playerModelRotationSpeed * Time.deltaTime);
+    }
+    #endregion
 
     //[Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
     public void RequestWeaponServerRpc(int weaponIndex) {
@@ -101,6 +172,34 @@ public class Player : MonoBehaviour {
     public void SetCurrentWeapon(Weapon weapon) {
         this.weapon = weapon;
     } */
+
+    public void TakeDamage(float value) {
+        if (isInPreDeath) return;
+
+        health -= value;
+        health = Mathf.Max(health, 0);
+
+        Debug.Log("Health: " + health);
+
+        if (health <= 0) {
+            isInPreDeath = true;
+            PreDeath();
+        }
+    }
+
+    private void PreDeath() {
+        if (isDead) return;
+
+        //If Timer runs out the Player dies
+        if (Time.time <= preDeathTimer) {
+            isDead = true;
+            Die();
+        }
+    }
+
+    private void Die() {
+        GameEventSystem.OnPlayerDeath?.Invoke();
+    }
 
     public (Vector3, Vector3) GetCameraDirection() {
         Vector3 cameraForward = mainCamera.transform.forward;

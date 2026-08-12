@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class WaveManager : MonoBehaviour {
@@ -7,9 +8,9 @@ public class WaveManager : MonoBehaviour {
 
     [Header("Spawn Settings")]
     [SerializeField] private GameObject zombiePrefab;
-    [SerializeField] private SpawnPoint[] spawnPoint;
+    [SerializeField] private SpawnPoint[] spawnPoints;
     [SerializeField] private float timeBetweenSpawns = 1.0f;
-    [SerializeField] private float timeBetweenWaves = 5.0f;
+    //[SerializeField] private float timeBetweenWaves = 5.0f;
 
     [Header("Wave Scaling")]
     [SerializeField] private int baseZombieCount = 6;
@@ -22,7 +23,10 @@ public class WaveManager : MonoBehaviour {
 
     [Header("Current State")]
     [SerializeField] private int currentWave = 0;
-    private bool isSpawning = false;
+    //private bool isSpawning = false;
+
+    //Zombies of the current Wave
+    private List<Zombie> currentZombies = new();
 
     private void Start() {
         StartNextWave();
@@ -30,12 +34,13 @@ public class WaveManager : MonoBehaviour {
 
     //Can be used to Start the next Wave after all Zombies got killed
     public void StartNextWave() {
+        GameEventSystem.OnWaveStarted?.Invoke();
         currentWave++;
         StartCoroutine(SpawnWaveRoutine());
     }
 
     private IEnumerator SpawnWaveRoutine() {
-        isSpawning = true;
+        //isSpawning = true;
         int zombiesToSpawn = Mathf.RoundToInt(baseZombieCount * Mathf.Pow(zombiesMultiplier, currentWave - 1));
 
         Debug.Log($"Wave {currentWave} started, Zombies spawned: {zombiesToSpawn}");
@@ -69,10 +74,37 @@ public class WaveManager : MonoBehaviour {
     }
 
     private void SpawnZombie(Zombie.MovementState type) {
-        Vector3 randomSpawnPoint = spawnPoint[Random.Range(0, spawnPoint.Length)].GetRandomSpawnPosition();
+        SpawnPoint spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        Vector3 randomSpawnPoint = spawnPoint.GetRandomSpawnPosition();
+
         Zombie zombie = Instantiate(zombiePrefab, randomSpawnPoint, Quaternion.identity).GetComponent<Zombie>();
+        currentZombies.Add(zombie);
+
         zombie.SetTarget(playerReference);
         zombie.SetSpeed(type);
+
+        if (spawnPoint.OutOfGround) {
+            zombie.StartOutOfGroundAnimation();
+        } else {
+            zombie.StartMovement();
+        }
     }
 
+    public void RemoveZombieFromList(Zombie zombie) {
+        currentZombies.Remove(zombie);
+
+        if (currentZombies.Count == 0) {
+            GameEventSystem.OnWaveEnded?.Invoke();
+            StartNextWave();
+        }
+    }
+
+
+    private void OnEnable() {
+        GameEventSystem.OnEnemyKilled += RemoveZombieFromList;
+    }
+
+    private void OnDisable() {
+        GameEventSystem.OnEnemyKilled -= RemoveZombieFromList;
+    }
 }

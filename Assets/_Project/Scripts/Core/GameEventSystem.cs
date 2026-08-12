@@ -1,11 +1,10 @@
 using System;
 using UnityEngine;
 
-public static class GameEventSystem
-{
+public static class GameEventSystem {
     // event examples
 
-    public static Action OnEnemyKilled;
+    public static Action<Zombie> OnEnemyKilled;
 
     public static Action OnPlayerDeath;
 

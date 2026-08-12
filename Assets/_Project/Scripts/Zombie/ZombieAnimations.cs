@@ -16,6 +16,9 @@ public class ZombieAnimations : MonoBehaviour {
     private int walkTypeHash = Animator.StringToHash("walkType");
     private int runTypeHash = Animator.StringToHash("runType");
 
+    //OutOfGround
+    private int outOfGroundHash = Animator.StringToHash("OutOfGround");
+
     //Leg Lost
     private int lostLegHash = Animator.StringToHash("lostLeg");
     private int hasLostLegHash = Animator.StringToHash("hasLostLeg");
@@ -25,7 +28,8 @@ public class ZombieAnimations : MonoBehaviour {
     private int attackHash = Animator.StringToHash("Attack");
 
     //Jump
-    private int jumpHash = Animator.StringToHash("Jump");
+    private int jumpUpHash = Animator.StringToHash("JumpUp");
+    private int jumpDownHash = Animator.StringToHash("JumpDown");
 
     //Death
     private int deathIndexHash = Animator.StringToHash("deathIndex");
@@ -69,6 +73,10 @@ public class ZombieAnimations : MonoBehaviour {
         }
     }
 
+    public void SetOutOfGroundBool(bool state) {
+        animator.SetBool(outOfGroundHash, state);
+    }
+
     public void SetAttackIndex(int value) {
         animator.SetInteger(attackIndexHash, value);
     }
@@ -77,8 +85,12 @@ public class ZombieAnimations : MonoBehaviour {
         animator.SetTrigger(attackHash);
     }
 
-    public void SetJumpTrigger() {
-        animator.SetTrigger(jumpHash);
+    public void SetJumpUpTrigger() {
+        animator.SetTrigger(jumpUpHash);
+    }
+
+    public void SetJumpDownTrigger() {
+        animator.SetTrigger(jumpDownHash);
     }
 
     public void SetDeathIndex(int value) {

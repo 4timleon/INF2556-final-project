@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.AI.Navigation;
 using UnityEngine;
@@ -48,6 +49,9 @@ public class Zombie : MonoBehaviour {
     private bool useFirstAttack = true;
     private int attackIndex = 0;
 
+    //OutOfGround Variables
+    private bool startOutOfGround = false;
+
     //Initial Wait Variables
     private bool initialWaitStarted;
     private bool initialWaitFinished;
@@ -66,11 +70,10 @@ public class Zombie : MonoBehaviour {
 
     private void Awake() {
         jumpAreaID = NavMesh.GetAreaFromName("Jump");
+        zombieAnimations = GetComponent<ZombieAnimations>();
     }
 
     private void Start() {
-        zombieAnimations = GetComponent<ZombieAnimations>();
-
         foreach (var joint in joints) joint.isKinematic = true;
 
     }
@@ -114,6 +117,8 @@ public class Zombie : MonoBehaviour {
         bool isOnLink = agent.isOnOffMeshLink;
         if (isOnLink && !wasOnOffMeshLink) {
             OffMeshLinkData link = agent.currentOffMeshLinkData;
+
+            StopAllCoroutines();
             StartCoroutine(DoOffMeshLink(link));
         }
 
@@ -121,27 +126,14 @@ public class Zombie : MonoBehaviour {
     }
 
     private IEnumerator DoOffMeshLink(OffMeshLinkData link) {
-        Vector3 realStartPos = link.startPos;
-        Vector3 realEndPos = link.endPos;
-
-        if (Vector3.Distance(transform.position, link.endPos) < Vector3.Distance(transform.position, link.startPos)) {
-            realStartPos = link.endPos;
-            realEndPos = link.startPos;
-        }
-
-        var dir = (realEndPos - realStartPos).normalized;
-        if (dir.sqrMagnitude < 0.001f) {
-            dir = transform.forward;
-        }
-
+        var dir = (link.endPos - link.startPos).normalized;
         dir.y = 0;
-        if (dir != Vector3.zero) {
-            var targetRotation = Quaternion.LookRotation(dir);
-            transform.rotation = targetRotation;
-        }
+        transform.rotation = Quaternion.LookRotation(dir);
 
-        if (ShouldJumpOnLink(link)) {
-            zombieAnimations.SetJumpTrigger();
+        if (ShouldJumpOnLink(link) && link.endPos.y > transform.position.y) {
+            zombieAnimations.SetJumpUpTrigger();
+        } else {
+            zombieAnimations.SetJumpDownTrigger();
         }
 
         var duration = 0.6f;
@@ -153,11 +145,11 @@ public class Zombie : MonoBehaviour {
             float t = Mathf.Clamp01(time / duration);
             float smoothT = Mathf.SmoothStep(0f, 1f, t);
 
-            transform.position = Vector3.Lerp(realStartPos, realEndPos, smoothT);
+            transform.position = Vector3.Lerp(link.startPos, link.endPos, smoothT);
             yield return null;
         }
 
-        transform.position = realEndPos;
+        transform.position = link.endPos;
         agent.CompleteOffMeshLink();
     }
 
@@ -171,6 +163,8 @@ public class Zombie : MonoBehaviour {
 
     //Check if Player is in attack range. If not then move
     private void CheckPlayer() {
+        if (IsDead || startOutOfGround) return;
+
         //Set Animations
         float sqrDistance = (player.transform.position - transform.position).sqrMagnitude;
         if (sqrDistance <= attackRange * attackRange && !pauseMovement) {
@@ -191,7 +185,7 @@ public class Zombie : MonoBehaviour {
     }
 
     //Dynamic Movement State Change with speed
-    private void UpdateMovementState() {
+    /* private void UpdateMovementState() {
         if (speed <= 0f) {
             CurrentMovementState = MovementState.Idle;
         } else if (speed <= slowSpeed) {
@@ -201,7 +195,8 @@ public class Zombie : MonoBehaviour {
         } else {
             CurrentMovementState = MovementState.Run;
         }
-    }
+    } */
+
     #endregion
 
     //Starts Attacking the Player when in range
@@ -235,6 +230,9 @@ public class Zombie : MonoBehaviour {
 
     //Starts one of 3 Death Animations and activates Ragdoll
     public void Die() {
+        if (IsDead) return;
+        IsDead = true;
+
         int deathIndex = Random.Range(0, 3);
 
         StopAgent();
@@ -243,9 +241,30 @@ public class Zombie : MonoBehaviour {
         zombieAnimations.SetDeathIndex(deathIndex);
         zombieAnimations.SetDeath();
 
-        IsDead = true;
+        GameEventSystem.OnEnemyKilled?.Invoke(this);
 
         StartCoroutine(StartRagdoll(1f));
+    }
+
+    //Start OutOfGround Animation
+    public void StartOutOfGroundAnimation() {
+        StopAgent();
+        StopMovement(true);
+        startOutOfGround = true;
+        zombieAnimations.SetOutOfGroundBool(true);
+    }
+
+    #region Animation Event
+    public void ContinueMovement() {
+        StartAgent(CurrentMovementState);
+        StopMovement(false);
+        startOutOfGround = false;
+    }
+    #endregion
+
+    public void StartMovement() {
+        startOutOfGround = false;
+        zombieAnimations.SetOutOfGroundBool(false);
     }
 
     //Stops the NavMesh Agent

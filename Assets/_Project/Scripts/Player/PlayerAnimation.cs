@@ -8,10 +8,10 @@ public class PlayerAnimation : MonoBehaviour {
     private int inputXHash = Animator.StringToHash("inputX");
     private int inputYHash = Animator.StringToHash("inputY");
     private int sprintMagnitudeHash = Animator.StringToHash("sprintMagnitude");
+    private int rotationMismatchHash = Animator.StringToHash("rotationMismatch");
 
     private Player player;
     private PlayerInputHandler playerInputHandler;
-    private Camera mainCamera;
 
     private Vector3 currentBlendInput = Vector3.zero;
 
@@ -49,5 +49,7 @@ public class PlayerAnimation : MonoBehaviour {
         animator.SetFloat(inputXHash, currentBlendInput.x);
         animator.SetFloat(inputYHash, currentBlendInput.y);
         animator.SetFloat(sprintMagnitudeHash, currentBlendInput.magnitude);
+        animator.SetFloat(rotationMismatchHash, player.RotationMismatch);
     }
+
 }
