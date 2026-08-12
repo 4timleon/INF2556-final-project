@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public static class GameEventSystem
 {
@@ -12,6 +13,9 @@ public static class GameEventSystem
     // Story
     public static Action<string> OnDoorOpened; // string = doorId, z.B. "Door_A1"
     public static Action OnPowerTurnedOn;
+
+    // Mystery Box
+    public static Action<WeaponType, List<ModuleType>> OnWeaponWon;
 
     public static Action<int, int> OnPlayerHealthChanged; // (current, max)
 }
