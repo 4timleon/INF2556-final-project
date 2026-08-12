@@ -34,6 +34,7 @@ public class WeaponBuilder : MonoBehaviour
         ModuleBase moduleInstance = Instantiate(modulePrefab, Vector3.zero, Quaternion.identity);
         moduleInstance.transform.SetParent(parent);
         moduleInstance.transform.localPosition = Vector3.zero;
+        moduleInstance.transform.localRotation = Quaternion.identity;
 
         weaponController.WeaponData.Modules.Add(moduleInstance.ModuleType, moduleInstance);
 
