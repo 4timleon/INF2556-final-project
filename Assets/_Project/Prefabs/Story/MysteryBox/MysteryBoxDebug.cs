@@ -12,7 +12,7 @@ public class MysteryBoxTestDebug : MonoBehaviour
         GameEventSystem.OnWeaponWon -= HandleWeaponWon;
     }
 
-    private void HandleWeaponWon(System.Collections.Generic.List<ModuleType> modules)
+    private void HandleWeaponWon(WeaponType weaponType, System.Collections.Generic.List<ModuleType> modules)
     {
         string result = modules.Count == 0 ? "Keine Module" : string.Join(", ", modules);
         Debug.Log($"Waffe gewonnen mit {modules.Count} Modulen: {result}");
