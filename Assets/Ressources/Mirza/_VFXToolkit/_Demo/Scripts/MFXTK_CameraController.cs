@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mirza.VFXToolKit
-{
-    public class MFXTK_CameraController : MonoBehaviour
-    {
+namespace Mirza.VFXToolKit {
+    public class MFXTK_CameraController : MonoBehaviour {
         public bool dragEnabled = true;
 
         [Space]
@@ -39,8 +37,7 @@ namespace Mirza.VFXToolKit
         bool focusEnabledThisFrame;
         bool previouslyFocused;
 
-        void Start()
-        {
+        void Start() {
             targetRotation = transform.localRotation;
             currentEulerAngles = targetRotation.eulerAngles;
 
@@ -49,19 +46,16 @@ namespace Mirza.VFXToolKit
 
         // ...
 
-        public void OnBeginDrag()
-        {
+        public void OnBeginDrag() {
             dragEnabled = true;
         }
-        public void OnEndDrag()
-        {
+        public void OnEndDrag() {
             dragEnabled = false;
         }
 
         // ...
 
-        void Update()
-        {
+        void Update() {
             bool isFocused = Application.isFocused;
 
             focusEnabledThisFrame = isFocused && !previouslyFocused;
@@ -74,7 +68,7 @@ namespace Mirza.VFXToolKit
 #endif
             // Rotate.
 
-            if (dragEnabled && Input.GetMouseButton(0))
+            /* if (dragEnabled && Input.GetMouseButton(0))
             {
                 Vector2 mouse = Vector2.zero;
 
@@ -136,7 +130,7 @@ namespace Mirza.VFXToolKit
                 zoomTransform.localPosition = localPosition;
             }
 
-            previouslyFocused = isFocused;
+            previouslyFocused = isFocused;*/
         }
     }
 }

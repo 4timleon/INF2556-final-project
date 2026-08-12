@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mirza.VFXToolKit
-{
+namespace Mirza.VFXToolKit {
     // Reads from live render texture to send to current object's renderer material.
 
     // Example use: I have a camera rendering backfaces,
@@ -11,21 +10,18 @@ namespace Mirza.VFXToolKit
     // such as for multi-transparency refraction (or something).
 
     [ExecuteInEditMode]
-    public class MVFXTK_LiveRenderTextureReceiveToRendererMaterial : MonoBehaviour
-    {
+    public class MVFXTK_LiveRenderTextureReceiveToRendererMaterial : MonoBehaviour {
         public MVFXTK_LiveRenderTexture liveRenderTexture;
 
-        Renderer renderer;
+        Renderer render;
         public string textureName = "_MainTex";
 
-        void Update()
-        {
-            if (!renderer)
-            {
-                renderer = GetComponent<Renderer>();
+        void Update() {
+            if (!render) {
+                render = GetComponent<Renderer>();
             }
 
-            renderer.sharedMaterial.SetTexture(textureName, liveRenderTexture.renderTexture);
+            render.sharedMaterial.SetTexture(textureName, liveRenderTexture.renderTexture);
         }
     }
 }

@@ -1,17 +1,15 @@
 using UnityEngine;
 
-namespace Mirza.VFXToolKit
-{
+namespace Mirza.VFXToolKit {
     // This script sets the emissive color of the material on the first child object
     // to match the colour of the Light component on the current GameObject.
 
     [ExecuteAlways]
-    public class MVFXTK_LightColourMesh : MonoBehaviour
-    {
-        Light light;
+    public class MVFXTK_LightColourMesh : MonoBehaviour {
+        Light lightColor;
         Material material;
 
-        Renderer renderer;
+        Renderer render;
 
         public float intensityScale = 1.0f;
         public bool executeInEditMode;
@@ -28,57 +26,45 @@ namespace Mirza.VFXToolKit
 
         // ...
 
-        void Start()
-        {
-            light = GetComponent<Light>();
+        void Start() {
+            lightColor = GetComponent<Light>();
 
-            switch (target)
-            {
-                case Target.Parent:
-                    {
-                        renderer = transform.parent.GetComponent<Renderer>();
+            switch (target) {
+                case Target.Parent: {
+                        render = transform.parent.GetComponent<Renderer>();
                         break;
                     }
-                case Target.Child:
-                    {
-                        renderer = transform.GetChild(0).GetComponent<Renderer>();
+                case Target.Child: {
+                        render = transform.GetChild(0).GetComponent<Renderer>();
                         break;
                     }
-                case Target.Self:
-                    {
-                        renderer = GetComponent<Renderer>();
+                case Target.Self: {
+                        render = GetComponent<Renderer>();
                         break;
                     }
-                default:
-                    {
+                default: {
                         throw new System.Exception("Unknown type.");
                     }
             }
         }
 
-        void LateUpdate()
-        {
-            if (Application.isPlaying)
-            {
-                material = renderer.material;
-            }
-            else
-            {
-                if (!executeInEditMode)
-                {
+        void LateUpdate() {
+            if (Application.isPlaying) {
+                material = render.material;
+            } else {
+                if (!executeInEditMode) {
                     return;
                 }
 
-                material = renderer.sharedMaterial;
+                material = render.sharedMaterial;
             }
 
-            if (!material.IsKeywordEnabled("_EMISSION"))
-            {
+            if (!material.IsKeywordEnabled("_EMISSION")) {
                 material.EnableKeyword("_EMISSION");
             }
 
-            float intensity = light.intensity * intensityScale;
-            Color colour = light.color * intensity;
+            float intensity = lightColor.intensity * intensityScale;
+            Color colour = lightColor.color * intensity;
 
             material.SetColor(propertyName, colour);
         }
