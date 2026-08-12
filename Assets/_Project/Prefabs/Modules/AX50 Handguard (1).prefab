@@ -64,10 +64,10 @@ MonoBehaviour:
     AcceptedJointSizes: 6
   - Joint: {fileID: 3984578878082411072}
     ModuleType: 9
-    AcceptedJointSizes: 6
+    AcceptedJointSizes: 4
   - Joint: {fileID: 1061532592720169913}
     ModuleType: 8
-    AcceptedJointSizes: 6
+    AcceptedJointSizes: 2
 --- !u!33 &4299176802787102776
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -212,7 +212,7 @@ Transform:
   m_GameObject: {fileID: 6284932084492599969}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.252, y: 0, z: 0.165}
+  m_LocalPosition: {x: 2.252, y: 0.051, z: 0.165}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
