@@ -9,6 +9,9 @@ public abstract class ModuleBase : MonoBehaviour
     [Title("General:", 14)]
     [SerializeField] private Void v00;
     [Space]
+    [SerializeField] public WeaponType BelongingType;
+    [SerializeField] public int TypeBias = 1;
+    [Space]
     [SerializeField] public Rarity Rarity;
     [SerializeField] public ModuleType ModuleType;
     [SerializeField] public JointSize ModuleJointSize;

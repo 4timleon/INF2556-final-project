@@ -7,8 +7,11 @@ public class WeaponData
     public readonly Dictionary<StatType, float> Stats;
     public readonly Dictionary<ModuleType, ModuleBase> Modules;
 
+    public WeaponType TotalType { get; private set; }
     public Rarity TotalRarity { get; private set; }
     public int TotalCost { get; private set; }
+
+    private Dictionary<WeaponType, int> typeBiases;
 
     private int raritySize;
 
@@ -16,6 +19,10 @@ public class WeaponData
     {
         Stats = new();
         Modules = new();
+
+        TotalType = WeaponType.AssaultRifle;
+
+        typeBiases = new();
 
         raritySize = 0;
     }
@@ -28,6 +35,7 @@ public class WeaponData
 
         TotalCost += moduleBase.ModuleCost;
 
+        AddTypeBias(moduleBase);
         AddStat(moduleBase);
 
         TotalRarity = CalculateTotalRarity();
@@ -52,6 +60,33 @@ public class WeaponData
             {
                 Stats.Add(statType, value);
             }
+        }
+    }
+
+    void AddTypeBias(ModuleBase moduleBase)
+    {
+        WeaponType weaponType = moduleBase.BelongingType;
+        int bias = moduleBase.TypeBias;
+
+        if (typeBiases.ContainsKey(weaponType))
+        {
+            typeBiases[weaponType] += bias;
+        }
+        else
+        {
+            typeBiases.Add(weaponType, bias);
+        }
+
+        if (typeBiases.ContainsKey(TotalType))
+        {
+            if (typeBiases[weaponType] >= typeBiases[TotalType])
+            {
+                TotalType = weaponType;
+            }
+        }
+        else
+        {
+            TotalType = weaponType;
         }
     }
 
