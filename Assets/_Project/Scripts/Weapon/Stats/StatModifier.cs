@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public class StatModifier
 {
-    public StatTypeSO statType;
+    public StatType statType;
     public float value;
     public float cost;
 }
