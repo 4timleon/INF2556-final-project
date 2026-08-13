@@ -7,11 +7,16 @@ using WeaponNamespace;
 public abstract class ModuleBase : MonoBehaviour
 {
     [Title("General:", 14)]
-    [SerializeField] private Void v0;
+    [SerializeField] private Void v00;
     [Space]
     [SerializeField] public Rarity Rarity;
     [SerializeField] public ModuleType ModuleType;
     [SerializeField] public JointSize ModuleJointSize;
+    [Space]
+    [SerializeField] public int ModuleCost;
+    [Space]
+    [Line(GUIColor.Gray, 1, 2f)]
+    [SerializeField] private Void v0;
     [Space]
     [SerializeField, DataTable()] public List<StatModifier> StatModifiers;
     [Space]

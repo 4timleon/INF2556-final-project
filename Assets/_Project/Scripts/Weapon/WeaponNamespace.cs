@@ -46,11 +46,21 @@ namespace WeaponNamespace
         Shotgun
     }
 
+    public enum StatType
+    {
+        Damage,
+        Accuracy,
+        Handling,
+        ReloadTime,
+        Firerate,
+        MagazineSize,
+    }
+
     public enum Rarity
     {
-        Common,
-        Rare,
-        Legendary,
-        Undead
+        Common = 1,
+        Rare = 2,
+        Legendary = 3,
+        Epic = 4
     }
 }
