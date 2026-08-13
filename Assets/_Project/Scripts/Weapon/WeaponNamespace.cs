@@ -54,6 +54,7 @@ namespace WeaponNamespace
         ReloadTime,
         Firerate,
         MagazineSize,
+        BulletAmount
     }
 
     public enum Rarity
