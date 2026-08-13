@@ -36,7 +36,7 @@ public class WeaponBuilder : MonoBehaviour
         moduleInstance.transform.localPosition = Vector3.zero;
         moduleInstance.transform.localRotation = Quaternion.identity;
 
-        weaponController.WeaponData.Modules.Add(moduleInstance.ModuleType, moduleInstance);
+        weaponController.WeaponData.AddModule(moduleInstance);
 
         List<ModuleSocket> sockets = moduleInstance.ModuleSockets;
 
