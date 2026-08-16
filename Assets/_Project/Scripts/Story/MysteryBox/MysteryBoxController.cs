@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MysteryBoxController : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class MysteryBoxController : MonoBehaviour
         public float weight = 10f;
         public bool hasModules = true;
     }
+
+    [Header("Animation")]
+    [SerializeField] private Animator boxAnimator;
 
     [Header("Settings")]
     [SerializeField] private int cost = 950;
@@ -30,6 +34,11 @@ public class MysteryBoxController : MonoBehaviour
         new WeaponWeightEntry { type = WeaponType.Granate, weight = 25f, hasModules = false },
         new WeaponWeightEntry { type = WeaponType.ChiliCheeseBurgerBait, weight = 25f, hasModules = false },
     };
+
+    [Header("Location Change")]
+    [SerializeField] private Transform[] spawnPoints;
+    [Range(0f, 1f)]
+    [SerializeField] private float teleportChance = 0.3f; // 30%
 
     [Header("Module Rarity Weights")]
     [Tooltip("Index 0 = Wahrscheinlichkeit fuer 0 Module, Index 10 = Wahrscheinlichkeit fuer alle 10 Module")]
@@ -55,6 +64,12 @@ public class MysteryBoxController : MonoBehaviour
         {
             TryUseBox();
         }
+
+        if (GameControls.GetInputActions().Player.Interact.WasPressedThisFrame())
+        {
+            Debug.Log($"Interact gedrückt. Geld: {GameData.Money}, Kosten: {cost}, InRange: {playerInRange}");
+            TryUseBox();
+        }
     }
 
     private void TryUseBox()
@@ -68,6 +83,11 @@ public class MysteryBoxController : MonoBehaviour
         List<ModuleType> rolledModules = rolledWeapon.hasModules ? RollModules() : new List<ModuleType>();
 
         GameEventSystem.OnWeaponWon?.Invoke(rolledWeapon.type, rolledModules);
+
+        if (boxAnimator != null)
+            boxAnimator.SetTrigger("UseBox");
+
+        TryTeleportToNewLocation();
     }
 
     private WeaponWeightEntry RollWeaponType()
@@ -131,5 +151,24 @@ public class MysteryBoxController : MonoBehaviour
     {
         if (other.CompareTag("Player"))
             playerInRange = false;
+    }
+
+    private void TryTeleportToNewLocation()
+    {
+        if (spawnPoints == null || spawnPoints.Length <= 1) return; // nichts zum Wechseln da
+
+        if (Random.value > teleportChance) return; // kein Teleport diesmal
+
+        Transform newSpot;
+        do
+        {
+            newSpot = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        }
+        while (newSpot.position == transform.position); // nicht am gleichen Punkt nochmal landen
+
+        transform.position = newSpot.position;
+        transform.rotation = newSpot.rotation;
+
+        // TODO: hier evtl. eine "Box verschwindet/erscheint" Animation/Sound triggern
     }
 }

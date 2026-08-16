@@ -1,0 +1,196 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4473605807046574627
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4253287598972851860}
+  - component: {fileID: 4998721878080681538}
+  - component: {fileID: 6900834087137128464}
+  m_Layer: 0
+  m_Name: MysteryBox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4253287598972851860
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4473605807046574627}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.30712548, z: -0, w: 0.9516691}
+  m_LocalPosition: {x: 99.353, y: 51.3, z: 266.649}
+  m_LocalScale: {x: 3.9363, y: 2.2435, z: 4.0398}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1935826441405944962}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -35.772, z: 0}
+--- !u!65 &4998721878080681538
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4473605807046574627}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6900834087137128464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4473605807046574627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8b024ee8896897489c8353dc3f6f991, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MysteryBoxController
+  boxAnimator: {fileID: 5767349858140126415}
+  cost: 0
+  cooldown: 10
+  weaponWeights:
+  - type: 0
+    weight: 10
+    hasModules: 1
+  - type: 1
+    weight: 10
+    hasModules: 1
+  - type: 2
+    weight: 10
+    hasModules: 1
+  - type: 4
+    weight: 10
+    hasModules: 1
+  - type: 3
+    weight: 10
+    hasModules: 1
+  - type: 5
+    weight: 25
+    hasModules: 0
+  - type: 6
+    weight: 25
+    hasModules: 0
+  - type: 7
+    weight: 25
+    hasModules: 0
+  spawnPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  teleportChance: 0.3
+  moduleCountWeights:
+  - 30
+  - 20
+  - 15
+  - 10
+  - 8
+  - 6
+  - 4
+  - 3
+  - 2
+  - 1.5
+  - 0.5
+--- !u!1001 &7036237536008551500
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4253287598972851860}
+    m_Modifications:
+    - target: {fileID: -5644133064174452605, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 4f89f24e664a39948a589038a9c9936a, type: 2}
+    - target: {fileID: 8128668236925612103, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_Name
+      value: 11_mystery_box_-_3december2019
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.25178337
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.44573212
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.24972323
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9516691
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.30712548
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: -5645937942226959685, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+--- !u!4 &1935826441405944962 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8897093224900880590, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+  m_PrefabInstance: {fileID: 7036237536008551500}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5767349858140126415 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: -5644133064174452605, guid: 45fd8e38e486e794e986e9a5ec299bbd, type: 3}
+  m_PrefabInstance: {fileID: 7036237536008551500}
+  m_PrefabAsset: {fileID: 0}
