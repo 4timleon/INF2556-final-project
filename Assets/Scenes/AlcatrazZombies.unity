@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 1
-  m_FogColor: {r: 0.23529412, g: 0.10468684, b: 0.09803922, a: 1}
+  m_Fog: 0
+  m_FogColor: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 1}
   m_FogMode: 2
-  m_FogDensity: 0.02
+  m_FogDensity: 0.01
   m_LinearFogStart: 30
   m_LinearFogEnd: 100
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -93,8 +93,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: fe2224341661b1640b75c51ae8c265f5, type: 2}
-  m_LightingSettings: {fileID: 4890085278179872738, guid: b5b1532c2ae3c5a438efe09b2fea5df7, type: 2}
+  m_LightingDataAsset: {fileID: 112000000, guid: 379f75793ed1f734793b309ba15159f9, type: 2}
+  m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -8255,6 +8255,14 @@ PrefabInstance:
     - target: {fileID: 6440766276049901043, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7938216754347844857, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
+      propertyPath: m_RendererIndex
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7938216754347844857, guid: ce540a8226d5b6640a78c2655bce426a, type: 3}
+      propertyPath: m_RenderPostProcessing
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
