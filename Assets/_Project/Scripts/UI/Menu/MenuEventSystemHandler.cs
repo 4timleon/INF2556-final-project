@@ -12,6 +12,9 @@ public class MenuEventSystemHandler : MonoBehaviour {
     [SerializeField] protected List<Selectable> selectables = new List<Selectable>();
     [SerializeField] protected Selectable _firstSelected;
 
+    [Header("Menus")]
+    [SerializeField] private SoundSettings soundSettings;
+
     [Header("Controls")]
     [SerializeField] protected PlayerInputHandler playerInputHandler;
 
@@ -94,10 +97,18 @@ public class MenuEventSystemHandler : MonoBehaviour {
         trigger.triggers.Add(pointerExitEntry);
 
         //Add OnPointerClick Event
-        EventTrigger.Entry pointerClick = new EventTrigger.Entry {
+        EventTrigger.Entry pointerClickEntry = new EventTrigger.Entry {
             eventID = EventTriggerType.PointerClick
         };
-        pointerClick.callback.AddListener(OnPointerClick);
+        pointerClickEntry.callback.AddListener(OnPointerClick);
+        trigger.triggers.Add(pointerClickEntry);
+
+        //Add OnPointerClick Event
+        EventTrigger.Entry pointerUpEntry = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerUp
+        };
+        pointerUpEntry.callback.AddListener(OnPointerUp);
+        trigger.triggers.Add(pointerUpEntry);
     }
 
     public void OnSelect(BaseEventData eventData) {
@@ -142,8 +153,29 @@ public class MenuEventSystemHandler : MonoBehaviour {
         PointerEventData pointerEventData = eventData as PointerEventData;
         if (pointerEventData != null) {
             if (pointerEventData.button == PointerEventData.InputButton.Left) {
-
+                //Play Sound
             }
+        }
+    }
+
+    private void OnPointerUp(BaseEventData eventData) {
+        PointerEventData pointerEventData = eventData as PointerEventData;
+        if (pointerEventData != null) {
+            Slider slider = pointerEventData.pointerPress != null
+                ? pointerEventData.pointerPress.GetComponentInParent<Slider>()
+                : null;
+            if (slider != null) {
+                OnSliderReleased(slider);
+            }
+        }
+    }
+
+    protected virtual void OnSliderReleased(Slider slider) {
+        //Saves automatically all PlayerPrefs if the values got changed
+        if (soundSettings != null) {
+            soundSettings.SaveSoundSettings();
+        } else {
+            PlayerPrefs.Save();
         }
     }
 

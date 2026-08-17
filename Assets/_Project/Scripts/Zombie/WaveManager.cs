@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
-public class WaveManager : MonoBehaviour {
+public class WaveManager : MonoBehaviour, IInititalizeStart {
 
     [SerializeField] private Player playerReference;
 
@@ -25,10 +27,18 @@ public class WaveManager : MonoBehaviour {
     [SerializeField] private int currentWave = 0;
     //private bool isSpawning = false;
 
+    private int currentZombiesToSpawn = 0;
+
     //Zombies of the current Wave
     private List<Zombie> currentZombies = new();
 
-    private void Start() {
+    public int StartPriority => 1000;
+
+    public async Awaitable InititalizeStart(CancellationToken ct) {
+        ct.ThrowIfCancellationRequested();
+
+        await Awaitable.NextFrameAsync(ct);
+
         StartNextWave();
     }
 
@@ -42,6 +52,7 @@ public class WaveManager : MonoBehaviour {
     private IEnumerator SpawnWaveRoutine() {
         //isSpawning = true;
         int zombiesToSpawn = Mathf.RoundToInt(baseZombieCount * Mathf.Pow(zombiesMultiplier, currentWave - 1));
+        currentZombiesToSpawn = zombiesToSpawn;
 
         Debug.Log($"Wave {currentWave} started, Zombies spawned: {zombiesToSpawn}");
 
@@ -92,13 +103,13 @@ public class WaveManager : MonoBehaviour {
 
     public void RemoveZombieFromList(Zombie zombie) {
         currentZombies.Remove(zombie);
+        currentZombiesToSpawn--;
 
-        if (currentZombies.Count == 0) {
+        if (currentZombies.Count == 0 && currentZombiesToSpawn == 0) {
             GameEventSystem.OnWaveEnded?.Invoke();
             StartNextWave();
         }
     }
-
 
     private void OnEnable() {
         GameEventSystem.OnEnemyKilled += RemoveZombieFromList;
@@ -107,4 +118,5 @@ public class WaveManager : MonoBehaviour {
     private void OnDisable() {
         GameEventSystem.OnEnemyKilled -= RemoveZombieFromList;
     }
+
 }

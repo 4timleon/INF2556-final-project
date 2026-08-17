@@ -1,6 +1,10 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class MenuManager : MonoBehaviour {
+
+    [Header("Scenes")]
+    [SerializeField] private string _mainScene;
 
     [Header("Menus")]
     [SerializeField] private GameObject mainMenuContainer;
@@ -21,13 +25,15 @@ public class MenuManager : MonoBehaviour {
 
     #region Main Menu
     public void Play() {
-
+        _ = LoadScene();
     }
 
     public void OpenSettings() {
         mainMenuContainer.SetActive(false);
         settingsMenuContainer.SetActive(true);
         graphicsContainer.SetActive(true);
+        controlsContainer.SetActive(false);
+        soundContainer.SetActive(false);
     }
 
     public void OpenCredits() {
@@ -67,4 +73,8 @@ public class MenuManager : MonoBehaviour {
         soundContainer.SetActive(true);
     }
     #endregion
+
+    public async Awaitable LoadScene() {
+        await LoadingManager.Instance.TransitionToSceneAsync(_mainScene);
+    }
 }
