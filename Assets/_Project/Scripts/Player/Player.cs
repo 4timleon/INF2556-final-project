@@ -60,6 +60,9 @@ public class Player : MonoBehaviour {
     private bool isRotatingClockwise = false;
     private float rotatingToTargetTimer = 0f;
 
+    //Pause
+    private bool isPaused = false;
+
     private void Awake() {
         playerAnimation = GetComponent<PlayerAnimation>();
     }
@@ -67,6 +70,14 @@ public class Player : MonoBehaviour {
     private void Start() {
         Cursor.visible = cursorVisible;
         Cursor.lockState = cursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+
+    private void OnEnable() {
+        PauseMenuController.OnGamePaused += PauseMenuController_OnGamePaused;
+    }
+
+    private void OnDisable() {
+        PauseMenuController.OnGamePaused -= PauseMenuController_OnGamePaused;
     }
 
     /* public override void OnNetworkSpawn() {
@@ -90,7 +101,9 @@ public class Player : MonoBehaviour {
     }
 
     private void LateUpdate() {
-        HandleLook();
+        if (!isPaused) {
+            HandleLook();
+        }
     }
 
     private void HandleMovement() {
@@ -224,6 +237,10 @@ public class Player : MonoBehaviour {
         }
 
         return Vector3.Dot(inputDirection.normalized, cameraForward) > 0f;
+    }
+
+    private void PauseMenuController_OnGamePaused(bool state) {
+        isPaused = state;
     }
 
     public PlayerInputHandler GetPlayerInputHandler() {

@@ -1,14 +1,18 @@
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class MenuManager : MonoBehaviour {
 
     [Header("Scenes")]
+    [SerializeField] private string _mainMenuScene;
     [SerializeField] private string _mainScene;
 
     [Header("Menus")]
     [SerializeField] private GameObject mainMenuContainer;
     [SerializeField] private GameObject settingsMenuContainer;
+
+    [Header("Pause Menu")]
+    [SerializeField] private GameObject pauseMenuContainer;
+    [SerializeField] private bool isPauseMenu;
 
     [Header("Settings")]
     [SerializeField] private GameObject graphicsContainer;
@@ -16,7 +20,9 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private GameObject soundContainer;
 
     private void Start() {
-        mainMenuContainer.SetActive(true);
+        if (isPauseMenu) pauseMenuContainer.SetActive(true);
+        else mainMenuContainer.SetActive(true);
+
         settingsMenuContainer.SetActive(false);
         graphicsContainer.SetActive(false);
         controlsContainer.SetActive(false);
@@ -25,11 +31,13 @@ public class MenuManager : MonoBehaviour {
 
     #region Main Menu
     public void Play() {
-        _ = LoadScene();
+        _ = LoadScene(_mainScene, true);
     }
 
     public void OpenSettings() {
-        mainMenuContainer.SetActive(false);
+        if (isPauseMenu) pauseMenuContainer.SetActive(false);
+        else mainMenuContainer.SetActive(false);
+
         settingsMenuContainer.SetActive(true);
         graphicsContainer.SetActive(true);
         controlsContainer.SetActive(false);
@@ -41,8 +49,15 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void SettingsBack() {
-        mainMenuContainer.SetActive(true);
+        if (isPauseMenu) pauseMenuContainer.SetActive(true);
+        else mainMenuContainer.SetActive(true);
+
         settingsMenuContainer.SetActive(false);
+    }
+
+    public void MainMenu() {
+        Time.timeScale = 1f;
+        _ = LoadScene(_mainMenuScene, false);
     }
 
     public void QuitGame() {
@@ -74,7 +89,7 @@ public class MenuManager : MonoBehaviour {
     }
     #endregion
 
-    public async Awaitable LoadScene() {
-        await LoadingManager.Instance.TransitionToSceneAsync(_mainScene);
+    public async Awaitable LoadScene(string sceneName, bool useOverlay) {
+        await LoadingManager.Instance.TransitionToSceneAsync(sceneName, useOverlay);
     }
 }

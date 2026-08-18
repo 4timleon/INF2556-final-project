@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class LoadingManager : MonoBehaviour {
@@ -91,8 +92,11 @@ public class LoadingManager : MonoBehaviour {
     private async Awaitable RunTransitionAsync(string sceneName, int buildIndex, bool useOverlay, CancellationToken ct) {
         _isTransitioning = true;
 
-        //Deactivate the Camera
+        //Deactivate the Camera Audio Listener
         Camera.main.GetComponent<AudioListener>().enabled = false;
+
+        //EventSystem
+        EventSystem.current.enabled = false;
 
         //Should the transition have an overlay?
         bool displayVisuals = useOverlay && !IsBypassedScene(sceneName, buildIndex);

@@ -1,62 +1,62 @@
+using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class PauseMenuController : MonoBehaviour
-{
+public class PauseMenuController : MonoBehaviour {
+
+    [Header("References")]
+    [SerializeField] private PlayerInputHandler playerInputHandler;
+
     [Header("Panels")]
-    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject pauseContainer;
     [SerializeField] private GameObject settingsPanel;
-
-    [Header("Settings")]
-    [SerializeField] private string mainMenuSceneName = "MainMenu"; // TODO: echten Szenennamen eintragen
 
     private bool isPaused;
 
-    private void Awake()
-    {
-        pausePanel.SetActive(false);
-        settingsPanel.SetActive(false);
+    //Event
+    public static event Action<bool> OnGamePaused;
+
+    private void Start() {
+        Resume();
     }
 
-    private void Update()
-    {
-        if (GameControls.GetInputActions().UI.Cancel.WasPressedThisFrame())
-        {
-            if (isPaused) Resume();
-            else Pause();
-        }
+    private void OnEnable() {
+        playerInputHandler.OnPauseAction += PlayerInputHandler_OnPauseAction;
     }
 
-    public void Pause()
-    {
+    private void OnDisable() {
+        playerInputHandler.OnPauseAction -= PlayerInputHandler_OnPauseAction;
+    }
+
+    #region Pause Button Action
+    public void Pause() {
         isPaused = true;
         Time.timeScale = 0f;
-        pausePanel.SetActive(true);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        OnGamePaused?.Invoke(true);
+
+        pauseContainer.SetActive(true);
+        settingsPanel.SetActive(false);
     }
 
-    public void Resume()
-    {
+    public void Resume() {
         isPaused = false;
         Time.timeScale = 1f;
-        pausePanel.SetActive(false);
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        OnGamePaused?.Invoke(false);
+
+        pauseContainer.SetActive(false);
         settingsPanel.SetActive(false);
     }
+    #endregion
 
-    public void OpenSettings()
-    {
-        pausePanel.SetActive(false);
-        settingsPanel.SetActive(true);
-    }
-
-    public void CloseSettings()
-    {
-        settingsPanel.SetActive(false);
-        pausePanel.SetActive(true);
-    }
-
-    public void QuitToMainMenu()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(mainMenuSceneName);
+    private void PlayerInputHandler_OnPauseAction() {
+        if (isPaused) Resume();
+        else Pause();
     }
 }

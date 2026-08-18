@@ -12,8 +12,7 @@ public class PlayerInputHandler : MonoBehaviour {
     public Vector2 LookInput { get; private set; }
     public bool SprintTriggered { get; private set; }
     public bool InteractTriggered { get; private set; }
-    public bool InventoryTriggered { get; private set; }
-    public bool RotateItemTriggered { get; private set; }
+    public bool PauseTriggered { get; private set; }
 
     public enum Binding {
         Move_Up,
@@ -29,6 +28,7 @@ public class PlayerInputHandler : MonoBehaviour {
     //Event
     //public event Action OnInteractAction;
     public event Action OnNavigateAction;
+    public event Action OnPauseAction;
 
     private void OnEnable() {
         inputActions = new InputSystem_Actions();
@@ -44,6 +44,7 @@ public class PlayerInputHandler : MonoBehaviour {
     }
 
     private void OnDisable() {
+        UnsubscribeToInputActions();
         UnsubscribeToUIInputActions();
     }
 
@@ -74,11 +75,14 @@ public class PlayerInputHandler : MonoBehaviour {
         inputActions.Player.Sprint.performed += _ => SprintTriggered = true;
         inputActions.Player.Sprint.canceled += _ => SprintTriggered = false;
 
+        inputActions.Player.Pause.performed += PauseAction;
+
         //inputActions.Player.Interact.performed += InteractAction;
     }
 
     private void UnsubscribeToInputActions() {
         //inputActions.Player.Interact.canceled -= InteractAction;
+        inputActions.Player.Pause.performed -= PauseAction;
     }
 
     private void SubscribeToUIInputActions() {
@@ -103,12 +107,8 @@ public class PlayerInputHandler : MonoBehaviour {
         this.InteractTriggered = InteractTriggered;
     }
 
-    public void SetInventoryTriggered(bool InventoryTriggered) {
-        this.InventoryTriggered = InventoryTriggered;
-    }
-
-    public void SetRotateItemTriggered(bool RotateItemTriggered) {
-        this.RotateItemTriggered = RotateItemTriggered;
+    public void PauseAction(InputAction.CallbackContext context) {
+        OnPauseAction?.Invoke();
     }
 
     public void StopLookInput() {

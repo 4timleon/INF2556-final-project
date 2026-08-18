@@ -61,52 +61,52 @@ public class MenuEventSystemHandler : MonoBehaviour {
     }
 
     protected virtual void AddSelectionListeners(Selectable selectable) {
-
         //Add Listener
         EventTrigger trigger = selectable.gameObject.GetComponent<EventTrigger>();
         if (trigger == null) {
             trigger = selectable.gameObject.AddComponent<EventTrigger>();
         }
 
+        //Remove old listeners
+        for (int i = trigger.triggers.Count - 1; i >= 0; i--) {
+            EventTrigger.Entry entry = trigger.triggers[i];
+            if (entry.eventID == EventTriggerType.Select ||
+                entry.eventID == EventTriggerType.Deselect ||
+                entry.eventID == EventTriggerType.PointerEnter ||
+                entry.eventID == EventTriggerType.PointerExit ||
+                entry.eventID == EventTriggerType.PointerClick ||
+                entry.eventID == EventTriggerType.PointerUp) {
+                trigger.triggers.RemoveAt(i);
+            }
+        }
+
         //Add Select Event
-        EventTrigger.Entry selectEntry = new EventTrigger.Entry {
-            eventID = EventTriggerType.Select
-        };
+        EventTrigger.Entry selectEntry = new EventTrigger.Entry { eventID = EventTriggerType.Select };
         selectEntry.callback.AddListener(OnSelect);
         trigger.triggers.Add(selectEntry);
 
         //Add Deselect Event
-        EventTrigger.Entry deselectEntry = new EventTrigger.Entry {
-            eventID = EventTriggerType.Deselect
-        };
+        EventTrigger.Entry deselectEntry = new EventTrigger.Entry { eventID = EventTriggerType.Deselect };
         deselectEntry.callback.AddListener(OnDeselect);
         trigger.triggers.Add(deselectEntry);
 
         //Add OnPointerEnter Event
-        EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerEnter
-        };
+        EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
         pointerEnterEntry.callback.AddListener(OnPointerEnter);
         trigger.triggers.Add(pointerEnterEntry);
 
         //Add OnPointerExit Event
-        EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerExit
-        };
+        EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
         pointerExitEntry.callback.AddListener(OnPointerExit);
         trigger.triggers.Add(pointerExitEntry);
 
         //Add OnPointerClick Event
-        EventTrigger.Entry pointerClickEntry = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerClick
-        };
+        EventTrigger.Entry pointerClickEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
         pointerClickEntry.callback.AddListener(OnPointerClick);
         trigger.triggers.Add(pointerClickEntry);
 
         //Add OnPointerClick Event
-        EventTrigger.Entry pointerUpEntry = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerUp
-        };
+        EventTrigger.Entry pointerUpEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerUp };
         pointerUpEntry.callback.AddListener(OnPointerUp);
         trigger.triggers.Add(pointerUpEntry);
     }
@@ -119,7 +119,7 @@ public class MenuEventSystemHandler : MonoBehaviour {
             return;
 
         Vector3 newScale = eventData.selectedObject.transform.localScale * _selectedAnimationScale;
-        _scaleUpTween = eventData.selectedObject.transform.LeanScale(newScale, _scaleDuration);
+        _scaleUpTween = eventData.selectedObject.transform.LeanScale(newScale, _scaleDuration).setIgnoreTimeScale(true);
     }
 
     public void OnDeselect(BaseEventData eventData) {
@@ -127,7 +127,7 @@ public class MenuEventSystemHandler : MonoBehaviour {
             return;
 
         Selectable selectable = eventData.selectedObject.GetComponent<Selectable>();
-        _scaleDownTween = eventData.selectedObject.transform.LeanScale(_scales[selectable], _scaleDuration);
+        _scaleDownTween = eventData.selectedObject.transform.LeanScale(_scales[selectable], _scaleDuration).setIgnoreTimeScale(true);
     }
 
     private void OnPointerEnter(BaseEventData eventData) {
@@ -184,5 +184,4 @@ public class MenuEventSystemHandler : MonoBehaviour {
             EventSystem.current.SetSelectedGameObject(_lastSelected.gameObject);
         }
     }
-
 }
