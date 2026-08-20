@@ -102,6 +102,8 @@ public class LoadingManager : MonoBehaviour {
         bool displayVisuals = useOverlay && !IsBypassedScene(sceneName, buildIndex);
 
         try {
+            _overlay.SetLoadingProgress(0f);
+
             //Fade in the overlay
             if (_overlay != null && displayVisuals) {//Overlay exists and should show the overlay
                 await _overlay.FadeInAsync(ct);
@@ -117,14 +119,18 @@ public class LoadingManager : MonoBehaviour {
             //Load 90% in the background
             while (loadOp.progress < 0.9f) {
                 ct.ThrowIfCancellationRequested();
+                _overlay.SetLoadingProgress(loadOp.progress);
                 await Awaitable.NextFrameAsync(ct); //Wait one Frame, to prevent the game from freezing
             }
+
+            _overlay.SetLoadingProgress(0.9f);
 
             loadOp.allowSceneActivation = true; //Now activate
 
             //Wait until Scene is fully loaded
             while (!loadOp.isDone) {
                 ct.ThrowIfCancellationRequested();
+                _overlay.SetLoadingProgress(loadOp.progress);
                 await Awaitable.NextFrameAsync(ct); //Wait one Frame, to prevent the game from freezing
             }
 
@@ -141,10 +147,12 @@ public class LoadingManager : MonoBehaviour {
                         await Awaitable.NextFrameAsync(ct);
                     }
                 }
+
             }
 
             //Run Systems by Priority 
             await RunInitializationPhasesAsync(newScene, ct);
+            _overlay.SetLoadingProgress(1f);
 
             //Wait 2 Frames so that Physics, Render and UI can fully stabilize
             await Awaitable.NextFrameAsync(ct);

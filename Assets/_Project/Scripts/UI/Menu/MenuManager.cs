@@ -19,6 +19,13 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private GameObject controlsContainer;
     [SerializeField] private GameObject soundContainer;
 
+    [Header("Quit Confirmation")]
+    [SerializeField] private GameObject quitConfirmationContainer;
+
+    private float animationScale = 1.1f;
+    private float scaleDuration = 0.25f;
+    private Vector3 originalScale;
+
     private void Start() {
         if (isPauseMenu) pauseMenuContainer.SetActive(true);
         else mainMenuContainer.SetActive(true);
@@ -27,6 +34,9 @@ public class MenuManager : MonoBehaviour {
         graphicsContainer.SetActive(false);
         controlsContainer.SetActive(false);
         soundContainer.SetActive(false);
+        quitConfirmationContainer.SetActive(false);
+
+        originalScale = quitConfirmationContainer.transform.localScale;
     }
 
     #region Main Menu
@@ -58,6 +68,22 @@ public class MenuManager : MonoBehaviour {
     public void MainMenu() {
         Time.timeScale = 1f;
         _ = LoadScene(_mainMenuScene, false);
+    }
+
+    public void ShowQuitConfirmation() {
+        quitConfirmationContainer.SetActive(true);
+
+        Vector3 targetScale = originalScale * animationScale; //Cache target Scale
+        quitConfirmationContainer.transform.localScale = Vector3.zero; //Set Scale to 0
+
+        quitConfirmationContainer.LeanScale(targetScale, scaleDuration)
+            .setIgnoreTimeScale(true); //Tween from current Scale to target Scale
+    }
+
+    public void HideQuitConfirmation() {
+        quitConfirmationContainer.LeanScale(Vector3.zero, scaleDuration)
+            .setIgnoreTimeScale(true)
+            .setOnComplete(() => quitConfirmationContainer.SetActive(false));
     }
 
     public void QuitGame() {
