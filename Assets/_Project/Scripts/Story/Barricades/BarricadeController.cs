@@ -1,29 +1,31 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class BarricadeController : MonoBehaviour
-{
+public class BarricadeController : MonoBehaviour {
     [Header("Settings")]
     [SerializeField] private int plankCount = 5;
     [SerializeField] private float repairAnimationDuration = 1f;
 
     [Header("References")]
     [SerializeField] private Animator[] plankAnimators;
+    [SerializeField] private Rigidbody[] rigidbodies;
 
     private bool[] plankBroken;
     private float cooldownTimer;
     private bool playerInRange;
 
-    private void Awake()
-    {
+    private void Awake() {
         plankBroken = new bool[plankCount];
+
+        foreach (Rigidbody rb in rigidbodies)
+            rb.isKinematic = true;
     }
 
-    private void Update()
-    {
+    private void Update() {
         if (!playerInRange) return;
 
-        if (cooldownTimer > 0f)
-        {
+        if (cooldownTimer > 0f) {
             cooldownTimer -= Time.deltaTime;
             return;
         }
@@ -34,55 +36,67 @@ public class BarricadeController : MonoBehaviour
         var interact = GameControls.GetInputActions().Player.Interact;
 
         //Hold or press to repair
-        if (interact.IsPressed() || interact.WasPressedThisFrame())
-        {
+        if (interact.IsPressed() || interact.WasPressedThisFrame()) {
             RepairPlank(targetIndex);
             cooldownTimer = repairAnimationDuration;
         }
     }
 
-    private int GetLowestBrokenPlankIndex()
-    {
-        for (int i = 0; i < plankBroken.Length; i++)
-        {
+    private int GetLowestBrokenPlankIndex() {
+        for (int i = 0; i < plankBroken.Length; i++) {
             if (plankBroken[i]) return i;
         }
         return -1;
     }
 
-    private void RepairPlank(int index)
-    {
+    private void RepairPlank(int index) {
         plankBroken[index] = false;
+
+        foreach (Rigidbody rb in rigidbodies)
+            rb.isKinematic = true;
 
         if (plankAnimators != null && index < plankAnimators.Length && plankAnimators[index] != null)
             plankAnimators[index].SetTrigger("Repair");
     }
 
-    public void BreakNextPlank()
-    {
-        for (int i = plankBroken.Length - 1; i >= 0; i--)
-        {
-            if (!plankBroken[i])
-            {
+    public void BreakNextPlank() {
+        for (int i = plankBroken.Length - 1; i >= 0; i--) {
+            if (!plankBroken[i]) {
                 plankBroken[i] = true;
 
-                if (plankAnimators != null && i < plankAnimators.Length && plankAnimators[i] != null)
-                    plankAnimators[i].SetTrigger("Break"); // du brauchst dafuer auch eine "Break"-Animation/Trigger im Animator
+                rigidbodies[i].isKinematic = false;
+                rigidbodies[i].AddForce(-transform.forward * 2.5f, ForceMode.Impulse);
 
                 return;
             }
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-            playerInRange = true;
+    public bool GetAllPlanksDestroyed() {
+        for (int i = 0; i < plankBroken.Length; i++) {
+            if (!plankBroken[i]) return false;
+        }
+
+        return true;
     }
 
-    private void OnTriggerExit(Collider other)
-    {
+    private void OnTriggerEnter(Collider other) {
+        if (other.CompareTag("Player"))
+            playerInRange = true;
+
+        Zombie zombie = other.GetComponentInParent<Zombie>();
+        if (zombie != null) {
+            zombie.BarricadeReached(this);
+        }
+    }
+
+    private void OnTriggerExit(Collider other) {
         if (other.CompareTag("Player"))
             playerInRange = false;
+
+        Zombie zombie = other.GetComponentInParent<Zombie>();
+        if (zombie != null && !zombie.IsAttackingBarricade) {
+            zombie.ClearTargetBarricade();
+        }
     }
 }

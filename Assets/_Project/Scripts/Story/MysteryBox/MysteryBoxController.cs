@@ -1,17 +1,20 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class MysteryBoxController : MonoBehaviour
-{
+public class MysteryBoxController : MonoBehaviour {
     [Serializable]
-    private class WeaponWeightEntry
-    {
+    private class WeaponWeightEntry {
         public WeaponType type;
         public float weight = 10f;
         public bool hasModules = true;
     }
+
+    [Header("Weapons")] //NEW Header
+    [SerializeField] private List<Transform> weaponInstances;
+    [SerializeField] private Transform weaponHolder;
 
     [Header("Animation")]
     [SerializeField] private Animator boxAnimator;
@@ -53,27 +56,39 @@ public class MysteryBoxController : MonoBehaviour
 
     private static readonly ModuleType[] AllModules = (ModuleType[])Enum.GetValues(typeof(ModuleType));
 
-    private void Update()
-    {
+    //Instances
+    private Transform selectedWeapon;
+    private GameObject previousGameObject;
+    private Vector3 previousPos;
+    private Vector3 target;
+
+    //Visual Weapon Roll Variables
+    private bool isRolling = false;
+    private bool isWeaponReady = false;
+    private bool resetBox = false;
+    private int finalWeaponId = -1;
+
+    //Visual Weapon Roll Coroutines
+    private Coroutine fallCoroutine;
+    private Coroutine rollCoroutine;
+
+    private void Update() {
         if (cooldownTimer > 0f)
             cooldownTimer -= Time.deltaTime;
 
         if (!playerInRange || cooldownTimer > 0f) return;
 
-        if (GameControls.GetInputActions().Player.Interact.WasPressedThisFrame())
-        {
+        if (GameControls.GetInputActions().Player.Interact.WasPressedThisFrame()) {
             TryUseBox();
         }
 
-        if (GameControls.GetInputActions().Player.Interact.WasPressedThisFrame())
-        {
+        if (GameControls.GetInputActions().Player.Interact.WasPressedThisFrame()) {
             Debug.Log($"Interact gedrückt. Geld: {GameData.Money}, Kosten: {cost}, InRange: {playerInRange}");
             TryUseBox();
         }
     }
 
-    private void TryUseBox()
-    {
+    private void TryUseBox() {
         if (GameData.Money < cost) return;
 
         GameData.Money -= cost;
@@ -90,16 +105,14 @@ public class MysteryBoxController : MonoBehaviour
         TryTeleportToNewLocation();
     }
 
-    private WeaponWeightEntry RollWeaponType()
-    {
+    private WeaponWeightEntry RollWeaponType() {
         float totalWeight = 0f;
         foreach (var entry in weaponWeights) totalWeight += entry.weight;
 
         float roll = UnityEngine.Random.Range(0f, totalWeight);
         float cumulative = 0f;
 
-        foreach (var entry in weaponWeights)
-        {
+        foreach (var entry in weaponWeights) {
             cumulative += entry.weight;
             if (roll <= cumulative) return entry;
         }
@@ -107,15 +120,13 @@ public class MysteryBoxController : MonoBehaviour
         return weaponWeights[0]; // Fallback
     }
 
-    private List<ModuleType> RollModules()
-    {
+    private List<ModuleType> RollModules() {
         int count = RollModuleCount();
 
         List<ModuleType> pool = new List<ModuleType>(AllModules);
         List<ModuleType> result = new List<ModuleType>();
 
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             int index = UnityEngine.Random.Range(0, pool.Count);
             result.Add(pool[index]);
             pool.RemoveAt(index);
@@ -124,16 +135,14 @@ public class MysteryBoxController : MonoBehaviour
         return result;
     }
 
-    private int RollModuleCount()
-    {
+    private int RollModuleCount() {
         float totalWeight = 0f;
         foreach (float w in moduleCountWeights) totalWeight += w;
 
         float roll = UnityEngine.Random.Range(0f, totalWeight);
         float cumulative = 0f;
 
-        for (int i = 0; i < moduleCountWeights.Length; i++)
-        {
+        for (int i = 0; i < moduleCountWeights.Length; i++) {
             cumulative += moduleCountWeights[i];
             if (roll <= cumulative) return i;
         }
@@ -141,27 +150,23 @@ public class MysteryBoxController : MonoBehaviour
         return 0;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
+    private void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Player"))
             playerInRange = true;
     }
 
-    private void OnTriggerExit(Collider other)
-    {
+    private void OnTriggerExit(Collider other) {
         if (other.CompareTag("Player"))
             playerInRange = false;
     }
 
-    private void TryTeleportToNewLocation()
-    {
+    private void TryTeleportToNewLocation() {
         if (spawnPoints == null || spawnPoints.Length <= 1) return; // nichts zum Wechseln da
 
         if (Random.value > teleportChance) return; // kein Teleport diesmal
 
         Transform newSpot;
-        do
-        {
+        do {
             newSpot = spawnPoints[Random.Range(0, spawnPoints.Length)];
         }
         while (newSpot.position == transform.position); // nicht am gleichen Punkt nochmal landen
@@ -171,4 +176,75 @@ public class MysteryBoxController : MonoBehaviour
 
         // TODO: hier evtl. eine "Box verschwindet/erscheint" Animation/Sound triggern
     }
+
+    #region Mystery Box Visual Roll
+    private void StartRoll() {
+        isRolling = true;
+
+        //Server bestimmt
+        //int chosenIndex = GetRandomWeaponIndex();//Random Waffe
+        int chosenIndex = RollModuleCount(); //<-----------Function used
+        finalWeaponId = chosenIndex;
+    }
+
+    public IEnumerator Roll(int finalIndex) {
+        float duration = 4f;
+        float timer = 0f;
+
+        //Visueller Roll, keine Random Waffe Auswahl
+        while (timer < duration) {
+            Transform randomWeapon = weaponInstances[Random.Range(0, weaponInstances.Count)];
+            ShowWeapon(randomWeapon.gameObject);
+
+            yield return new WaitForSeconds(0.1f);
+
+            timer += 0.1f;
+        }
+
+        //Alle Clients sehen finale Waffe
+        selectedWeapon = weaponInstances[finalIndex];//Setzen der Random Waffe
+        ShowWeapon(selectedWeapon.gameObject);
+
+        //Wenn der Server (Host) seinen fertig gerollt hat, dann setze seine Werte
+        isRolling = false;
+        isWeaponReady = true;
+    }
+
+    private IEnumerator FallDown() {
+        //Fall down slowly
+        while (Vector3.Distance(weaponHolder.position, target) > 0.01f) {
+            weaponHolder.position = Vector3.MoveTowards(weaponHolder.position, target, 0.05f * Time.deltaTime);
+            yield return null;
+        }
+
+        weaponHolder.position = target;
+
+        resetBox = true;
+    }
+
+    private void ShowWeapon(GameObject randomWeapon) {
+        if (previousGameObject != null) previousGameObject.SetActive(false);
+
+        randomWeapon.SetActive(true);
+
+        previousGameObject = randomWeapon;
+    }
+
+    /* private int GetRandomWeaponIndex() {
+        int totalWeight = 0;
+
+        foreach (WeaponData weapon in weapons) {
+            totalWeight += weapon.weight;
+        }
+
+        int random = Random.Range(0, totalWeight);
+
+        for (int i = 0; i < weapons.Length; i++) {
+            if (random < weapons[i].weight) return weapons[i].id;
+            random -= weapons[i].weight;
+        }
+
+        return 0;
+    } */
+    #endregion
 }

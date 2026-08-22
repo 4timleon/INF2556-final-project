@@ -21,6 +21,9 @@ public class Detach : MonoBehaviour {
 
     private DetachController detachController;
 
+    //Despawn Timer
+    private float despawnTimer = 2f;
+
     private void Start() {
         detachController = GetComponentInParent<DetachController>();//Remove Later after shooting implemented
 
@@ -57,6 +60,8 @@ public class Detach : MonoBehaviour {
 
         //Remove Later after shooting implemented
         detachController.RemoveFromList(this);
+
+        StartCoroutine(RemoveAfterSomeTime(newMesh));
     }
 
     private void DetachMesh(Vector3 pushDirection) {
@@ -72,5 +77,11 @@ public class Detach : MonoBehaviour {
         if (rb != null) {
             rb.AddForce(pushDirection.normalized * pushForce, ForceMode.Impulse);
         }
+    }
+
+    private IEnumerator RemoveAfterSomeTime(GameObject instance) {
+        yield return new WaitForSeconds(despawnTimer);
+
+        Destroy(instance);
     }
 }

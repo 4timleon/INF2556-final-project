@@ -31,15 +31,23 @@ public class Zombie : MonoBehaviour {
     [Header("Attack")]
     [SerializeField] private float attackRange = 1.5f;
     [SerializeField, Range(1f, 10f)] private float initialIdleWaitTime = 3f;
+    [SerializeField] private Transform leftArm;
+    [SerializeField] private Transform rightArm;
+    [SerializeField] private float armAttackRadius = 0.2f;
 
     [Space]
     [Header("Health")]
     [SerializeField] private float health = 100;
 
-    public float Speed => speed;
-    public MovementState CurrentMovementState { get; private set; }
-    private bool pauseMovement = false;
+    [Space]
+    [SerializeField] private bool debug = false;
 
+    //public fields
+    public float Speed => speed;
+    public bool IsAttackingBarricade => isAttackingBarricade;
+    public MovementState CurrentMovementState { get; private set; }
+
+    //References
     private Player player;
     private ZombieAnimations zombieAnimations;
 
@@ -61,21 +69,36 @@ public class Zombie : MonoBehaviour {
     private float nextDamageTaken = 1f;
     private float damageCooldown = 1f;
 
+    //NavMesh Movement
+    private bool pauseMovement = false;
+    private float checkTimer = 0f;
+    private float checkInterval = 0.5f;
+
     //NavMesh link animation
     private bool wasOnOffMeshLink = false;
+    private Coroutine offMeshLinkCoroutine;
+    private bool cancelOffMeshLink;
+    private Vector3 windowClimbEndPosition;
     private int jumpAreaID;
+    private int climbAreaID;
+
+    //Barricade
+    private BarricadeController barricade = null;
+    private bool isAttackingBarricade;
 
     //Death
     public bool IsDead { get; private set; } = false;
 
     private void Awake() {
         jumpAreaID = NavMesh.GetAreaFromName("Jump");
+        climbAreaID = NavMesh.GetAreaFromName("Climb");
         zombieAnimations = GetComponent<ZombieAnimations>();
     }
 
     private void Start() {
         foreach (var joint in joints) joint.isKinematic = true;
 
+        checkTimer = Random.Range(0f, 0.5f);
     }
 
     private void Update() {
@@ -95,7 +118,15 @@ public class Zombie : MonoBehaviour {
             return;
         }
 
-        CheckPlayer();
+        if (!agent.isOnOffMeshLink && !isAttackingBarricade) {
+            CheckPlayer();
+        }
+
+        checkTimer += Time.deltaTime;
+        if (checkTimer >= checkInterval) {
+            checkTimer = 0f;
+            CheckIfBetterPathExists();
+        }
 
         if (Keyboard.current.digit1Key.wasPressedThisFrame) {
             TakeDamage(100f);
@@ -115,49 +146,133 @@ public class Zombie : MonoBehaviour {
 
     private void HandleOffMeshLinkAnimation() {
         bool isOnLink = agent.isOnOffMeshLink;
-        if (isOnLink && !wasOnOffMeshLink) {
+        if (isOnLink && !wasOnOffMeshLink) {//Only execute when on a new link
             OffMeshLinkData link = agent.currentOffMeshLinkData;
 
-            StopAllCoroutines();
-            StartCoroutine(DoOffMeshLink(link));
+            if (offMeshLinkCoroutine != null) {
+                StopCoroutine(offMeshLinkCoroutine);
+            }
+
+            cancelOffMeshLink = false;
+
+            if (ShouldJumpOnLink(link)) {
+                offMeshLinkCoroutine = StartCoroutine(DoOffMeshJumpLink(link));
+            } else if (ShouldClimbOnLink(link)) {
+                offMeshLinkCoroutine = StartCoroutine(DoOffMeshClimbLink(link));
+            }
         }
 
         wasOnOffMeshLink = isOnLink;
     }
 
-    private IEnumerator DoOffMeshLink(OffMeshLinkData link) {
-        var dir = (link.endPos - link.startPos).normalized;
+    private IEnumerator DoOffMeshJumpLink(OffMeshLinkData link) {
+        StopAgent();
+        transform.position = link.startPos;
+
+        Vector3 dir = (link.endPos - link.startPos).normalized;
         dir.y = 0;
+        agent.updateRotation = false;
         transform.rotation = Quaternion.LookRotation(dir);
 
-        if (ShouldJumpOnLink(link) && link.endPos.y > transform.position.y) {
+        //Animation for the Jump links
+        if (link.endPos.y > transform.position.y) {
             zombieAnimations.SetJumpUpTrigger();
         } else {
             zombieAnimations.SetJumpDownTrigger();
         }
 
-        var duration = 0.6f;
-        var time = 0f;
+        yield return StartCoroutine(LerpToPosition(link.startPos, link.endPos, 0.6f));
 
-        while (time < duration) {
-            time += Time.deltaTime;
+        //Complete Link
+        CleanUpOffMeshLink();
+    }
 
-            float t = Mathf.Clamp01(time / duration);
-            float smoothT = Mathf.SmoothStep(0f, 1f, t);
+    private IEnumerator DoOffMeshClimbLink(OffMeshLinkData link) {
+        StopAgent();
+        transform.position = link.startPos;
 
-            transform.position = Vector3.Lerp(link.startPos, link.endPos, smoothT);
+        Vector3 dir = (link.endPos - link.startPos).normalized;
+        dir.y = 0;
+        agent.updateRotation = false;
+        transform.rotation = Quaternion.LookRotation(dir);
+
+        if (!barricade.GetAllPlanksDestroyed()) {
+            isAttackingBarricade = true;
+        }
+
+        Debug.Log((offMeshLinkCoroutine != null) + " | " + isAttackingBarricade + " | " + cancelOffMeshLink);
+        //Wait and Attack the Barricade until it is broken up completely or gets canceled
+        while (isAttackingBarricade && !cancelOffMeshLink) {
+            if (Time.time >= nextAttackTime) {
+                Attack();
+                nextAttackTime = Time.time + attackCooldown;
+            }
             yield return null;
         }
 
-        transform.position = link.endPos;
-        agent.CompleteOffMeshLink();
+        isAttackingBarricade = false;
+
+        //Was the link canceled? Then set it finished!
+        if (cancelOffMeshLink) {
+            CleanUpOffMeshLink();
+            yield break;
+        }
+
+        //Barricade broken up
+        Debug.Log("Playing Window Climb Animation");
+        zombieAnimations.SetWindowClimb();//Animation for the Window links
+
+        windowClimbEndPosition = link.endPos;
+        yield return null;
+    }
+
+    // When the Climb Animation ends an Animation Event Triggers and executes this Function, 
+    // warping the Zombie to the end and cleaning up the link
+    public void FinishClimbAnimation() {
+        if (cancelOffMeshLink) {
+            CleanUpOffMeshLink();
+            return;
+        }
+
+        agent.Warp(windowClimbEndPosition);
+        CleanUpOffMeshLink();
+    }
+
+
+    private IEnumerator LerpToPosition(Vector3 start, Vector3 end, float duration) {
+        float time = 0f;
+
+        while (time < duration) {
+            if (cancelOffMeshLink) yield break;
+
+            time += Time.deltaTime;
+            float t = Mathf.Clamp01(time / duration);
+            float smoothT = Mathf.SmoothStep(0f, 1f, t);
+
+            transform.position = Vector3.Lerp(start, end, smoothT);
+            yield return null;
+        }
+
+        transform.position = end;
+    }
+
+    public void CleanUpOffMeshLink() {
+        if (agent.isOnOffMeshLink) {
+            agent.CompleteOffMeshLink();
+        }
+
+        agent.updateRotation = true;
+        ContinueMovement();
+        offMeshLinkCoroutine = null;
     }
 
     private bool ShouldJumpOnLink(OffMeshLinkData link) {
-        if (link.owner is NavMeshLink navMeshLink) {
-            return navMeshLink.area == jumpAreaID;
-        }
+        if (link.owner is NavMeshLink navMeshLink) return navMeshLink.area == jumpAreaID;
+        return false;
+    }
 
+    private bool ShouldClimbOnLink(OffMeshLinkData link) {
+        if (link.owner is NavMeshLink navMeshLink) return navMeshLink.area == climbAreaID;
         return false;
     }
 
@@ -184,6 +299,49 @@ public class Zombie : MonoBehaviour {
         }
     }
 
+    private void CheckIfBetterPathExists() {
+        if (!isAttackingBarricade) return;
+
+        //Filter
+        int climbAreaMask = 1 << climbAreaID;
+        NavMeshQueryFilter filter = new NavMeshQueryFilter {
+            agentTypeID = agent.agentTypeID,
+            areaMask = ~climbAreaMask //All Areas except "Climb"
+        };
+
+        NavMeshPath altPath = new NavMeshPath();
+
+        if (NavMesh.CalculatePath(transform.position, player.transform.position, filter, altPath)) {
+            if (altPath.status == NavMeshPathStatus.PathComplete) {
+                float altPathCost = GetPathCost(altPath);
+                if (altPathCost < 15f) {//If Path shorter then cancel barricade attack
+                    Debug.Log(altPathCost);
+                    Debug.Log("Barricade Canceled");
+
+                    isAttackingBarricade = false;
+                    barricade = null;
+                    cancelOffMeshLink = true;
+
+                    if (offMeshLinkCoroutine != null) {
+                        StopCoroutine(offMeshLinkCoroutine);
+                        offMeshLinkCoroutine = null;
+                    }
+
+                    StartAgent(CurrentMovementState);
+                    agent.SetPath(altPath);
+                }
+            }
+        }
+    }
+
+    private float GetPathCost(NavMeshPath path) {
+        float length = 0f;
+        for (int i = 1; i < path.corners.Length; i++) {
+            length += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+        }
+        return length;
+    }
+
     //Dynamic Movement State Change with speed
     /* private void UpdateMovementState() {
         if (speed <= 0f) {
@@ -200,7 +358,7 @@ public class Zombie : MonoBehaviour {
     #endregion
 
     //Starts Attacking the Player when in range
-    private void Attack() {
+    public void Attack() {
         if (useFirstAttack) {
             zombieAnimations.SetAttackIndex(attackIndex);
             zombieAnimations.SetAttackTrigger();
@@ -213,8 +371,54 @@ public class Zombie : MonoBehaviour {
         useFirstAttack = !useFirstAttack;
     }
 
-    public void DealDamage() {
+    public void DealDamageLeftArm() {
+        if (isAttackingBarricade) {
+            //Debug.Log("Breaking Next Plank");
+            barricade.BreakNextPlank();
 
+            if (barricade.GetAllPlanksDestroyed()) {
+                isAttackingBarricade = false;
+            }
+
+            return;
+        }
+
+        Collider[] hits = Physics.OverlapSphere(leftArm.transform.position, armAttackRadius);
+
+        foreach (Collider hit in hits) {
+            if (hit.GetComponent<Player>() != null) {
+                //Damage Player
+            }
+        }
+    }
+
+    public void DealDamageRightArm() {
+        if (isAttackingBarricade) {
+            //Debug.Log("Breaking Next Plank");
+            barricade.BreakNextPlank();
+
+            if (barricade.GetAllPlanksDestroyed()) {
+                isAttackingBarricade = false;
+            }
+
+            return;
+        }
+
+        Collider[] hits = Physics.OverlapSphere(rightArm.transform.position, armAttackRadius);
+
+        foreach (Collider hit in hits) {
+            if (hit.GetComponent<Player>() != null) {
+                //Damage Player
+            }
+        }
+    }
+
+    private void OnDrawGizmos() {
+        if (debug) {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(leftArm.transform.position, armAttackRadius);
+            Gizmos.DrawWireSphere(rightArm.transform.position, armAttackRadius);
+        }
     }
 
     //Zombie Takes Damage by given value
@@ -309,9 +513,23 @@ public class Zombie : MonoBehaviour {
         noHead = true;
     }
 
+    public void BarricadeReached(BarricadeController barricade) {
+        this.barricade = barricade;
+
+        if (barricade != null && !barricade.GetAllPlanksDestroyed()) {
+            isAttackingBarricade = true;
+        }
+    }
+
+    public void ClearTargetBarricade() {
+        this.barricade = null;
+        isAttackingBarricade = false;
+    }
+
     //Wait a few seconds before chasing the player and playing the walk animation
     private IEnumerator InitialWait() {
         yield return new WaitForSeconds(initialIdleWaitTime);
+
         initialWaitFinished = true;
         CurrentMovementState = MovementState.Walk;
         speed = slowSpeed;

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7441521074319156373}
   - component: {fileID: 1613079871231637653}
   - component: {fileID: 7217485644167195688}
-  - component: {fileID: 1733673365022798265}
+  - component: {fileID: 1317730186597468100}
   m_Layer: 0
   m_Name: FloorCeiling_3x3
   m_TagString: Untagged
@@ -92,8 +92,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &1733673365022798265
-MeshCollider:
+--- !u!65 &1317730186597468100
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -110,7 +110,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: ac63f9195c0ad1a4a8963b870751acd3, type: 2}
+  serializedVersion: 3
+  m_Size: {x: 15.068405, y: 0.09742689, z: 11.9442425}
+  m_Center: {x: 6.0342026, y: -0.048713923, z: 4.6204505}
