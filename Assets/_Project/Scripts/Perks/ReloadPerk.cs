@@ -9,17 +9,17 @@ public class ReloadPerk : PerkData
 
     public override void ApplyPerk(GameObject player)
     {
-        if (player.TryGetComponent<PlayerWeaponHandler>(out var weaponComp))
+        //if (player.TryGetComponent<PlayerWeaponHandler>(out var weaponComp))
         {
-            weaponComp.ApplyReloadMultiplier(reloadSpeedMultiplier);
+            //weaponComp.ApplyReloadMultiplier(reloadSpeedMultiplier);
         }
     }
 
     public override void RemovePerk(GameObject player)
     {
-        if (player.TryGetComponent<PlayerWeaponHandler>(out var weaponComp))
+        //if (player.TryGetComponent<PlayerWeaponHandler>(out var weaponComp))
         {
-            weaponComp.ApplyReloadMultiplier(1.0f);
+            //weaponComp.ApplyReloadMultiplier(1.0f);
         }
     }
 }

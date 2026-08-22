@@ -8,17 +8,17 @@ public class RevivePerk : PerkData
 
     public override void ApplyPerk(GameObject player)
     {
-        if (player.TryGetComponent<PlayerHealth>(out var healthComp))
+        //if (player.TryGetComponent<PlayerHealth>(out var healthComp))
         {
-            healthComp.EnableSelfRevive(invincibilityDuration, this);
+            //healthComp.EnableSelfRevive(invincibilityDuration, this);
         }
     }
 
     public override void RemovePerk(GameObject player)
     {
-        if (player.TryGetComponent<PlayerHealth>(out var healthComp))
+        //if (player.TryGetComponent<PlayerHealth>(out var healthComp))
         {
-            healthComp.DisableSelfRevive();
+            //healthComp.DisableSelfRevive();
         }
     }
 }

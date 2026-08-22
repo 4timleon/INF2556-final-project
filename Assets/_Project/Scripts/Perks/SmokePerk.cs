@@ -9,17 +9,17 @@ public class SmokePerk : PerkData
 
     public override void ApplyPerk(GameObject player)
     {
-        if (player.TryGetComponent<PlayerMovement>(out var movementComp))
+        //if (player.TryGetComponent<PlayerMovement>(out var movementComp))
         {
-            movementComp.ApplySpeedMultiplier(speedMultiplier);
+            //movementComp.ApplySpeedMultiplier(speedMultiplier);
         }
     }
 
     public override void RemovePerk(GameObject player)
     {
-        if (player.TryGetComponent<PlayerMovement>(out var movementComp))
+        //if (player.TryGetComponent<PlayerMovement>(out var movementComp))
         {
-            movementComp.ApplySpeedMultiplier(1.0f);
+            //movementComp.ApplySpeedMultiplier(1.0f);
         }
     }
 }

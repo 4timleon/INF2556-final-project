@@ -10,17 +10,17 @@ public class StaminaPerk : PerkData
     public override void ApplyPerk(GameObject player)
     {
         // TODO anpassen auf Player Zeugs
-        if (player.TryGetComponent<PlayerStamina>(out var staminaComp))
+        //if (player.TryGetComponent<PlayerStamina>(out var staminaComp))
         {
-            staminaComp.ApplyStaminaDrainMultiplier(staminaDrainMultiplier);
+            //staminaComp.ApplyStaminaDrainMultiplier(staminaDrainMultiplier);
         }
     }
 
     public override void RemovePerk(GameObject player)
     {
-        if (player.TryGetComponent<PlayerStamina>(out var staminaComp))
+        //if (player.TryGetComponent<PlayerStamina>(out var staminaComp))
         {
-            staminaComp.ApplyStaminaDrainMultiplier(1.0f);
+            //staminaComp.ApplyStaminaDrainMultiplier(1.0f);
         }
     }
 }
