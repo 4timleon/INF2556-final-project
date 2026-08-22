@@ -77,7 +77,10 @@ public class ShopManager : MonoBehaviour
 
         if (ScoreManager.Instance.SpendScore(item.basePrice))
         {
-            // TODO spieler die waffe geben
+            if (item is WeaponItemData weaponItem)
+            {
+                player.GetComponent<PlayerWeaponHandler>().EquipWeapon(weaponItem);
+            }
             Debug.Log($"Waffe gekauft: {item.itemName}");
             CurrentWeapons[index] = null;
             OnShopUpdated?.Invoke();
