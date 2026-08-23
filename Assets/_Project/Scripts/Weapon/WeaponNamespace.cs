@@ -46,6 +46,14 @@ namespace WeaponNamespace
         Shotgun
     }
 
+    public enum GripType
+    {
+        Normal,
+        Close,
+        Flat,
+        Dense
+    }
+
     public enum StatType
     {
         Damage,
