@@ -13,7 +13,7 @@ public static class GameEventSystem
 
     // Story
     public static Action<string> OnDoorOpened; // string = doorId, z.B. "Door_A1"
-    public static Action OnPowerTurnedOn;
+    public static Action<bool> OnPowerChanged;
 
     // Mystery Box
     public static Action<WeaponType, List<ModuleType>> OnWeaponWon;

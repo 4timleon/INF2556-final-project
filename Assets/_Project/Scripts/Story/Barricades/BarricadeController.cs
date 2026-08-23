@@ -1,11 +1,10 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class BarricadeController : MonoBehaviour {
     [Header("Settings")]
     [SerializeField] private int plankCount = 5;
     [SerializeField] private float repairAnimationDuration = 1f;
+    [SerializeField] private float breakForce = 2.5f;
 
     [Header("References")]
     [SerializeField] private Animator[] plankAnimators;
@@ -15,27 +14,37 @@ public class BarricadeController : MonoBehaviour {
     private float cooldownTimer;
     private bool playerInRange;
 
+    // Startwerte, damit die Planke beim Reparieren zurueckgesetzt werden kann
+    private Vector3[] startPositions;
+    private Quaternion[] startRotations;
+
     private void Awake() {
         plankBroken = new bool[plankCount];
+        startPositions = new Vector3[plankCount];
+        startRotations = new Quaternion[plankCount];
 
-        foreach (Rigidbody rb in rigidbodies)
-            rb.isKinematic = true;
+        for (int i = 0; i < plankCount; i++) {
+            if (rigidbodies[i] == null) continue;
+
+            Transform t = rigidbodies[i].transform;
+            startPositions[i] = t.localPosition;
+            startRotations[i] = t.localRotation;
+
+            rigidbodies[i].isKinematic = true;
+        }
     }
 
     private void Update() {
-        if (!playerInRange) return;
-
-        if (cooldownTimer > 0f) {
+        if (cooldownTimer > 0f)
             cooldownTimer -= Time.deltaTime;
-            return;
-        }
+
+        if (!playerInRange || cooldownTimer > 0f) return;
 
         int targetIndex = GetLowestBrokenPlankIndex();
-        if (targetIndex == -1) return; // All planks are repaired
+        if (targetIndex == -1) return;
 
         var interact = GameControls.GetInputActions().Player.Interact;
 
-        //Hold or press to repair
         if (interact.IsPressed() || interact.WasPressedThisFrame()) {
             RepairPlank(targetIndex);
             cooldownTimer = repairAnimationDuration;
@@ -52,8 +61,18 @@ public class BarricadeController : MonoBehaviour {
     private void RepairPlank(int index) {
         plankBroken[index] = false;
 
-        foreach (Rigidbody rb in rigidbodies)
+        Rigidbody rb = rigidbodies[index];
+        if (rb != null) {
+            // erst Velocities loeschen, solange der Body noch dynamisch ist
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            // dann Physik abschalten
             rb.isKinematic = true;
+
+            rb.transform.localPosition = startPositions[index];
+            rb.transform.localRotation = startRotations[index];
+        }
 
         if (plankAnimators != null && index < plankAnimators.Length && plankAnimators[index] != null)
             plankAnimators[index].SetTrigger("Repair");
@@ -64,8 +83,10 @@ public class BarricadeController : MonoBehaviour {
             if (!plankBroken[i]) {
                 plankBroken[i] = true;
 
-                rigidbodies[i].isKinematic = false;
-                rigidbodies[i].AddForce(-transform.forward * 2.5f, ForceMode.Impulse);
+                if (rigidbodies[i] != null) {
+                    rigidbodies[i].isKinematic = false;
+                    rigidbodies[i].AddForce(transform.forward * breakForce, ForceMode.Impulse);
+                }
 
                 return;
             }
@@ -76,7 +97,6 @@ public class BarricadeController : MonoBehaviour {
         for (int i = 0; i < plankBroken.Length; i++) {
             if (!plankBroken[i]) return false;
         }
-
         return true;
     }
 
@@ -86,7 +106,11 @@ public class BarricadeController : MonoBehaviour {
 
         Zombie zombie = other.GetComponentInParent<Zombie>();
         if (zombie != null) {
-            zombie.BarricadeReached(this);
+            // nur wenn der Zombie auf der Aussenseite steht
+            Vector3 toZombie = zombie.transform.position - transform.position;
+            if (Vector3.Dot(toZombie, transform.forward) > 0f) {
+                zombie.BarricadeReached(this);
+            }
         }
     }
 

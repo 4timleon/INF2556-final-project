@@ -9,44 +9,44 @@ public class GeneratorController : MonoBehaviour
     [SerializeField] private Animator generatorAnimator;
 
     private bool playerInRange;
-    private bool isActivated;
+    private bool hasBeenPaid;   // einmal bezahlt, danach frei schaltbar
 
     private void Update()
     {
-        if (isActivated || !playerInRange) return;
+        if (!playerInRange) return;
 
         if (GameControls.GetInputActions().Player.Interact.WasPressedThisFrame())
         {
-            TryActivate();
+            TryToggle();
         }
     }
 
-    // Einziger Einstiegspunkt für die Aktivierung.
-    // Spaeter (Multiplayer): hier waere die Stelle fuer eine
-    // "nur Server darf das wirklich ausfuehren" Pruefung (z.B. RPC an den Host).
-    
-    private void TryActivate()
+    private void TryToggle()
     {
-        if (GameData.Money < generatorCost)
+        // Beim ersten Mal muss bezahlt werden
+        if (!hasBeenPaid)
         {
-            // TODO: UI Feedback "Nicht genug Geld"
-            return;
+            if (GameData.Money < generatorCost)
+            {
+                // TODO: UI Feedback "Nicht genug Geld"
+                return;
+            }
+
+            GameData.Money -= generatorCost;
+            hasBeenPaid = true;
         }
 
-        GameData.Money -= generatorCost;
-        Activate();
+        SetPower(!GameData.IsPowerOn);
     }
 
-    private void Activate()
+    private void SetPower(bool state)
     {
-        isActivated = true;
-
-        GameData.IsPowerOn = true;
+        GameData.IsPowerOn = state;
 
         if (generatorAnimator != null)
-            generatorAnimator.SetTrigger("Activate");
+            generatorAnimator.SetBool("IsOn", state);
 
-        GameEventSystem.OnPowerTurnedOn?.Invoke();
+        GameEventSystem.OnPowerChanged?.Invoke(state);
     }
 
     private void OnTriggerEnter(Collider other)
