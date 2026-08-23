@@ -8,9 +8,15 @@ public class GripModule : ModuleBase
     [SerializeField] private Void v1;
 
     [SerializeField] private Transform trigger;
+    [SerializeField] private Transform pivot;
 
     public override void PullTrigger()
     {
         //todo: animate trigger
+    }
+
+    public Transform GetPivot()
+    {
+        return pivot;
     }
 }

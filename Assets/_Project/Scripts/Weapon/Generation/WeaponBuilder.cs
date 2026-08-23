@@ -15,18 +15,24 @@ public class WeaponBuilder : MonoBehaviour
     public WeaponController BuildWeapon()
     {
         WeaponController weaponController = new GameObject("Weapon").AddComponent<WeaponController>();
-        weaponController.Initialize(new WeaponData());
-
+        WeaponData weaponData = new WeaponData();
         ModuleBase bodyPrefab = moduleDatabase.GetRandomBodyModule();
 
-        BuildWeaponRecursivly(weaponController, bodyPrefab, weaponController.transform);
+        BuildWeaponRecursivly(weaponData, bodyPrefab, weaponController.transform);
+
+        Transform pivot = (weaponData.Modules[ModuleType.Grip] as GripModule)?.GetPivot();
+        Vector3 transformedPivot = (-1f) * weaponController.transform.TransformPoint(pivot.position);
+
+        weaponData.Modules[ModuleType.Body].transform.localPosition = transformedPivot;
+
+        weaponController.Initialize(weaponData);
 
         return weaponController;
     }
 
-    void BuildWeaponRecursivly(WeaponController weaponController, ModuleBase modulePrefab, Transform parent)
+    void BuildWeaponRecursivly(WeaponData weaponData, ModuleBase modulePrefab, Transform parent)
     {
-        if (ModulFilter(weaponController, modulePrefab))
+        if (ModulFilter(weaponData, modulePrefab))
         {
             return;
         }
@@ -36,7 +42,7 @@ public class WeaponBuilder : MonoBehaviour
         moduleInstance.transform.localPosition = Vector3.zero;
         moduleInstance.transform.localRotation = Quaternion.identity;
 
-        weaponController.WeaponData.AddModule(moduleInstance);
+        weaponData.AddModule(moduleInstance);
 
         List<ModuleSocket> sockets = moduleInstance.ModuleSockets;
 
@@ -48,15 +54,13 @@ public class WeaponBuilder : MonoBehaviour
 
             if (nextModulePrefab != null)
             {
-                BuildWeaponRecursivly(weaponController, nextModulePrefab, socket.Joint);
+                BuildWeaponRecursivly(weaponData, nextModulePrefab, socket.Joint);
             }
         }
     }
 
-    bool ModulFilter(WeaponController weaponController, ModuleBase nextModule)
+    bool ModulFilter(WeaponData weaponData, ModuleBase nextModule)
     {
-        WeaponData weaponData = weaponController.WeaponData;
-
         //prevent multiple sights
         if (nextModule.ModuleType == ModuleType.Sight && weaponData.Modules.ContainsKey(ModuleType.Sight))
         {
