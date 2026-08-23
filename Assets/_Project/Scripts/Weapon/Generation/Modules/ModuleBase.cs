@@ -7,7 +7,7 @@ using WeaponNamespace;
 public abstract class ModuleBase : MonoBehaviour
 {
     [Title("General:", 14)]
-    [SerializeField] private Void v00;
+    [SerializeField] private Void v000;
     [Space]
     [SerializeField] public WeaponType BelongingType;
     [SerializeField] public int TypeBias = 1;
@@ -18,6 +18,13 @@ public abstract class ModuleBase : MonoBehaviour
     [Space]
     [SerializeField] public int ModuleCost;
     [Space]
+    [Line(GUIColor.Gray, 1, 2f)]
+    [SerializeField] private Void v00;
+    [Space]
+    [SerializeField] public bool HasHandPlacement;
+    [SerializeField, EnableField(nameof(HasHandPlacement)), IndentProperty(20f)] public Transform HandPlacement;
+    [SerializeField, EnableField(nameof(HasHandPlacement)), IndentProperty(20f)] public GripType GripType;
+    [SerializeField, EnableField(nameof(HasHandPlacement)), IndentProperty(20f)] public int PlacementBias = 1;
     [Line(GUIColor.Gray, 1, 2f)]
     [SerializeField] private Void v0;
     [Space]
