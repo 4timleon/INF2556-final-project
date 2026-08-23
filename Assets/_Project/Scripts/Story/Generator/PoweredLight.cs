@@ -30,8 +30,6 @@ public class PoweredLight : MonoBehaviour
         SetLights(GameData.IsPowerOn);
     }
 
-    private void TurnOn() => SetLights(true);
-
     private void SetLights(bool state)
     {
         foreach (Light l in lights)
