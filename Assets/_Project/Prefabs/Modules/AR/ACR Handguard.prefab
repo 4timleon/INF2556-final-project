@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1280643981043253328
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3338336847265239644}
+  m_Layer: 0
+  m_Name: Placement
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3338336847265239644
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280643981043253328}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.5950139, y: -0.3672198, z: -0.38429627, w: 0.602847}
+  m_LocalPosition: {x: -0.293, y: -0.474, z: 0.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 154691219015746883}
+  m_LocalEulerAnglesHint: {x: -88.478, y: 33.255, z: -97.462}
 --- !u!1 &2075414434660521874
 GameObject:
   m_ObjectHideFlags: 0
@@ -35,6 +66,7 @@ Transform:
   - {fileID: 6449737408275679329}
   - {fileID: 7075333839840098202}
   - {fileID: 562324478934282190}
+  - {fileID: 3338336847265239644}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7000410139230301279
@@ -49,9 +81,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 721a9fc41302ec444a2292313ea9653f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicModule
+  BelongingType: 0
+  TypeBias: 1
   Rarity: 2
   ModuleType: 2
   ModuleJointSize: 8
+  ModuleCost: 0
+  HasHandPlacement: 1
+  HandPlacement: {fileID: 3338336847265239644}
+  GripType: 0
+  PlacementBias: 2
   StatModifiers: []
   ModuleSockets:
   - Joint: {fileID: 6449737408275679329}

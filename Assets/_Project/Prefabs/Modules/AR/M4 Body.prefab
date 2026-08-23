@@ -161,6 +161,7 @@ Transform:
   - {fileID: 5699530073889148012}
   - {fileID: 8589295596893707952}
   - {fileID: 8712430807907769499}
+  - {fileID: 3544739331137921385}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6804778673443984575
@@ -175,9 +176,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 721a9fc41302ec444a2292313ea9653f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicModule
+  BelongingType: 0
+  TypeBias: 1
   Rarity: 1
   ModuleType: 0
   ModuleJointSize: 0
+  ModuleCost: 0
+  HasHandPlacement: 1
+  HandPlacement: {fileID: 3544739331137921385}
+  GripType: 3
+  PlacementBias: 1
   StatModifiers: []
   ModuleSockets:
   - Joint: {fileID: 7125945975242398903}
@@ -283,3 +291,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5392638708989044370}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7506547678060356361
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3544739331137921385}
+  m_Layer: 0
+  m_Name: Placement
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3544739331137921385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7506547678060356361}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.51672715, y: -0.53792405, z: -0.26676103, w: 0.61030257}
+  m_LocalPosition: {x: 0.097, y: -1.057, z: 0.627}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5392638708989044370}
+  m_LocalEulerAnglesHint: {x: -66.594, y: -106.487, z: 35.435}

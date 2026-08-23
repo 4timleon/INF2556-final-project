@@ -47,10 +47,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 721a9fc41302ec444a2292313ea9653f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicModule
+  BelongingType: 0
+  TypeBias: 1
   Rarity: 2
   ModuleType: 1
   ModuleJointSize: 8
   ModuleCost: 0
+  HasHandPlacement: 0
+  HandPlacement: {fileID: 0}
   StatModifiers: []
   ModuleSockets:
   - Joint: {fileID: 3011589763962558000}

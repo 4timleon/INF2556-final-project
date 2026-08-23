@@ -31,7 +31,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 985914468396106143}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &766484900117788533
@@ -52,6 +53,10 @@ MonoBehaviour:
   ModuleType: 8
   ModuleJointSize: 4
   ModuleCost: 0
+  HasHandPlacement: 1
+  HandPlacement: {fileID: 985914468396106143}
+  GripType: 1
+  PlacementBias: 5
   StatModifiers: []
   ModuleSockets: []
 --- !u!33 &716355962829225760
@@ -111,3 +116,34 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6205955867986537681
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 985914468396106143}
+  m_Layer: 0
+  m_Name: Placement
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &985914468396106143
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6205955867986537681}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.4928351, y: -0.56957006, z: -0.087998115, w: 0.65188956}
+  m_LocalPosition: {x: -0.64, y: -0.87, z: 0.61}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6872061365311329656}
+  m_LocalEulerAnglesHint: {x: -47.97, y: 258.403, z: -318.152}

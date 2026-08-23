@@ -123,6 +123,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1707783979287759964}
+  - {fileID: 6364447785111250351}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3372336541513006513
@@ -137,12 +138,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14618d46c67402e479a2f18e46ffceab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GripModule
+  BelongingType: 0
+  TypeBias: 1
   Rarity: 1
   ModuleType: 5
   ModuleJointSize: 4
+  ModuleCost: 0
+  HasHandPlacement: 0
+  HandPlacement: {fileID: 0}
   StatModifiers: []
   ModuleSockets: []
   trigger: {fileID: 1707783979287759964}
+  pivot: {fileID: 6364447785111250351}
 --- !u!33 &8420464510618304798
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -200,3 +207,34 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6981923841642277801
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6364447785111250351}
+  m_Layer: 0
+  m_Name: Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6364447785111250351
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6981923841642277801}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.1159989, y: -0.5320002, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5992444212548161790}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
