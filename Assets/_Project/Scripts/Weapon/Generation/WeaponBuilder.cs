@@ -25,6 +25,9 @@ public class WeaponBuilder : MonoBehaviour
 
         weaponData.Modules[ModuleType.Body].transform.localPosition = transformedPivot;
 
+        weaponController.transform.position = Vector3.zero;
+        weaponController.transform.rotation = Quaternion.identity;
+
         weaponController.Initialize(weaponData);
 
         return weaponController;
