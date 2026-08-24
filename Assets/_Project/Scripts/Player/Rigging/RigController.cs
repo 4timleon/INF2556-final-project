@@ -1,18 +1,20 @@
 using UnityEngine;
 using WeaponNamespace;
 
-[RequireComponent(typeof(IKTargetHandler))]
+[RequireComponent(typeof(IKTargetHandler), typeof(IKDisplacementHandler))]
 public class RigController : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     [SerializeField] private string gripBlend = "GripBlend";
     [SerializeField] private Transform rightHandSocket;
 
-    private IKTargetHandler ikTargetHandler;
+    private IKTargetHandler targetHandler;
+    private IKDisplacementHandler displacementHandler;
 
     void Start()
     {
-        ikTargetHandler = GetComponent<IKTargetHandler>();
+        targetHandler = GetComponent<IKTargetHandler>();
+        displacementHandler = GetComponent<IKDisplacementHandler>();
     }
 
     public void TransformWeapon(WeaponController weaponController)
@@ -24,7 +26,8 @@ public class RigController : MonoBehaviour
         weaponTransform.localRotation = Quaternion.identity;
         weaponTransform.localScale = Vector3.one;
 
-        ikTargetHandler.SetHandTarget(weaponController);
+        targetHandler.SetHandTarget(weaponController);
+        displacementHandler.SetDisplacementTarget(weaponController);
 
         ChangeGripType(weaponController);
     }
