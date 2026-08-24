@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class WaveManager : MonoBehaviour, IInititalizeStart {
 
@@ -23,7 +24,7 @@ public class WaveManager : MonoBehaviour, IInititalizeStart {
     [SerializeField] private AnimationCurve fastWeightCurve = AnimationCurve.Linear(1, 0, 10, 50);
     [SerializeField] private AnimationCurve runWeightCurve = AnimationCurve.Linear(1, 0, 10, 80);
 
-    [Header("Current State")]
+    [Header("Current State (Debug), Default: 0")]
     [SerializeField] private int currentWave = 0;
     //private bool isSpawning = false;
 
@@ -42,10 +43,18 @@ public class WaveManager : MonoBehaviour, IInititalizeStart {
         StartNextWave();
     }
 
+    private void Update() {
+        if (Keyboard.current.digit3Key.wasPressedThisFrame) {
+            StartNextWave();
+        }
+    }
+
     //Can be used to Start the next Wave after all Zombies got killed
     public void StartNextWave() {
-        GameEventSystem.OnWaveStarted?.Invoke();
         currentWave++;
+        GameData.Wave = currentWave;
+
+        GameEventSystem.OnWaveStarted?.Invoke();
         StartCoroutine(SpawnWaveRoutine());
     }
 

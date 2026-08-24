@@ -1,51 +1,61 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
-public class WaveUI : MonoBehaviour
-{
-    [SerializeField] private TMP_Text waveNumberText;
-    [SerializeField] private Animator backgroundAnimator;
-    [SerializeField] private int tallyThreshold = 5; // ab dieser Welle: Zahl statt Striche
+public class WaveUI : MonoBehaviour {
 
-    private void OnEnable()
-    {
-        GameEventSystem.OnWaveStarted += HandleWaveStarted;
+    [SerializeField] private TextMeshProUGUI waveNumberText;
+
+    public bool animationFinished { get; private set; } = false;
+
+    private void OnEnable() {
+        waveNumberText.text = GameData.Wave.ToString();
+
+        GameEventSystem.OnWaveStarted += UpdateWaveNumber;
     }
 
-    private void OnDisable()
-    {
-        GameEventSystem.OnWaveStarted -= HandleWaveStarted;
+    private void OnDisable() {
+        GameEventSystem.OnWaveStarted -= UpdateWaveNumber;
     }
 
-    private void Start()
-    {
-        UpdateWaveNumber();
-    }
-
-    private void HandleWaveStarted()
-    {
-        UpdateWaveNumber();
-
-        if (backgroundAnimator != null)
-            backgroundAnimator.SetTrigger("PlaySplatter");
-    }
-
-    private void UpdateWaveNumber()
-    {
+    private void UpdateWaveNumber() {
         int wave = GameData.Wave;
 
-        if (wave <= tallyThreshold)
-        {
-            waveNumberText.text = BuildTallyString(wave);
-        }
-        else
-        {
-            waveNumberText.text = wave.ToString();
-        }
+        UpdateVisuals(wave);
     }
 
-    private string BuildTallyString(int count)
-    {
-        return string.Join(" ", System.Linq.Enumerable.Repeat("I", count));
+    private void UpdateVisuals(int wave) {
+        TextFadeOut(() => {
+            waveNumberText.text = wave.ToString();
+
+            TextFadeIn(() => {
+                animationFinished = true;
+            });
+        });
+    }
+
+    private void TextFadeOut(System.Action onComplete) {
+        LeanTween.cancel(waveNumberText.gameObject);
+
+        LeanTween.value(waveNumberText.gameObject, waveNumberText.color.a, 0f, 3f)
+            .setOnUpdate((float value) => {
+                Color c = waveNumberText.color;
+                c.a = value;
+                waveNumberText.color = c;
+            })
+            .setOnComplete(onComplete);
+    }
+
+    private void TextFadeIn(System.Action onComplete = null) {
+        LeanTween.cancel(waveNumberText.gameObject);
+
+        Color startColor = new Color(1f, 1f, 1f, 0f);
+        Color targetColor = new Color(0.6f, 0f, 0f, 1f);
+
+        LeanTween.value(waveNumberText.gameObject, startColor, targetColor, 3f)
+            .setOnUpdate((Color value) => {
+                waveNumberText.color = value;
+            })
+            .setOnComplete(onComplete);
     }
 }
