@@ -8,6 +8,7 @@ public class ControlsSettings : MonoBehaviour {
     [SerializeField] private Transform confirmationScreen;
     [SerializeField] private Button resetButton;
     [SerializeField] private ButtonBinding[] bindings;
+    [SerializeField] private MenuManager menuManager;
 
     private void Start() {
         HidePressToRebindKey();
@@ -86,10 +87,14 @@ public class ControlsSettings : MonoBehaviour {
     }
 
     private void ShowPressToRebindKey() {
+        menuManager.SetMenuState(Menus.KeybindWindow);
         confirmationScreen.gameObject.SetActive(true);
     }
 
-    private void HidePressToRebindKey() {
+    public void HidePressToRebindKey() {
+        if (menuManager.MenuState == Menus.KeybindWindow) {
+            menuManager.SetMenuState(Menus.Settings);
+        }
         confirmationScreen.gameObject.SetActive(false);
     }
 }

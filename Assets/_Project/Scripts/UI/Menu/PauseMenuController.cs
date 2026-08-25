@@ -5,6 +5,7 @@ public class PauseMenuController : MonoBehaviour {
 
     [Header("References")]
     [SerializeField] private PlayerInputHandler playerInputHandler;
+    [SerializeField] private MenuManager menuManager;
 
     [Header("Panels")]
     [SerializeField] private GameObject pauseContainer;
@@ -20,15 +21,17 @@ public class PauseMenuController : MonoBehaviour {
     }
 
     private void OnEnable() {
-        playerInputHandler.OnPauseAction += PlayerInputHandler_OnPauseAction;
+        playerInputHandler.OnCancelAction += PlayerInputHandler_OnCancelAction;
     }
 
     private void OnDisable() {
-        playerInputHandler.OnPauseAction -= PlayerInputHandler_OnPauseAction;
+        playerInputHandler.OnCancelAction -= PlayerInputHandler_OnCancelAction;
     }
 
     #region Pause Button Action
     public void Pause() {
+        menuManager.SetMenuState(Menus.PauseMenu);
+
         isPaused = true;
         Time.timeScale = 0f;
 
@@ -42,6 +45,8 @@ public class PauseMenuController : MonoBehaviour {
     }
 
     public void Resume() {
+        menuManager.SetMenuState(Menus.InGame);
+
         isPaused = false;
         Time.timeScale = 1f;
 
@@ -55,8 +60,16 @@ public class PauseMenuController : MonoBehaviour {
     }
     #endregion
 
-    private void PlayerInputHandler_OnPauseAction() {
+    private void PlayerInputHandler_OnCancelAction() {
+        if (menuManager.MenuState == Menus.PauseMenu
+            || menuManager.MenuState == Menus.Settings
+            || menuManager.MenuState == Menus.KeybindWindow
+            || menuManager.MenuState == Menus.QuitConfirmation
+            || menuManager.MenuState == Menus.Quit)
+            return;
+
         if (isPaused) Resume();
         else Pause();
     }
+
 }

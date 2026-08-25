@@ -29,6 +29,7 @@ public class PlayerInputHandler : MonoBehaviour {
     //public event Action OnInteractAction;
     public event Action OnNavigateAction;
     public event Action OnPauseAction;
+    public event Action OnCancelAction;
 
     private void OnEnable() {
         inputActions = new InputSystem_Actions();
@@ -42,29 +43,10 @@ public class PlayerInputHandler : MonoBehaviour {
         SubscribeToInputActions();
         SubscribeToUIInputActions();
     }
-
     private void OnDisable() {
         UnsubscribeToInputActions();
         UnsubscribeToUIInputActions();
     }
-
-    /* public override void OnNetworkSpawn() {
-        if (IsOwner) {
-            inputActions = new InputSystem_Actions();
-            inputActions.Enable();
-
-            SubscribeToInputActions();
-        }
-    }
-
-    public override void OnNetworkDespawn() {
-        if (IsOwner && inputActions != null) {
-            UnsubscribeToInputActions();
-
-            inputActions.Disable();
-        }
-    } */
-
     private void SubscribeToInputActions() {
         inputActions.Player.Move.performed += context => MovementInput = context.ReadValue<Vector2>();
         inputActions.Player.Move.canceled += _ => MovementInput = Vector2.zero;
@@ -75,22 +57,21 @@ public class PlayerInputHandler : MonoBehaviour {
         inputActions.Player.Sprint.performed += _ => SprintTriggered = true;
         inputActions.Player.Sprint.canceled += _ => SprintTriggered = false;
 
-        inputActions.Player.Pause.performed += PauseAction;
-
         //inputActions.Player.Interact.performed += InteractAction;
     }
 
     private void UnsubscribeToInputActions() {
         //inputActions.Player.Interact.canceled -= InteractAction;
-        inputActions.Player.Pause.performed -= PauseAction;
     }
 
     private void SubscribeToUIInputActions() {
         inputActions.UI.Navigate.performed += NavigateAction;
+        inputActions.UI.Cancel.performed += CancelAction;
     }
 
     private void UnsubscribeToUIInputActions() {
         inputActions.UI.Navigate.performed -= NavigateAction;
+        inputActions.UI.Cancel.performed -= CancelAction;
     }
 
     private void InteractAction(InputAction.CallbackContext context) {
@@ -101,6 +82,10 @@ public class PlayerInputHandler : MonoBehaviour {
 
     private void NavigateAction(InputAction.CallbackContext context) {
         OnNavigateAction?.Invoke();
+    }
+
+    private void CancelAction(InputAction.CallbackContext context) {
+        OnCancelAction?.Invoke();
     }
 
     public void SetInteractTriggered(bool InteractTriggered) {
@@ -133,7 +118,7 @@ public class PlayerInputHandler : MonoBehaviour {
             case Binding.Shoot:
                 return inputActions.Player.Shoot.bindings[1].ToDisplayString();
             case Binding.Pause:
-                return inputActions.Player.Pause.bindings[0].ToDisplayString();
+                return inputActions.UI.Cancel.bindings[0].ToDisplayString();
         }
     }
 
@@ -174,7 +159,7 @@ public class PlayerInputHandler : MonoBehaviour {
                 bindingIndex = 1;
                 break;
             case Binding.Pause:
-                inputAction = inputActions.Player.Pause;
+                inputAction = inputActions.UI.Cancel;
                 bindingIndex = 0;
                 break;
         }
@@ -187,6 +172,11 @@ public class PlayerInputHandler : MonoBehaviour {
 
                 PlayerPrefs.SetString(PLAYER_PREFS_BINDINGS, inputActions.SaveBindingOverridesAsJson());
                 PlayerPrefs.Save();
+            })
+            .OnCancel(callback => {
+                callback.Dispose();
+                inputActions.Player.Enable();
+                onActionRebound();
             })
             .Start();
     }

@@ -1,6 +1,23 @@
+using System;
 using UnityEngine;
 
+public enum Menus {
+    InGame,
+    MainMenu,
+    Settings,
+    KeybindWindow,
+    Credits,
+    QuitConfirmation,
+    PauseMenu,
+    Quit
+}
+
 public class MenuManager : MonoBehaviour {
+
+    [Header("References")]
+    [SerializeField] private PlayerInputHandler playerInputHandler;
+    [SerializeField] private PauseMenuController pauseMenuController;
+    [SerializeField] private ControlsSettings controlsSettings;
 
     [Header("Scenes")]
     [SerializeField] private string _mainMenuScene;
@@ -22,21 +39,54 @@ public class MenuManager : MonoBehaviour {
     [Header("Quit Confirmation")]
     [SerializeField] private GameObject quitConfirmationContainer;
 
-    private float animationScale = 1.1f;
-    private float scaleDuration = 0.25f;
-    private Vector3 originalScale;
+    public Menus MenuState { get; private set; }
 
     private void Start() {
-        if (isPauseMenu) pauseMenuContainer.SetActive(true);
-        else mainMenuContainer.SetActive(true);
+        if (!isPauseMenu) {
+            mainMenuContainer.SetActive(true);
+            MenuState = Menus.MainMenu;
+        }
 
         settingsMenuContainer.SetActive(false);
         graphicsContainer.SetActive(false);
         controlsContainer.SetActive(false);
         soundContainer.SetActive(false);
         quitConfirmationContainer.SetActive(false);
+    }
 
-        originalScale = quitConfirmationContainer.transform.localScale;
+    private void OnEnable() {
+        playerInputHandler.OnCancelAction += PlayerInputHandler_OnCancelAction;
+    }
+
+    private void OnDisable() {
+        playerInputHandler.OnCancelAction -= PlayerInputHandler_OnCancelAction;
+    }
+
+    private void PlayerInputHandler_OnCancelAction() {
+        switch (MenuState) {
+            case Menus.InGame:
+                break;
+            case Menus.MainMenu:
+                break;
+            case Menus.PauseMenu:
+                break;
+            case Menus.Settings:
+                SettingsBack();
+                break;
+            case Menus.Credits:
+                //Close Credits
+                mainMenuContainer.SetActive(true);
+                MenuState = Menus.MainMenu;
+                break;
+            case Menus.KeybindWindow:
+                controlsSettings.HidePressToRebindKey();
+                break;
+            case Menus.QuitConfirmation:
+                HideQuitConfirmation();
+                break;
+            case Menus.Quit:
+                break;
+        }
     }
 
     #region Main Menu
@@ -45,8 +95,13 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void OpenSettings() {
-        if (isPauseMenu) pauseMenuContainer.SetActive(false);
-        else mainMenuContainer.SetActive(false);
+        if (isPauseMenu) {
+            pauseMenuContainer.SetActive(false);
+            MenuState = Menus.Settings;
+        } else {
+            mainMenuContainer.SetActive(false);
+            MenuState = Menus.Settings;
+        }
 
         settingsMenuContainer.SetActive(true);
         graphicsContainer.SetActive(true);
@@ -59,8 +114,13 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void SettingsBack() {
-        if (isPauseMenu) pauseMenuContainer.SetActive(true);
-        else mainMenuContainer.SetActive(true);
+        if (isPauseMenu) {
+            pauseMenuContainer.SetActive(true);
+            MenuState = Menus.PauseMenu;
+        } else {
+            mainMenuContainer.SetActive(true);
+            MenuState = Menus.MainMenu;
+        }
 
         settingsMenuContainer.SetActive(false);
     }
@@ -71,22 +131,23 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void ShowQuitConfirmation() {
+        MenuState = Menus.QuitConfirmation;
         quitConfirmationContainer.SetActive(true);
-
-        Vector3 targetScale = originalScale * animationScale; //Cache target Scale
-        quitConfirmationContainer.transform.localScale = Vector3.zero; //Set Scale to 0
-
-        quitConfirmationContainer.LeanScale(targetScale, scaleDuration)
-            .setIgnoreTimeScale(true); //Tween from current Scale to target Scale
     }
 
     public void HideQuitConfirmation() {
-        quitConfirmationContainer.LeanScale(Vector3.zero, scaleDuration)
-            .setIgnoreTimeScale(true)
-            .setOnComplete(() => quitConfirmationContainer.SetActive(false));
+        if (isPauseMenu) {
+            MenuState = Menus.PauseMenu;
+        } else {
+            MenuState = Menus.MainMenu;
+        }
+
+        quitConfirmationContainer.SetActive(false);
     }
 
     public void QuitGame() {
+        MenuState = Menus.Quit;
+
         Application.Quit();
 
 #if UNITY_EDITOR
@@ -117,5 +178,9 @@ public class MenuManager : MonoBehaviour {
 
     public async Awaitable LoadScene(string sceneName, bool useOverlay) {
         await LoadingManager.Instance.TransitionToSceneAsync(sceneName, useOverlay);
+    }
+
+    public void SetMenuState(Menus state) {
+        MenuState = state;
     }
 }
