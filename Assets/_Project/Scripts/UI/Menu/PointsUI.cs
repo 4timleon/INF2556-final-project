@@ -12,17 +12,17 @@ public class PointsUI : MonoBehaviour {
     [SerializeField] private Transform spawnPivot;
 
     [Header("Settings")]
-    public float moveDistance = 50f;
-    public float duration = 0.8f;
-    public float minAngle = -35f;
-    public float maxAngle = 35f;
-    public LeanTweenType easeType = LeanTweenType.easeOutQuad;
+    [SerializeField] private float moveDistance = 50f;
+    [SerializeField] private float duration = 0.8f;
+    [SerializeField] private float minAngle = -35f;
+    [SerializeField] private float maxAngle = 35f;
+    [SerializeField] private LeanTweenType easeType = LeanTweenType.easeOutQuad;
 
     [Header("Pool Config")]
     [SerializeField] private int defaultCapacity = 20;
     [SerializeField] private int maxSize = 100;
 
-    private static readonly StringBuilder stringBuilder = new StringBuilder(16);
+    private readonly StringBuilder stringBuilder = new StringBuilder(16);
 
     private int points = 0;
 

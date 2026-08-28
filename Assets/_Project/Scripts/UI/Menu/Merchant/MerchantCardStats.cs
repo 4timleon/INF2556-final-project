@@ -18,7 +18,7 @@ public class MerchantCardStats : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI stat4;
     [SerializeField] private TextMeshProUGUI stat5;
 
-    private static readonly StringBuilder stringBuilder = new StringBuilder(16);
+    private readonly StringBuilder stringBuilder = new StringBuilder(16);
 
     public void SetStats(StatTypes statTypes, int value) {
         stringBuilder.Clear();

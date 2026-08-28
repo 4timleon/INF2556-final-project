@@ -48,8 +48,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4390ffa6362dcc42a9d80fc8010d9d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuManager
+  playerInputHandler: {fileID: 0}
+  pauseMenuController: {fileID: 0}
+  controlsSettings: {fileID: 0}
+  _mainMenuScene: MainMenu
+  _mainScene: 
   mainMenuContainer: {fileID: 0}
   settingsMenuContainer: {fileID: 0}
+  merchantMenuContainer: {fileID: 0}
+  pauseMenuContainer: {fileID: 0}
+  isPauseMenu: 1
   graphicsContainer: {fileID: 0}
   controlsContainer: {fileID: 0}
   soundContainer: {fileID: 0}
+  quitConfirmationContainer: {fileID: 0}

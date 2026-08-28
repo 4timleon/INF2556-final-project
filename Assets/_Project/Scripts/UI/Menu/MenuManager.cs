@@ -1,10 +1,12 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public enum Menus {
     InGame,
     MainMenu,
     Settings,
+    MerchantMenu,
     KeybindWindow,
     Credits,
     QuitConfirmation,
@@ -26,6 +28,7 @@ public class MenuManager : MonoBehaviour {
     [Header("Menus")]
     [SerializeField] private GameObject mainMenuContainer;
     [SerializeField] private GameObject settingsMenuContainer;
+    [SerializeField] private GameObject merchantMenuContainer;
 
     [Header("Pause Menu")]
     [SerializeField] private GameObject pauseMenuContainer;
@@ -41,6 +44,8 @@ public class MenuManager : MonoBehaviour {
 
     public Menus MenuState { get; private set; }
 
+    private MerchantUI merchantUI;
+
     private void Start() {
         if (!isPauseMenu) {
             mainMenuContainer.SetActive(true);
@@ -52,6 +57,9 @@ public class MenuManager : MonoBehaviour {
         controlsContainer.SetActive(false);
         soundContainer.SetActive(false);
         quitConfirmationContainer.SetActive(false);
+        merchantMenuContainer.SetActive(false);
+
+        merchantUI = merchantMenuContainer.GetComponent<MerchantUI>();
     }
 
     private void OnEnable() {
@@ -62,6 +70,12 @@ public class MenuManager : MonoBehaviour {
         playerInputHandler.OnCancelAction -= PlayerInputHandler_OnCancelAction;
     }
 
+    private void Update() {
+        if (Keyboard.current.digit5Key.wasPressedThisFrame) {
+            OpenMerchantMenu();
+        }
+    }
+
     private void PlayerInputHandler_OnCancelAction() {
         switch (MenuState) {
             case Menus.InGame:
@@ -69,6 +83,9 @@ public class MenuManager : MonoBehaviour {
             case Menus.MainMenu:
                 break;
             case Menus.PauseMenu:
+                break;
+            case Menus.MerchantMenu:
+                CloseMerchantMenu();
                 break;
             case Menus.Settings:
                 SettingsBack();
@@ -123,6 +140,19 @@ public class MenuManager : MonoBehaviour {
         }
 
         settingsMenuContainer.SetActive(false);
+    }
+
+    public void OpenMerchantMenu() {
+        pauseMenuController.StopTime(true);
+        merchantMenuContainer.gameObject.SetActive(true);
+        MenuState = Menus.MerchantMenu;
+    }
+
+    public void CloseMerchantMenu() {
+        pauseMenuController.StopTime(false);
+        merchantMenuContainer.gameObject.SetActive(false);
+        merchantUI.SetCardPositionAndRotation();
+        MenuState = Menus.InGame;
     }
 
     public void MainMenu() {

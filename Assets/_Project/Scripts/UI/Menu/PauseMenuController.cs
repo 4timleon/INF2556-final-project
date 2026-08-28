@@ -32,13 +32,7 @@ public class PauseMenuController : MonoBehaviour {
     public void Pause() {
         menuManager.SetMenuState(Menus.PauseMenu);
 
-        isPaused = true;
-        Time.timeScale = 0f;
-
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-
-        OnGamePaused?.Invoke(true);
+        StopTime(true);
 
         pauseContainer.SetActive(true);
         settingsPanel.SetActive(false);
@@ -47,25 +41,36 @@ public class PauseMenuController : MonoBehaviour {
     public void Resume() {
         menuManager.SetMenuState(Menus.InGame);
 
-        isPaused = false;
-        Time.timeScale = 1f;
-
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
-        OnGamePaused?.Invoke(false);
+        StopTime(false);
 
         pauseContainer.SetActive(false);
         settingsPanel.SetActive(false);
     }
     #endregion
 
+    public void StopTime(bool state) {
+        isPaused = state;
+        Cursor.visible = state;
+        OnGamePaused?.Invoke(state);
+
+        if (state) {
+            Time.timeScale = 0f;
+
+            Cursor.lockState = CursorLockMode.None;
+        } else {
+            Time.timeScale = 1f;
+
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+    }
+
     private void PlayerInputHandler_OnCancelAction() {
         if (menuManager.MenuState == Menus.PauseMenu
             || menuManager.MenuState == Menus.Settings
             || menuManager.MenuState == Menus.KeybindWindow
             || menuManager.MenuState == Menus.QuitConfirmation
-            || menuManager.MenuState == Menus.Quit)
+            || menuManager.MenuState == Menus.Quit
+            || menuManager.MenuState == Menus.MerchantMenu)
             return;
 
         if (isPaused) Resume();
