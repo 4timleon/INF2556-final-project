@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -24,8 +23,8 @@ public class WaveManager : MonoBehaviour, IInititalizeStart {
     [SerializeField] private AnimationCurve fastWeightCurve = AnimationCurve.Linear(1, 0, 10, 50);
     [SerializeField] private AnimationCurve runWeightCurve = AnimationCurve.Linear(1, 0, 10, 80);
 
-    [Header("Current State (Debug), Default: 0")]
-    [SerializeField] private int currentWave = 0;
+    [Header("Current State (Debug), Default: 1")]
+    [SerializeField] private int currentWave = 1;
     //private bool isSpawning = false;
 
     private int currentZombiesToSpawn = 0;
@@ -35,12 +34,18 @@ public class WaveManager : MonoBehaviour, IInititalizeStart {
 
     public int StartPriority => 1000;
 
+    public int AwakePriority => throw new System.NotImplementedException();
+
+    private void Awake() {
+        GameData.Wave = currentWave;
+    }
+
     public async Awaitable InititalizeStart(CancellationToken ct) {
         ct.ThrowIfCancellationRequested();
 
         await Awaitable.NextFrameAsync(ct);
 
-        StartNextWave();
+        GameEventSystem.OnWaveStarted += GameEventSystem_OnWaveStarted;
     }
 
     private void Update() {
@@ -49,12 +54,14 @@ public class WaveManager : MonoBehaviour, IInititalizeStart {
         }
     }
 
+    private void GameEventSystem_OnWaveStarted() {
+        StartNextWave();
+    }
+
     //Can be used to Start the next Wave after all Zombies got killed
     public void StartNextWave() {
         currentWave++;
         GameData.Wave = currentWave;
-
-        GameEventSystem.OnWaveStarted?.Invoke();
         StartCoroutine(SpawnWaveRoutine());
     }
 
@@ -116,7 +123,6 @@ public class WaveManager : MonoBehaviour, IInititalizeStart {
 
         if (currentZombies.Count == 0 && currentZombiesToSpawn == 0) {
             GameEventSystem.OnWaveEnded?.Invoke();
-            StartNextWave();
         }
     }
 
@@ -126,6 +132,8 @@ public class WaveManager : MonoBehaviour, IInititalizeStart {
 
     private void OnDisable() {
         GameEventSystem.OnEnemyKilled -= RemoveZombieFromList;
+        GameEventSystem.OnWaveStarted -= GameEventSystem_OnWaveStarted;
     }
+
 
 }

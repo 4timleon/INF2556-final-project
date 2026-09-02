@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour {
 
@@ -12,7 +14,9 @@ public class Player : MonoBehaviour {
     [SerializeField] private Camera mainCamera;
     [SerializeField] private AudioListener audioListener;
     [SerializeField] private Transform aimtarget;
-    [SerializeField] private Transform weaponSocket;
+    [SerializeField] private Volume globalVolume;
+    [SerializeField] private VolumeProfile globalVolumeProfile;
+    [SerializeField] private VolumeProfile monochromeVolumeProfile;
     [SerializeField] private bool cursorVisible = false;
 
     [Header("Move Parameters")]
@@ -30,27 +34,29 @@ public class Player : MonoBehaviour {
     [SerializeField] private float rotationThreshold = 30;
 
     [Header("Health")]
-    [SerializeField] private float health = 100;
-    [SerializeField] private float preDeathTimer = 60f;
+    [SerializeField] private float currentHealth = 100;
+    [SerializeField] private float maxHealth = 100;
+    [SerializeField] private float preDeathTimer = 10f;
+    [SerializeField] private bool revive = true; //Test: Set to false
+    [SerializeField] private float healDelay = 5f;
+    [SerializeField] private float healTillFull = 3f;
+    [SerializeField] private float invincibilityFrameDuration = 1f;
+
+    [Header("Sound")]
+    [SerializeField] private AudioSource lowHpAudioSource;
+    [SerializeField] private AudioSource hitAudioSource;
 
     public bool IsIdling { get; private set; } = false;
     public float RotationMismatch { get; private set; } = 0f;
     public bool IsRotatingToTarget { get; private set; } = false;
 
-    //References
-    private PlayerAnimation playerAnimation;
-
-    public Transform WeaponSocket => weaponSocket;
-
     private Vector3 currentMovement;
-    private float horizontalRotation;
-    private float verticalRotation;
     private float currentSpeed => walkSpeed * (GetIsSprinting() ? sprintMultiplier : 1f);
 
     //private Weapon weapon;
 
-    private bool isInPreDeath = false;
-    private bool isDead = false;
+    public bool IsInPreDeath { get; private set; } = false;
+    public bool IsDead { get; private set; } = false;
 
     //Camera Variables
     private Vector2 cameraRotation = Vector2.zero;
@@ -63,9 +69,11 @@ public class Player : MonoBehaviour {
     //Pause
     private bool isPaused = false;
 
-    private void Awake() {
-        playerAnimation = GetComponent<PlayerAnimation>();
-    }
+    //Health
+    private Coroutine healCoroutine;
+    private float nextDamageTime = 0f;
+
+    public static event Action<float> OnPreDeathCounter;
 
     private void Start() {
         Cursor.visible = cursorVisible;
@@ -80,22 +88,7 @@ public class Player : MonoBehaviour {
         PauseMenuController.OnGamePaused -= PauseMenuController_OnGamePaused;
     }
 
-    /* public override void OnNetworkSpawn() {
-        if (IsOwner) {
-            if (mainCamera != null) mainCamera.enabled = true;
-            if (audioListener != null) audioListener.enabled = true;
-
-            Cursor.lockState = cursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = cursorVisible;
-        } else {
-            if (mainCamera != null) mainCamera.gameObject.SetActive(false);
-            if (audioListener != null) audioListener.enabled = false;
-        }
-    } */
-
     private void Update() {
-        //if (!IsOwner) return;
-
         HandleMovement();
         HandleFall();
     }
@@ -171,44 +164,88 @@ public class Player : MonoBehaviour {
     }
     #endregion
 
-    //[Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
-    public void RequestWeaponServerRpc(int weaponIndex) {
-        //WeaponManager.Instance.SpawnWeaponForPlayer(weaponIndex, this);
-    }
-
-    /* public Weapon GetCurrentWeapon() {
-        return weapon;
-    }
-
-    public void SetCurrentWeapon(Weapon weapon) {
-        this.weapon = weapon;
-    } */
-
     public void TakeDamage(float value) {
-        if (isInPreDeath) return;
+        if (IsInPreDeath || IsDead) return;
 
-        health -= value;
-        health = Mathf.Max(health, 0);
+        // Check if still in invincibility frames
+        if (Time.time < nextDamageTime) return;
 
-        Debug.Log("Health: " + health);
+        currentHealth -= value;
+        currentHealth = Mathf.Max(currentHealth, 0);
 
-        if (health <= 0) {
-            isInPreDeath = true;
-            PreDeath();
+        // Set next damage time
+        nextDamageTime = Time.time + invincibilityFrameDuration;
+
+        GameEventSystem.OnPlayerHealthChanged(currentHealth, maxHealth);
+
+        if (hitAudioSource.isPlaying) {
+            hitAudioSource.Stop();
+        }
+        SoundManager.Instance?.PlayHitSound(hitAudioSource);
+
+        //Debug.Log("Health: " + currentHealth);
+
+        if (healCoroutine != null) {
+            StopCoroutine(healCoroutine);
+            healCoroutine = null;
+        }
+        healCoroutine = StartCoroutine(HealAfter());
+
+        if (currentHealth < 50f) {
+            SoundManager.Instance?.PlayLowHPSound(lowHpAudioSource);
+        }
+
+        if (currentHealth <= 0) {
+            if (revive) {
+                IsInPreDeath = true;
+                globalVolume.profile = monochromeVolumeProfile;
+                StartCoroutine(PreDeath());
+            } else {
+                IsDead = true;
+                Die();
+            }
         }
     }
 
-    private void PreDeath() {
-        if (isDead) return;
+    public IEnumerator HealAfter() {
+        yield return new WaitForSeconds(healDelay);
 
-        //If Timer runs out the Player dies
-        if (Time.time <= preDeathTimer) {
-            isDead = true;
-            Die();
-        }
+        LeanTween.cancel(gameObject);
+        LeanTween.value(gameObject, currentHealth, maxHealth, healTillFull)
+            .setOnUpdate((float value) => {
+                currentHealth = value;
+
+                GameEventSystem.OnPlayerHealthChanged(currentHealth, maxHealth);
+
+                if (currentHealth >= 50 && lowHpAudioSource.isPlaying) {
+                    lowHpAudioSource.Stop();
+                }
+            });
+    }
+
+    private IEnumerator PreDeath() {
+        GameEventSystem.OnPlayerPreDeath?.Invoke(true);
+
+        //Sends the time in PreDeath once
+        OnPreDeathCounter?.Invoke(preDeathTimer);
+
+        //If Timer runs out the Player revives
+        yield return new WaitForSeconds(preDeathTimer);
+
+        //Stand Up
+        globalVolume.profile = globalVolumeProfile;
+        revive = false;
+        IsInPreDeath = false;
+
+        //Remove Revive Perk
     }
 
     private void Die() {
+        if (healCoroutine != null && IsDead) {
+            StopCoroutine(healCoroutine);
+            healCoroutine = null;
+        }
+
         GameEventSystem.OnPlayerDeath?.Invoke();
     }
 
@@ -241,6 +278,12 @@ public class Player : MonoBehaviour {
 
     private void PauseMenuController_OnGamePaused(bool state) {
         isPaused = state;
+
+        if (lowHpAudioSource.isPlaying && state) {
+            lowHpAudioSource.Pause();
+        } else if (currentHealth < 50f && !state) {
+            lowHpAudioSource.Play();
+        }
     }
 
     public PlayerInputHandler GetPlayerInputHandler() {

@@ -45,6 +45,8 @@ public class ZombieAnimations : MonoBehaviour {
     private float walkIndex;
     private float runIndex;
 
+    private float tempIndex;
+
     private void Start() {
         zombie = GetComponent<Zombie>();
         idleIndex = Random.Range(0, idleAnimationsAmount);
@@ -69,6 +71,37 @@ public class ZombieAnimations : MonoBehaviour {
                 break;
             case Zombie.MovementState.Run:
                 animator.SetFloat(runTypeHash, runIndex);
+                break;
+        }
+    }
+
+    public void SetTemporaryWalk(int index) {
+        switch (zombie.CurrentMovementState) {
+            case Zombie.MovementState.Idle:
+                tempIndex = idleIndex;
+                idleIndex = index;
+                break;
+            case Zombie.MovementState.Walk:
+                tempIndex = walkIndex;
+                walkIndex = index;
+                break;
+            case Zombie.MovementState.Run:
+                tempIndex = runIndex;
+                runIndex = index;
+                break;
+        }
+    }
+
+    public void SetMovementBack() {
+        switch (zombie.CurrentMovementState) {
+            case Zombie.MovementState.Idle:
+                idleIndex = tempIndex;
+                break;
+            case Zombie.MovementState.Walk:
+                walkIndex = tempIndex;
+                break;
+            case Zombie.MovementState.Run:
+                runIndex = tempIndex;
                 break;
         }
     }
@@ -129,6 +162,20 @@ public class ZombieAnimations : MonoBehaviour {
         zombie.StartAgent(Zombie.MovementState.Walk);
         zombie.StopMovement(false);
     }
+
+    public void AttackStarted() {
+        zombie.PlayAttackSound();
+    }
+
+    public void TriggerDamage() {
+        zombie.DealDamage();
+    }
+
+    public void AttackFinished() {
+        zombie.SetIsAttacking(false);
+    }
+
     #endregion
+
 
 }

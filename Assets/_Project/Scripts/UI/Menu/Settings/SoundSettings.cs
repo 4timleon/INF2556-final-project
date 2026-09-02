@@ -8,20 +8,21 @@ public class SoundSettings : MonoBehaviour {
     private const string SOUND_MUSIC = "Sound_Music";
     private const string SOUND_VFX = "Sound_VFX";
 
+    [Header("Mixer Reference")]
+    [SerializeField] private SoundMixerManager soundMixerManager;
+
+    [Header("UI Sliders")]
     [SerializeField] private Slider masterSlider;
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Slider soundEffectSlider;
+
+    [Header("UI Texts")]
     [SerializeField] private TextMeshProUGUI masterText;
     [SerializeField] private TextMeshProUGUI musicText;
     [SerializeField] private TextMeshProUGUI soundEffectText;
 
     private void Start() {
         LoadSoundSettings(); //Load the values
-
-        //Set Listeners and Update the Text
-        masterSlider.onValueChanged.AddListener(value => { masterText.text = (value * 100).ToString("F0"); });
-        musicSlider.onValueChanged.AddListener(value => { musicText.text = (value * 100).ToString("F0"); });
-        soundEffectSlider.onValueChanged.AddListener(value => { soundEffectText.text = (value * 100).ToString("F0"); });
     }
 
     //Loads the values from the PlayerPrefs with 0.5 as the default value if it doesn't exists (Why 0.5? I don't want my ears to be blown ofc.)
@@ -30,9 +31,9 @@ public class SoundSettings : MonoBehaviour {
         musicSlider.value = PlayerPrefs.GetFloat(SOUND_MUSIC, 0.5f);
         soundEffectSlider.value = PlayerPrefs.GetFloat(SOUND_VFX, 0.5f);
 
-        masterText.text = (masterSlider.value * 100).ToString("F0");
-        musicText.text = (musicSlider.value * 100).ToString("F0");
-        soundEffectText.text = (soundEffectSlider.value * 100).ToString("F0");
+        OnMasterChanged(masterSlider.value);
+        OnMusicChanged(musicSlider.value);
+        OnSoundEffectChanged(soundEffectSlider.value);
     }
 
     //Saves the Sound Settings when the player lets go of the slider
@@ -43,9 +44,35 @@ public class SoundSettings : MonoBehaviour {
         PlayerPrefs.Save();
     }
 
+    private void OnMasterChanged(float value) {
+        SetSoundNumberText(masterText, value);
+        soundMixerManager.SetMasterVolume(value);
+    }
+
+    private void OnMusicChanged(float value) {
+        SetSoundNumberText(musicText, value);
+        soundMixerManager.SetMusicVolume(value);
+    }
+
+    private void OnSoundEffectChanged(float value) {
+        SetSoundNumberText(soundEffectText, value);
+        soundMixerManager.SetSoundFXVolume(value);
+    }
+
+    public void SetSoundNumberText(TextMeshProUGUI textMesh, float value) {
+        textMesh.text = (value * 100).ToString("F0");
+    }
+
+    private void OnEnable() {
+        //Set Listeners and Update the Text
+        masterSlider.onValueChanged.AddListener(OnMasterChanged);
+        musicSlider.onValueChanged.AddListener(OnMusicChanged);
+        soundEffectSlider.onValueChanged.AddListener(OnSoundEffectChanged);
+    }
+
     private void OnDisable() {
-        masterSlider.onValueChanged.RemoveAllListeners();
-        musicSlider.onValueChanged.RemoveAllListeners();
-        soundEffectSlider.onValueChanged.RemoveAllListeners();
+        masterSlider.onValueChanged.RemoveListener(OnMasterChanged);
+        musicSlider.onValueChanged.RemoveListener(OnMusicChanged);
+        soundEffectSlider.onValueChanged.RemoveListener(OnSoundEffectChanged);
     }
 }

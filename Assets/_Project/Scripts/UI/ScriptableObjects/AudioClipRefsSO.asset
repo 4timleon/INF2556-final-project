@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b394dc0ecfe5348419eb6255fb895ca8, type: 3}
+  m_Name: AudioClipRefsSO
+  m_EditorClassIdentifier: Assembly-CSharp::AudioClipRefsSO
+  zombieChaseSounds:
+  - {fileID: 8300000, guid: a4dd5225c40378c43a805fa3313f57ca, type: 3}
+  - {fileID: 8300000, guid: c4254676826af0147b1774bc3d0843ad, type: 3}
+  - {fileID: 8300000, guid: 35397dfdde728564c83ebfd39113c8ee, type: 3}
+  - {fileID: 8300000, guid: 2c689a1ef53422b468af7c9005f8cf81, type: 3}
+  - {fileID: 8300000, guid: e32f1ead11a706e4e847cb0ad7e59dd6, type: 3}
+  zombieChaseVolume: 0.5
+  zombieAttackSounds:
+  - {fileID: 8300000, guid: 8349b6879d13f3d48a2ec24a18325018, type: 3}
+  - {fileID: 8300000, guid: e43aea6176d531547a9ab416d630b1b9, type: 3}
+  - {fileID: 8300000, guid: 82f957f253348d645bdedf757befae64, type: 3}
+  zombieAttackVolume: 0.5
+  zombieHitSounds:
+  - {fileID: 8300000, guid: 422a17854337a0e408bef049531c80af, type: 3}
+  - {fileID: 8300000, guid: 4a08d8cd236fae7459d02034a7196f8e, type: 3}
+  - {fileID: 8300000, guid: a0cccf9172754c94fad257d3ee0af1c9, type: 3}
+  - {fileID: 8300000, guid: 3a87b7e29dbfc124aaf79d94b0057792, type: 3}
+  zombieHitVolume: 0.5
+  heartbeatSound: {fileID: 8300000, guid: 994fe2d3a8a3a644ead5d222ad03025e, type: 3}
+  heartbeatVolume: 0.5
+  playerHitSounds:
+  - {fileID: 8300000, guid: 79bb612b1c039e145940555ed4bd0bcd, type: 3}
+  - {fileID: 8300000, guid: c49c97dd3a8b3e34eb5b2694ff3ab272, type: 3}
+  - {fileID: 8300000, guid: c5b4118fca668af47a445408d1a532cb, type: 3}
+  - {fileID: 8300000, guid: 9ca6b7af33298724490358564038121e, type: 3}
+  - {fileID: 8300000, guid: f5f62a2f979049a4fb819925ecea5274, type: 3}
+  playerHitVolume: 0.5

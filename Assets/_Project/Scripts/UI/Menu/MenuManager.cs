@@ -57,9 +57,11 @@ public class MenuManager : MonoBehaviour {
         controlsContainer.SetActive(false);
         soundContainer.SetActive(false);
         quitConfirmationContainer.SetActive(false);
-        merchantMenuContainer.SetActive(false);
 
-        merchantUI = merchantMenuContainer.GetComponent<MerchantUI>();
+        if (merchantMenuContainer != null) {
+            merchantMenuContainer.SetActive(false);
+            merchantUI = merchantMenuContainer.GetComponent<MerchantUI>();
+        }
     }
 
     private void OnEnable() {
