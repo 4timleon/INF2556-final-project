@@ -7,5 +7,5 @@ using WeaponNamespace;
 public class StatModifier
 {
     public StatType StatType;
-    [Range(1f, 100f)] public float Value;
+    public float Value;
 }
