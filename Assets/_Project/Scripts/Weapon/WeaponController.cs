@@ -5,13 +5,23 @@ using WeaponNamespace;
 public class WeaponController : MonoBehaviour
 {
     public WeaponData WeaponData { get; private set; }
+
+    public int CurrentAmmo { get; set; }
+
+    public bool IsReloading { get; set; }
+
     public Transform LeftHandTarget { get; private set; }
     public GripType LeftHandGripType { get; private set; }
     public float LeftHandGripDistance { get; private set; }
+    public ReloadBase ReloadBase { get; private set; }
 
     public void Initialize(WeaponData weaponData)
     {
         WeaponData = weaponData;
+
+        ReloadBase = ((BodyModule)WeaponData.Modules[ModuleType.Body]).ReloadBase;
+
+        CurrentAmmo = (int)WeaponData.Stats[StatType.MagazineSize];
 
         CalculateLeftHandTarget();
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using WeaponNamespace;
@@ -6,6 +7,8 @@ public class WeaponData
 {
     public readonly Dictionary<StatType, float> Stats;
     public readonly Dictionary<ModuleType, ModuleBase> Modules;
+
+    public ModuleBase LastAddedModule { get; set; }
 
     public WeaponType TotalType { get; private set; }
     public Rarity TotalRarity { get; private set; }
@@ -39,6 +42,16 @@ public class WeaponData
         AddStat(moduleBase);
 
         TotalRarity = CalculateTotalRarity();
+        LastAddedModule = moduleBase;
+    }
+
+    public void FinalizeStats()
+    {
+        float accuracy = CalculateRMS(StatType.Accuracy);
+        float handling = CalculateRMS(StatType.Handling);
+
+        Stats[StatType.Accuracy] = accuracy;
+        Stats[StatType.Handling] = handling;
     }
 
     void AddStat(ModuleBase moduleBase)
@@ -54,6 +67,11 @@ public class WeaponData
 
             if (Stats.ContainsKey(statType))
             {
+                if (statType == StatType.Accuracy || statType == StatType.Handling)
+                {
+                    value *= value;
+                }
+
                 Stats[statType] += value;
             }
             else
@@ -61,6 +79,11 @@ public class WeaponData
                 Stats.Add(statType, value);
             }
         }
+    }
+
+    float CalculateRMS(StatType statType)
+    {
+        return Mathf.Sqrt(Stats[statType] / (float)Modules.Count);
     }
 
     void AddTypeBias(ModuleBase moduleBase)
