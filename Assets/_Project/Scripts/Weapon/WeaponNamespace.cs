@@ -51,7 +51,9 @@ namespace WeaponNamespace
         Normal,
         Close,
         Flat,
-        Dense
+        Dense,
+        Magazine,
+        Bullet
     }
 
     public enum StatType
