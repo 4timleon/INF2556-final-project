@@ -28,6 +28,7 @@ public class WeaponBuilder : MonoBehaviour
         weaponController.transform.position = Vector3.zero;
         weaponController.transform.rotation = Quaternion.identity;
 
+        weaponData.FinalizeStats();
         weaponController.Initialize(weaponData);
 
         return weaponController;
@@ -35,7 +36,7 @@ public class WeaponBuilder : MonoBehaviour
 
     void BuildWeaponRecursivly(WeaponData weaponData, ModuleBase modulePrefab, Transform parent)
     {
-        if (ModulFilter(weaponData, modulePrefab))
+        if (ModuleFilter(weaponData, modulePrefab))
         {
             return;
         }
@@ -62,12 +63,27 @@ public class WeaponBuilder : MonoBehaviour
         }
     }
 
-    bool ModulFilter(WeaponData weaponData, ModuleBase nextModule)
+    bool ModuleFilter(WeaponData weaponData, ModuleBase nextModule)
     {
         //prevent multiple sights
         if (nextModule.ModuleType == ModuleType.Sight && weaponData.Modules.ContainsKey(ModuleType.Sight))
         {
             return true;
+        }
+
+        //prevent grip magazines
+        if (nextModule.ModuleType == ModuleType.Magazine && weaponData.LastAddedModule != null && weaponData.LastAddedModule.ModuleType == ModuleType.Grip)
+        {
+            bool hasGripMagazine = ((BodyModule)weaponData.Modules[ModuleType.Body]).HasGripMagazine;
+            if (hasGripMagazine)
+            {
+                return false;
+            }
+            else
+            {
+                weaponData.LastAddedModule = null;
+                return true;
+            }
         }
 
         return false;
