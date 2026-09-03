@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class WeaponShowcase : MonoBehaviour
 {
     [SerializeField] private WeaponBuilder weaponBuilder;
-    [SerializeField] private RigController rigController;
+    [SerializeField] private PlayerArmory playerArmory;
 
     private GameObject generatedWeapon;
 
@@ -12,18 +12,11 @@ public class WeaponShowcase : MonoBehaviour
     {
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            if (generatedWeapon != null)
-            {
-                Destroy(generatedWeapon);
-            }
-
             WeaponController weaponController = weaponBuilder.BuildWeapon();
             weaponController.transform.SetParent(transform);
             weaponController.transform.position = Vector3.zero;
 
-            rigController.TransformWeapon(weaponController);
-
-            generatedWeapon = weaponController.gameObject;
+            playerArmory.AddWeapon(weaponController);
         }
     }
 }
