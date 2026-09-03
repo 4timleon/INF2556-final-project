@@ -1,6 +1,6 @@
+using System;
 using UnityEngine;
 
-[RequireComponent(typeof(RigController))]
 public class IKDisplacementHandler : MonoBehaviour
 {
     [SerializeField] private Vector3 baseOffset;
@@ -8,7 +8,17 @@ public class IKDisplacementHandler : MonoBehaviour
     [SerializeField] private float minZ;
     [SerializeField] private Transform displacementTarget;
 
-    public void SetDisplacementTarget(WeaponController weaponController)
+    void OnEnable()
+    {
+        GameEventSystem.OnPlayerWeaponTransform += Event_WeaponTransform;
+    }
+
+    void OnDisable()
+    {
+        GameEventSystem.OnPlayerWeaponTransform -= Event_WeaponTransform;
+    }
+
+    private void Event_WeaponTransform(WeaponController weaponController)
     {
         float zShift = Mathf.Clamp((-1f) * weaponController.LeftHandGripDistance, minZ, maxZ);
 

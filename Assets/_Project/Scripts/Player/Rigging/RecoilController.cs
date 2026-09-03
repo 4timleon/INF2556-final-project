@@ -18,7 +18,7 @@ public class RecoilController : MonoBehaviour
         targetPosWeight = Mathf.Clamp01(targetPosWeight + positionStrength);
         targetRotWeight = Mathf.Clamp01(targetRotWeight + rotationStrength);
 
-        CameraShaker.Instance.ShakeOnce(positionStrength, rotationStrength, .1f, .5f);
+        CameraShaker.Instance.ShakeOnce(rotationStrength, rotationStrength, .1f, .5f);
     }
 
     void Update()
