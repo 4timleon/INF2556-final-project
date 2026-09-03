@@ -7,6 +7,9 @@ public class BodyModule : ModuleBase
     [Title("Body", 14)]
     [SerializeField] private Void v1;
 
-    [SerializeField] public bool HasMagazine = true;
-    [SerializeField, DisableField(nameof(HasMagazine))] public Transform ChamberPlacement;
+    [field: SerializeField] public ReloadBase ReloadBase { get; private set; }
+
+    public bool HasMagazine => (ReloadBase is MagazineReload) && (ReloadBase != null);
+    [SerializeField, EnableField(nameof(HasMagazine))] public bool HasGripMagazine = false;
+    [SerializeField, DisableField(nameof(HasMagazine)), IndentProperty(20)] public Transform ChamberPlacement;
 }
