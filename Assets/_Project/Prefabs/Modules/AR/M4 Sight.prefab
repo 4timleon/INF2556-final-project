@@ -52,7 +52,15 @@ MonoBehaviour:
   ModuleType: 7
   ModuleJointSize: 2
   ModuleCost: 0
-  StatModifiers: []
+  HasHandPlacement: 0
+  HandPlacement: {fileID: 0}
+  GripType: 0
+  PlacementBias: 1
+  StatModifiers:
+  - StatType: 1
+    Value: 82
+  - StatType: 2
+    Value: 15
   ModuleSockets: []
 --- !u!33 &2315325295654772757
 MeshFilter:

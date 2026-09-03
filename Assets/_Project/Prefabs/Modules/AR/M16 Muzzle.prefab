@@ -46,10 +46,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 721a9fc41302ec444a2292313ea9653f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicModule
+  BelongingType: 0
+  TypeBias: 1
   Rarity: 1
   ModuleType: 6
   ModuleJointSize: 4
-  StatModifiers: []
+  ModuleCost: 0
+  HasHandPlacement: 0
+  HandPlacement: {fileID: 0}
+  GripType: 0
+  PlacementBias: 1
+  StatModifiers:
+  - StatType: 1
+    Value: 90
+  - StatType: 2
+    Value: 10
   ModuleSockets: []
 --- !u!33 &4841822230175099193
 MeshFilter:

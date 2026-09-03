@@ -55,7 +55,15 @@ MonoBehaviour:
   ModuleCost: 0
   HasHandPlacement: 0
   HandPlacement: {fileID: 0}
-  StatModifiers: []
+  GripType: 0
+  PlacementBias: 1
+  StatModifiers:
+  - StatType: 0
+    Value: 6.75
+  - StatType: 1
+    Value: 45
+  - StatType: 2
+    Value: 35
   ModuleSockets:
   - Joint: {fileID: 3011589763962558000}
     ModuleType: 6

@@ -71,7 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1780592083822285389}
-  - component: {fileID: 5265114493639098374}
+  - component: {fileID: 6288649363380279758}
   - component: {fileID: 4675911355106415921}
   - component: {fileID: 4074446317904396017}
   m_Layer: 0
@@ -102,7 +102,7 @@ Transform:
   - {fileID: 4443958113306879456}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5265114493639098374
+--- !u!114 &6288649363380279758
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -111,12 +111,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4566662083566850497}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 721a9fc41302ec444a2292313ea9653f, type: 3}
+  m_Script: {fileID: 11500000, guid: 4515f741569c30840888d8a2c110e8b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicModule
   BelongingType: 1
   TypeBias: 3
-  Rarity: 1
+  Rarity: 2
   ModuleType: 0
   ModuleJointSize: 0
   ModuleCost: 0
@@ -124,7 +124,19 @@ MonoBehaviour:
   HandPlacement: {fileID: 4443958113306879456}
   GripType: 3
   PlacementBias: 1
-  StatModifiers: []
+  StatModifiers:
+  - StatType: 0
+    Value: 2
+  - StatType: 1
+    Value: 45
+  - StatType: 2
+    Value: 35
+  - StatType: 3
+    Value: 1
+  - StatType: 4
+    Value: 7.5
+  - StatType: 5
+    Value: 30
   ModuleSockets:
   - Joint: {fileID: 7532403062886228539}
     ModuleType: 1
@@ -141,6 +153,9 @@ MonoBehaviour:
   - Joint: {fileID: 1635852123574847040}
     ModuleType: 7
     AcceptedJointSizes: 6
+  <ReloadBase>k__BackingField: {fileID: 11400000, guid: 896f2dacd42d69a498c91d18666b9057, type: 2}
+  HasGripMagazine: 0
+  ChamberPlacement: {fileID: 0}
 --- !u!33 &4675911355106415921
 MeshFilter:
   m_ObjectHideFlags: 0

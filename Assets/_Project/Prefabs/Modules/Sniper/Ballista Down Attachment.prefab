@@ -88,7 +88,11 @@ MonoBehaviour:
   HandPlacement: {fileID: 7323401004379083004}
   GripType: 3
   PlacementBias: 5
-  StatModifiers: []
+  StatModifiers:
+  - StatType: 1
+    Value: 100
+  - StatType: 2
+    Value: 50
   ModuleSockets: []
 --- !u!33 &4728011068857038912
 MeshFilter:

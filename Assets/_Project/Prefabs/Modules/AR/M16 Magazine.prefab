@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5821438606735383657
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8039232217659900575}
+  m_Layer: 0
+  m_Name: Placement
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8039232217659900575
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5821438606735383657}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.20912604, y: 0.29871625, z: -0.35658765, w: 0.86016285}
+  m_LocalPosition: {x: -0.25, y: -2.25, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5146357792277974302}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7935028318095379398
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5146357792277974302}
-  - component: {fileID: 2800279659301161765}
+  - component: {fileID: -4897591250148420532}
   - component: {fileID: 7447906142607889637}
   - component: {fileID: 5491359348382497915}
   m_Layer: 0
@@ -31,10 +62,11 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8039232217659900575}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2800279659301161765
+--- !u!114 &-4897591250148420532
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,14 +75,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 7935028318095379398}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 721a9fc41302ec444a2292313ea9653f, type: 3}
+  m_Script: {fileID: 11500000, guid: 2700f881050366b438cba1bc430757e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicModule
+  BelongingType: 0
+  TypeBias: 1
   Rarity: 1
   ModuleType: 4
   ModuleJointSize: 4
-  StatModifiers: []
+  ModuleCost: 0
+  HasHandPlacement: 1
+  HandPlacement: {fileID: 8039232217659900575}
+  GripType: 4
+  PlacementBias: 0
+  StatModifiers:
+  - StatType: 5
+    Value: 8
+  - StatType: 3
+    Value: 0.35
   ModuleSockets: []
+  ThumbPlacement: {fileID: 0}
 --- !u!33 &7447906142607889637
 MeshFilter:
   m_ObjectHideFlags: 0

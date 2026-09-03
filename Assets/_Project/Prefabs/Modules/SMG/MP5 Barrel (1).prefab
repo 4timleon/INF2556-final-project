@@ -59,7 +59,15 @@ MonoBehaviour:
   HandPlacement: {fileID: 7945652225758279148}
   GripType: 3
   PlacementBias: 2
-  StatModifiers: []
+  StatModifiers:
+  - StatType: 0
+    Value: 3.5
+  - StatType: 1
+    Value: 62.5
+  - StatType: 2
+    Value: 80
+  - StatType: 4
+    Value: 1.5
   ModuleSockets:
   - Joint: {fileID: 6570604149244184505}
     ModuleType: 6

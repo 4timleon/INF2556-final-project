@@ -122,7 +122,11 @@ MonoBehaviour:
   HandPlacement: {fileID: 5379734651367464}
   GripType: 0
   PlacementBias: 2
-  StatModifiers: []
+  StatModifiers:
+  - StatType: 0
+    Value: 6.5
+  - StatType: 4
+    Value: 2.5
   ModuleSockets:
   - Joint: {fileID: 2094145093815014174}
     ModuleType: 1
