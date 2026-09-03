@@ -7,7 +7,7 @@ public static class GameEventSystem {
 
     public static Action<Zombie> OnEnemyKilled;
     public static Action<bool> OnPlayerPreDeath;
-    public static Action OnPlayerDeath;
+    public static Action<float> OnPlayerDeath;
     public static Action OnWaveStarted;
     public static Action OnWaveEnded;
 

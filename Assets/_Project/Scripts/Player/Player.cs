@@ -45,6 +45,7 @@ public class Player : MonoBehaviour {
     [Header("Sound")]
     [SerializeField] private AudioSource lowHpAudioSource;
     [SerializeField] private AudioSource hitAudioSource;
+    [SerializeField] private AudioSource gameOverSoundSource;
 
     public bool IsIdling { get; private set; } = false;
     public float RotationMismatch { get; private set; } = 0f;
@@ -52,8 +53,6 @@ public class Player : MonoBehaviour {
 
     private Vector3 currentMovement;
     private float currentSpeed => walkSpeed * (GetIsSprinting() ? sprintMultiplier : 1f);
-
-    //private Weapon weapon;
 
     public bool IsInPreDeath { get; private set; } = false;
     public bool IsDead { get; private set; } = false;
@@ -72,10 +71,13 @@ public class Player : MonoBehaviour {
     //Health
     private Coroutine healCoroutine;
     private float nextDamageTime = 0f;
+    private float deathCounter;
 
     public static event Action<float> OnPreDeathCounter;
 
     private void Start() {
+        deathCounter = 0f;
+
         Cursor.visible = cursorVisible;
         Cursor.lockState = cursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
     }
@@ -89,12 +91,15 @@ public class Player : MonoBehaviour {
     }
 
     private void Update() {
-        HandleMovement();
+        if (!IsDead) {
+            HandleMovement();
+        }
+
         HandleFall();
     }
 
     private void LateUpdate() {
-        if (!isPaused) {
+        if (!isPaused && !IsDead) {
             HandleLook();
         }
     }
@@ -178,9 +183,7 @@ public class Player : MonoBehaviour {
 
         GameEventSystem.OnPlayerHealthChanged(currentHealth, maxHealth);
 
-        if (hitAudioSource.isPlaying) {
-            hitAudioSource.Stop();
-        }
+        if (hitAudioSource.isPlaying) hitAudioSource.Stop();
         SoundManager.Instance?.PlayHitSound(hitAudioSource);
 
         //Debug.Log("Health: " + currentHealth);
@@ -191,9 +194,8 @@ public class Player : MonoBehaviour {
         }
         healCoroutine = StartCoroutine(HealAfter());
 
-        if (currentHealth < 50f) {
+        if (currentHealth < 50f)
             SoundManager.Instance?.PlayLowHPSound(lowHpAudioSource);
-        }
 
         if (currentHealth <= 0) {
             if (revive) {
@@ -208,7 +210,7 @@ public class Player : MonoBehaviour {
     }
 
     public IEnumerator HealAfter() {
-        yield return new WaitForSeconds(healDelay);
+        yield return new WaitForSecondsRealtime(healDelay);
 
         LeanTween.cancel(gameObject);
         LeanTween.value(gameObject, currentHealth, maxHealth, healTillFull)
@@ -220,33 +222,53 @@ public class Player : MonoBehaviour {
                 if (currentHealth >= 50 && lowHpAudioSource.isPlaying) {
                     lowHpAudioSource.Stop();
                 }
-            });
+            })
+            .setIgnoreTimeScale(true);
     }
 
     private IEnumerator PreDeath() {
+        deathCounter++;
+
         GameEventSystem.OnPlayerPreDeath?.Invoke(true);
 
         //Sends the time in PreDeath once
         OnPreDeathCounter?.Invoke(preDeathTimer);
 
+        LeanTween.value(gameObject, Time.timeScale, 0.3f, 1f)
+            .setOnUpdate((float value) => {
+                Time.timeScale = value;
+            })
+            .setIgnoreTimeScale(true);
+
         //If Timer runs out the Player revives
-        yield return new WaitForSeconds(preDeathTimer);
+        yield return new WaitForSecondsRealtime(preDeathTimer);
 
         //Stand Up
         globalVolume.profile = globalVolumeProfile;
         revive = false;
         IsInPreDeath = false;
+        Time.timeScale = 1f;
 
         //Remove Revive Perk
     }
 
     private void Die() {
+        deathCounter++;
+
         if (healCoroutine != null && IsDead) {
             StopCoroutine(healCoroutine);
             healCoroutine = null;
         }
 
-        GameEventSystem.OnPlayerDeath?.Invoke();
+        if (lowHpAudioSource.isPlaying) lowHpAudioSource.Stop();
+        gameOverSoundSource.Play();
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        Time.timeScale = 0.3f;
+
+        GameEventSystem.OnPlayerDeath?.Invoke(deathCounter);
     }
 
     public (Vector3, Vector3) GetCameraDirection() {

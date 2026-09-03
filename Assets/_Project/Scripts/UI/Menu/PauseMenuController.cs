@@ -11,21 +11,28 @@ public class PauseMenuController : MonoBehaviour {
     [SerializeField] private GameObject pauseContainer;
     [SerializeField] private GameObject settingsPanel;
 
+    [Header("Sounds")]
+    [SerializeField] private AudioSource backgroundMusic;
+
     private bool isPaused;
+    private bool playerIsDead;
 
     //Event
     public static event Action<bool> OnGamePaused;
 
     private void Start() {
+        playerIsDead = false;
         Resume();
     }
 
     private void OnEnable() {
         playerInputHandler.OnCancelAction += PlayerInputHandler_OnCancelAction;
+        GameEventSystem.OnPlayerDeath += GameEventSystem_OnPlayerDeath;
     }
 
     private void OnDisable() {
         playerInputHandler.OnCancelAction -= PlayerInputHandler_OnCancelAction;
+        GameEventSystem.OnPlayerDeath -= GameEventSystem_OnPlayerDeath;
     }
 
     #region Pause Button Action
@@ -33,6 +40,10 @@ public class PauseMenuController : MonoBehaviour {
         menuManager.SetMenuState(Menus.PauseMenu);
 
         StopTime(true);
+
+        if (backgroundMusic.isPlaying) {
+            backgroundMusic.Pause();
+        }
 
         pauseContainer.SetActive(true);
         settingsPanel.SetActive(false);
@@ -42,6 +53,8 @@ public class PauseMenuController : MonoBehaviour {
         menuManager.SetMenuState(Menus.InGame);
 
         StopTime(false);
+
+        backgroundMusic.Play();
 
         pauseContainer.SetActive(false);
         settingsPanel.SetActive(false);
@@ -65,6 +78,8 @@ public class PauseMenuController : MonoBehaviour {
     }
 
     private void PlayerInputHandler_OnCancelAction() {
+        if (playerIsDead) return;
+
         if (menuManager.MenuState == Menus.PauseMenu
             || menuManager.MenuState == Menus.Settings
             || menuManager.MenuState == Menus.KeybindWindow
@@ -75,6 +90,10 @@ public class PauseMenuController : MonoBehaviour {
 
         if (isPaused) Resume();
         else Pause();
+    }
+
+    private void GameEventSystem_OnPlayerDeath(float deathCounter) {
+        playerIsDead = true;
     }
 
 }

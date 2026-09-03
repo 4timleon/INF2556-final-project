@@ -40,6 +40,23 @@ public class SoundManager : MonoBehaviour {
         InitializePool();
     }
 
+    private void OnEnable() {
+        GameEventSystem.OnPlayerDeath += GameEventSystem_OnPlayerDeath;
+    }
+
+    private void OnDisable() {
+        GameEventSystem.OnPlayerDeath -= GameEventSystem_OnPlayerDeath;
+    }
+
+    private void GameEventSystem_OnPlayerDeath(float deathCounter) {
+        LeanTween.cancel(gameObject);
+        LeanTween.value(gameObject, volume, 0f, 5f)
+            .setOnUpdate((float value) => {
+                volume = value;
+            })
+            .setIgnoreTimeScale(true);
+    }
+
     #region Sound Pool
     public SoundBuilder CreateSound() => new SoundBuilder(this);
 

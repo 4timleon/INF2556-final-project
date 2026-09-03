@@ -21,6 +21,9 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private PauseMenuController pauseMenuController;
     [SerializeField] private ControlsSettings controlsSettings;
 
+    [Header("Sounds")]
+    [SerializeField] private AudioSource mainMenuMusicSource;
+
     [Header("Scenes")]
     [SerializeField] private string _mainMenuScene;
     [SerializeField] private string _mainScene;
@@ -50,6 +53,7 @@ public class MenuManager : MonoBehaviour {
         if (!isPauseMenu) {
             mainMenuContainer.SetActive(true);
             MenuState = Menus.MainMenu;
+            mainMenuMusicSource.Play();
         }
 
         settingsMenuContainer.SetActive(false);

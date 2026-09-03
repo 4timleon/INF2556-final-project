@@ -25,6 +25,7 @@ public class PointsUI : MonoBehaviour {
     private readonly StringBuilder stringBuilder = new StringBuilder(16);
 
     private int points = 0;
+    public int Points => points;
 
     //Pool
     private IObjectPool<GameObject> textPool;

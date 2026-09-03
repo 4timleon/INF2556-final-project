@@ -59,7 +59,6 @@ public class Zombie : MonoBehaviour {
     private bool useFirstAttack = true;
     private int attackIndex = 0;
     private MovementState tempMovementState;
-    private float tempSpeed;
 
     //Attack Collision
     private Collider[] hitColliders = new Collider[10];
@@ -149,7 +148,7 @@ public class Zombie : MonoBehaviour {
             if (randomWait <= 0) {
                 SoundManager.Instance?.PlayZombieChaseSound(zombieAudioSource);
 
-                randomWait = Random.Range(2f, 5f);
+                randomWait = Random.Range(4f, 8f);
             }
         }
     }
@@ -378,7 +377,6 @@ public class Zombie : MonoBehaviour {
         StartAgent(state);
 
         tempMovementState = state;
-        tempSpeed = speed;
     }
 
     public void SetIsAttacking(bool state) {

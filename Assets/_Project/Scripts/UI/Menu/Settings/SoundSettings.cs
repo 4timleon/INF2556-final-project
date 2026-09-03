@@ -21,6 +21,13 @@ public class SoundSettings : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI musicText;
     [SerializeField] private TextMeshProUGUI soundEffectText;
 
+    [Header("Sound Icons")]
+    [SerializeField] private Image masterImage;
+    [SerializeField] private Image musicImage;
+    [SerializeField] private Image soundFXImage;
+    [SerializeField] private Sprite soundIcon;
+    [SerializeField] private Sprite muffledIcon;
+
     private void Start() {
         LoadSoundSettings(); //Load the values
     }
@@ -46,17 +53,28 @@ public class SoundSettings : MonoBehaviour {
 
     private void OnMasterChanged(float value) {
         SetSoundNumberText(masterText, value);
+        SetSoundSprite(masterImage, value);
         soundMixerManager.SetMasterVolume(value);
     }
 
     private void OnMusicChanged(float value) {
         SetSoundNumberText(musicText, value);
+        SetSoundSprite(musicImage, value);
         soundMixerManager.SetMusicVolume(value);
     }
 
     private void OnSoundEffectChanged(float value) {
         SetSoundNumberText(soundEffectText, value);
+        SetSoundSprite(soundFXImage, value);
         soundMixerManager.SetSoundFXVolume(value);
+    }
+
+    private void SetSoundSprite(Image image, float value) {
+        if (value <= 0.0001) {
+            image.sprite = muffledIcon;
+        } else {
+            image.sprite = soundIcon;
+        }
     }
 
     public void SetSoundNumberText(TextMeshProUGUI textMesh, float value) {
