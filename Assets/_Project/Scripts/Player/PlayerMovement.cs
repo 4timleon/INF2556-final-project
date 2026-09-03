@@ -1,49 +1,60 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using EditorAttributes;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-    private InputSystem_Actions inputActions;
+    [Title("Inputs:", 14)]
+    [SerializeField] private PlayerInputs playerInputs;
+
+    [Space]
+    [Title("Movement:", 14)]
+    [SerializeField] private float maxWalkSpeed = 10f;
+    [SerializeField] private float maxSprintSpeed = 20f;
+    [Space]
+    [SerializeField] private float groundAcceleration = 100f;
+    [SerializeField] private float groundFriction = 50f;
+    [SerializeField] private float airAcceleration = 20f;
+    [Space]
+    [SerializeField] private float leanMultiplier = 1f;
+
+    [Space]
+    [Title("Jumping:", 14)]
+    [SerializeField] private float jumpHeight = 4f;
+    [SerializeField] private float gravity = 20f;
+
+    [Space]
+    [Title("Camera:", 14)]
+    [SerializeField] private Transform cameraRigTransform;
+    [SerializeField] private Transform cameraTransform;
+    [SerializeField] private float sensitivity = 1f;
+
+    [Space]
+    [Title("Arms:", 14)]
+    [SerializeField] private Transform armsTransform;
+    [SerializeField] private float armPitchSwayAmount = 0.5f;
+    [SerializeField] private float armPitchReturnTime = 0.2f;
+    [SerializeField] private float maxArmPitchSway = 5f;
+    [Space]
+    [SerializeField] private float armYawSwayAmount = 0.5f;
+    [SerializeField] private float armYawReturnTime = 0.2f;
+    [SerializeField] private float maxArmYawSway = 10f;
+
+    [Space]
+    [Title("Animation:", 14)]
+    [SerializeField] private Animator animator;
+    [SerializeField] private string movementBlend;
+
     private CharacterController characterController;
-
-    [Header("Movement:")]
-    public float maxWalkSpeed = 10f;
-    public float maxSprintSpeed = 20f;
-
-    public float groundAcceleration = 100f;
-    public float groundFriction = 50f;
-    public float airAcceleration = 20f;
-
-    public float leanMultiplier = 1f;
-
-    [Header("Jumping:")]
-    public float jumpHeight = 4f;
-    public float gravity = 20f;
-
-    [Header("Camera:")]
-    public Transform cameraRigTransform;
-    public Transform cameraTransform;
-    public float sensitivity = 1f;
-
-    [Header("Arms:")]
-    public Transform armsTransform;
-    public float armPitchSwayAmount = 0.5f;
-    public float armPitchReturnTime = 0.2f;
-    public float maxArmPitchSway = 5f;
-    public float armYawSwayAmount = 0.5f;
-    public float armYawReturnTime = 0.2f;
-    public float maxArmYawSway = 10f;
 
     private float currentArmPitch = 0.0f;
     private float armPitchVelocity = 0.0f;
     private float currentArmYaw = 0.0f;
     private float armYawVelocity = 0.0f;
-
-    [Header("Animation:")]
-    public Animator animator;
-    public string movementBlend;
 
     private int isInStanceHash;
     private int isSprintingHash;
@@ -52,19 +63,16 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocity = Vector3.zero;
     private bool isSprinting;
 
+    private bool isAttacking;
+    private bool isSwitching;
+    private bool isReloading;
+
     private float yaw = 0.0f;
     private float pitch = 0.0f;
 
     private void Start()
     {
-        inputActions = GameControls.GetInputActions();
-
         characterController = GetComponent<CharacterController>();
-
-        inputActions.Player.Sprint.started += OnSprintStarted;
-        inputActions.Player.Sprint.canceled += OnSprintCanceled;
-
-        inputActions.Player.Jump.started += OnJump;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -74,18 +82,47 @@ public class PlayerMovement : MonoBehaviour
         isWalkingHash = Animator.StringToHash("isWalking");
     }
 
-    private void OnDisable()
+    void OnEnable()
     {
-        inputActions.Player.Sprint.started -= OnSprintStarted;
-        inputActions.Player.Sprint.canceled -= OnSprintCanceled;
-        inputActions.Player.Jump.started -= OnJump;
+        GameEventSystem.OnPlayerAttackStarted += Event_AttackStarted;
+        GameEventSystem.OnPlayerAttackEnded += Event_AttackEnded;
+
+        GameEventSystem.OnPlayerReloadStarted += Event_ReloadStarted;
+        GameEventSystem.OnPlayerReloadEnded += Event_ReloadEnded;
+
+        GameEventSystem.OnPlayerWeaponDraw += Event_WeaponDraw;
+        GameEventSystem.OnPlayerWeaponHolster += Event_WeaponHolster;
+
+        GameEventSystem.OnPlayerSprintStarted += Event_SprintStarted;
+        GameEventSystem.OnPlayerSprintEnded += Event_SprintCanceled;
+
+        GameEventSystem.OnPlayerJump += Event_Jump;
     }
 
-    private void OnSprintStarted(UnityEngine.InputSystem.InputAction.CallbackContext context) => isSprinting = true;
+    void OnDisable()
+    {
+        GameEventSystem.OnPlayerReloadStarted -= Event_ReloadStarted;
+        GameEventSystem.OnPlayerReloadEnded -= Event_ReloadEnded;
 
-    private void OnSprintCanceled(UnityEngine.InputSystem.InputAction.CallbackContext context) => isSprinting = false;
+        GameEventSystem.OnPlayerWeaponDraw -= Event_WeaponDraw;
+        GameEventSystem.OnPlayerWeaponHolster -= Event_WeaponHolster;
 
-    private void OnJump(UnityEngine.InputSystem.InputAction.CallbackContext context)
+        GameEventSystem.OnPlayerSprintStarted -= Event_SprintStarted;
+        GameEventSystem.OnPlayerSprintEnded -= Event_SprintCanceled;
+
+        GameEventSystem.OnPlayerJump -= Event_Jump;
+    }
+
+    void Event_AttackStarted() => isAttacking = true;
+    void Event_AttackEnded() => isAttacking = false;
+    void Event_WeaponHolster() => isSwitching = true;
+    void Event_WeaponDraw(WeaponController controller) => isSwitching = false;
+    void Event_ReloadEnded() => isReloading = false;
+    void Event_ReloadStarted() => isReloading = true;
+    void Event_SprintStarted() => isSprinting = CanSprint();
+    void Event_SprintCanceled() => isSprinting = false;
+
+    void Event_Jump()
     {
         if (characterController.isGrounded)
         {
@@ -93,7 +130,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Update()
+    void Update()
     {
         BodyMovement();
         LeanMovement();
@@ -101,12 +138,14 @@ public class PlayerMovement : MonoBehaviour
         AnimationMovement();
     }
 
-    private void BodyMovement()
+    void BodyMovement()
     {
-        Vector2 input = inputActions.Player.Move.ReadValue<Vector2>();
+        Vector2 input = playerInputs.MoveInput;
         Vector3 targetDirection = new Vector3(input.x, 0, input.y);
 
         targetDirection = transform.TransformDirection(targetDirection).normalized;
+
+        if (!CanSprint() && isSprinting) isSprinting = false;
 
         float currentMaxSpeed = GetSpeed();
 
@@ -151,7 +190,7 @@ public class PlayerMovement : MonoBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    private void AnimationMovement()
+    void AnimationMovement()
     {
         Vector3 planarVelocity = new Vector3(characterController.velocity.x, 0f, characterController.velocity.z);
 
@@ -162,9 +201,9 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat(movementBlend, animationSpeed, 0.1f, Time.deltaTime);
     }
 
-    private void LeanMovement()
+    void LeanMovement()
     {
-        if (inputActions.Player.Move.ReadValue<Vector2>().x == 0)
+        if (playerInputs.MoveInput.x == 0)
         {
             if (Mathf.Round(cameraRigTransform.localRotation.eulerAngles.z) == 0)
             {
@@ -172,17 +211,17 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        float input = inputActions.Player.Move.ReadValue<Vector2>().x;
+        float input = playerInputs.MoveInput.x;
         float lean = input * (leanMultiplier * (-1f));
 
-        LeanTween.cancelAll(cameraRigTransform.gameObject);
+        LeanTween.cancel(cameraRigTransform.gameObject);
         LeanTween.rotateLocal(cameraRigTransform.gameObject, new Vector3(0, 0, lean), .15f);
     }
 
-    private void CameraMovement()
+    void CameraMovement()
     {
-        float mouseX = inputActions.Player.Look.ReadValue<Vector2>().x * (sensitivity / 10);
-        float mouseY = inputActions.Player.Look.ReadValue<Vector2>().y * (sensitivity / 10);
+        float mouseX = playerInputs.LookInput.x * (sensitivity / 10);
+        float mouseY = playerInputs.LookInput.y * (sensitivity / 10);
 
         yaw += mouseX;
         pitch -= mouseY;
@@ -208,8 +247,6 @@ public class PlayerMovement : MonoBehaviour
         armsTransform.localRotation = yawRotation * pitchRotation;
     }
 
-    private float GetSpeed() => isSprinting ? maxSprintSpeed : maxWalkSpeed;
-    public bool IsWalking() => inputActions.Player.Move.ReadValue<Vector2>() != Vector2.zero;
-    public bool IsSprinting() => isSprinting;
-    public bool IsStanding() => !IsWalking() && !IsSprinting();
+    bool CanSprint() => !isReloading && !isSwitching && !isAttacking;
+    float GetSpeed() => isSprinting ? maxSprintSpeed : maxWalkSpeed;
 }
