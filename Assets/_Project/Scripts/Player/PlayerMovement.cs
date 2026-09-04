@@ -10,7 +10,6 @@ public class PlayerMovement : MonoBehaviour
 {
     [Title("Inputs:", 14)]
     [SerializeField] private PlayerInputs playerInputs;
-
     [Space]
     [Title("Movement:", 14)]
     [SerializeField] private float maxWalkSpeed = 10f;
@@ -21,18 +20,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float airAcceleration = 20f;
     [Space]
     [SerializeField] private float leanMultiplier = 1f;
-
     [Space]
     [Title("Jumping:", 14)]
     [SerializeField] private float jumpHeight = 4f;
     [SerializeField] private float gravity = 20f;
-
     [Space]
     [Title("Camera:", 14)]
     [SerializeField] private Transform cameraRigTransform;
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private float sensitivity = 1f;
-
     [Space]
     [Title("Arms:", 14)]
     [SerializeField] private Transform armsTransform;
@@ -43,11 +39,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float armYawSwayAmount = 0.5f;
     [SerializeField] private float armYawReturnTime = 0.2f;
     [SerializeField] private float maxArmYawSway = 10f;
-
     [Space]
     [Title("Animation:", 14)]
     [SerializeField] private Animator animator;
     [SerializeField] private string movementBlend;
+    [Space]
+    [Title("Recoil:", 14)]
+    [SerializeField] private float recoilReturnSpeed = 15f;
 
     private CharacterController characterController;
 
@@ -69,6 +67,9 @@ public class PlayerMovement : MonoBehaviour
 
     private float yaw = 0.0f;
     private float pitch = 0.0f;
+
+    private float recoilPitch = 0f;
+    private float recoilYaw = 0f;
 
     private void Start()
     {
@@ -97,6 +98,8 @@ public class PlayerMovement : MonoBehaviour
         GameEventSystem.OnPlayerSprintEnded += Event_SprintCanceled;
 
         GameEventSystem.OnPlayerJump += Event_Jump;
+
+        GameEventSystem.OnPlayerWeaponRecoil += Event_WeaponRecoil;
     }
 
     void OnDisable()
@@ -111,6 +114,8 @@ public class PlayerMovement : MonoBehaviour
         GameEventSystem.OnPlayerSprintEnded -= Event_SprintCanceled;
 
         GameEventSystem.OnPlayerJump -= Event_Jump;
+
+        GameEventSystem.OnPlayerWeaponRecoil -= Event_WeaponRecoil;
     }
 
     void Event_AttackStarted() => isAttacking = true;
@@ -128,6 +133,12 @@ public class PlayerMovement : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(2f * jumpHeight * gravity);
         }
+    }
+
+    private void Event_WeaponRecoil(float pitchKick, float yawKick)
+    {
+        recoilPitch += pitchKick;
+        recoilYaw += yawKick;
     }
 
     void Update()
@@ -225,6 +236,13 @@ public class PlayerMovement : MonoBehaviour
 
         yaw += mouseX;
         pitch -= mouseY;
+
+        yaw += recoilYaw;
+        pitch -= recoilPitch;
+
+        recoilPitch = Mathf.Lerp(recoilPitch, 0f, recoilReturnSpeed * Time.deltaTime);
+        recoilYaw = Mathf.Lerp(recoilYaw, 0f, recoilReturnSpeed * Time.deltaTime);
+
         pitch = Mathf.Clamp(pitch, -90f, 90f);
 
         transform.localRotation = Quaternion.AngleAxis(yaw, Vector3.up);

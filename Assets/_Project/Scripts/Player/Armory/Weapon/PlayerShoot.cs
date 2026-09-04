@@ -124,7 +124,8 @@ public class PlayerShoot : MonoBehaviour
             return;
         }
 
-        recoilController.ApplyRecoil(recoil, recoil);
+        recoilController.ApplyRigRecoil(recoil, recoil);
+        recoilController.ApplyCameraRecoil(recoil, recoil);
         weaponController.CurrentAmmo--;
 
         for (int i = 0; i < bulletAmount; i++)
@@ -155,9 +156,18 @@ public class PlayerShoot : MonoBehaviour
     //todo: durch pooling ersetzen (hatte kein bock)
     IEnumerator MoveTracer(Vector3 targetPoint)
     {
-        Vector3 muzzle = weaponController.GetModule(ModuleType.Muzzle).transform.position;
+        Vector3 tracerStart;
 
-        GameObject tracer = Instantiate(tracerPrefab, muzzle, Quaternion.identity);
+        if (weaponController.TryGetModule(ModuleType.Muzzle, out var muzzleBase))
+        {
+            tracerStart = muzzleBase.transform.position;
+        }
+        else
+        {
+            tracerStart = weaponController.GetModule(ModuleType.Barrel).transform.position;
+        }
+
+        GameObject tracer = Instantiate(tracerPrefab, tracerStart, Quaternion.identity);
 
         while (tracer != null && Vector3.Distance(tracer.transform.position, targetPoint) > 0.1f)
         {

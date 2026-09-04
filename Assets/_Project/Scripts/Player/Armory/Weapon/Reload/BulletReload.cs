@@ -70,7 +70,7 @@ public class BulletReload : ReloadBase
             controller.TargetHandler.SetHandTarget(chamberPlacement, timing.timeInsertShell, () => stepFinished = true);
             yield return new WaitUntil(() => stepFinished);
 
-            controller.RecoilController.ApplyRecoil(0, 0.35f);
+            controller.RecoilController.ApplyRigRecoil(0, 0.35f);
             if (bulletInstance != null) bulletInstance.SetActive(false);
             if (timing.lockDelay > 0f) yield return new WaitForSeconds(timing.lockDelay);
 

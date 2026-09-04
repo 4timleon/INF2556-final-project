@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using EZCameraShake;
+using Random = UnityEngine.Random;
 
 public class RecoilController : MonoBehaviour
 {
@@ -13,12 +14,20 @@ public class RecoilController : MonoBehaviour
     private float targetPosWeight;
     private float targetRotWeight;
 
-    public void ApplyRecoil(float positionStrength, float rotationStrength)
+    public void ApplyRigRecoil(float positionStrength, float rotationStrength)
     {
         targetPosWeight = Mathf.Clamp01(targetPosWeight + positionStrength);
         targetRotWeight = Mathf.Clamp01(targetRotWeight + rotationStrength);
 
         CameraShaker.Instance.ShakeOnce(rotationStrength, rotationStrength, .1f, .5f);
+    }
+
+    public void ApplyCameraRecoil(float positionStrength, float rotationStrength)
+    {
+        float recoilPitch = rotationStrength / 5f;
+        float recoilYaw = Random.Range(-1f, 1f) * (rotationStrength / 5f);
+
+        GameEventSystem.OnPlayerWeaponRecoil?.Invoke(recoilPitch, recoilYaw);
     }
 
     void Update()

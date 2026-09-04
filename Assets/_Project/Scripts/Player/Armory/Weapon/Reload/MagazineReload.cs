@@ -42,7 +42,7 @@ public class MagazineReload : ReloadBase
         yield return new WaitUntil(() => stepFinished);
 
         stepFinished = false;
-        controller.RecoilController.ApplyRecoil(0, 0.5f);
+        controller.RecoilController.ApplyRigRecoil(0, 0.5f);
         LeanTween.moveLocal(magTransform.gameObject, magEjectedPos, timing.timeToEjectMag)
             .setEase(LeanTweenType.easeInQuad)
             .setOnComplete(() => stepFinished = true);
@@ -56,7 +56,7 @@ public class MagazineReload : ReloadBase
             .setOnComplete(() =>
             {
                 stepFinished = true;
-                controller.RecoilController.ApplyRecoil(0.25f, 1f);
+                controller.RecoilController.ApplyRigRecoil(0.25f, 1f);
             });
         yield return new WaitUntil(() => stepFinished);
 
