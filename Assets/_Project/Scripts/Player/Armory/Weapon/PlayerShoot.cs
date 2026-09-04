@@ -1,18 +1,22 @@
 using System;
 using System.Collections;
+using EditorAttributes;
 using UnityEngine;
 using WeaponNamespace;
 using Random = UnityEngine.Random;
 
 public class PlayerShoot : MonoBehaviour
 {
+    [Title("References:", 14)]
     [SerializeField] private RecoilController recoilController;
     [SerializeField] private PlayerInputs playerInputs;
     [SerializeField] private Camera playerCamera;
+    [Space]
+    [Title("Raycast:", 14)]
     [SerializeField] private LayerMask hitMask;
     [SerializeField] private float maxRange = 100f;
-
-    [Header("Visuals")]
+    [Space]
+    [Title("Tracer", 14)]
     [SerializeField] private GameObject tracerPrefab;
     [SerializeField] private float tracerSpeed = 250f;
 

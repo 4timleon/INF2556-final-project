@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using EditorAttributes;
 using UnityEngine;
 
 public class PlayerArmory : MonoBehaviour
 {
+    [Title("Weapon Socket:", 14)]
+    [SerializeField] private Transform rightHandSocket;
+    [Space]
+    [Title("Animation:", 14)]
     [SerializeField] private Animator animator;
     [SerializeField] private string holsterAnimationName;
     [SerializeField] private string movementAnimationName;
-    [SerializeField] private Transform rightHandSocket;
     [SerializeField] private int rightLayer;
 
     private WeaponController currentWeaponController;
