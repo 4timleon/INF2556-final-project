@@ -26,6 +26,26 @@ public class WeaponController : MonoBehaviour
         CalculateLeftHandTarget();
     }
 
+    public ModuleBase GetModule(ModuleType moduleType)
+    {
+        if (WeaponData.Modules.TryGetValue(moduleType, out var value))
+        {
+            return value;
+        }
+
+        return null;
+    }
+
+    public float GetStat(StatType statType)
+    {
+        if (WeaponData.Stats.TryGetValue(statType, out float value))
+        {
+            return value;
+        }
+
+        return 1;
+    }
+
     void CalculateLeftHandTarget()
     {
         Dictionary<ModuleType, ModuleBase> modules = WeaponData.Modules;
