@@ -36,6 +36,16 @@ public class WeaponController : MonoBehaviour
         return null;
     }
 
+    public bool TryGetModule(ModuleType moduleType, out ModuleBase moduleBase)
+    {
+        if (WeaponData.Modules.TryGetValue(moduleType, out moduleBase))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public float GetStat(StatType statType)
     {
         if (WeaponData.Stats.TryGetValue(statType, out float value))
