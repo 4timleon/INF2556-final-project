@@ -10,6 +10,8 @@ public class PlayerInputs : MonoBehaviour
     public Vector2 LookInput => inputActions.Player.Look.ReadValue<Vector2>();
     public Vector2 ScrollInput => inputActions.Player.MouseWheel.ReadValue<Vector2>();
 
+    public bool IsMoving => MoveInput.magnitude >= 0.1f;
+
     void Awake()
     {
         inputActions = GameControls.GetInputActions();
