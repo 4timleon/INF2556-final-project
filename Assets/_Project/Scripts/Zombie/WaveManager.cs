@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WaveManager : MonoBehaviour {
+public class WaveManager : MonoBehaviour
+{
 
     [SerializeField] private Player playerReference;
 
@@ -28,24 +29,38 @@ public class WaveManager : MonoBehaviour {
     //Zombies of the current Wave
     private List<Zombie> currentZombies = new();
 
-    private void Start() {
+    private void Start()
+    {
         StartNextWave();
     }
 
+    private void OnEnable()
+    {
+        GameEventSystem.OnEnemyKilled += RemoveZombieFromList;
+    }
+
+    private void OnDisable()
+    {
+        GameEventSystem.OnEnemyKilled -= RemoveZombieFromList;
+    }
+
     //Can be used to Start the next Wave after all Zombies got killed
-    public void StartNextWave() {
+    public void StartNextWave()
+    {
         GameEventSystem.OnWaveStarted?.Invoke();
         currentWave++;
         StartCoroutine(SpawnWaveRoutine());
     }
 
-    private IEnumerator SpawnWaveRoutine() {
+    private IEnumerator SpawnWaveRoutine()
+    {
         //isSpawning = true;
         int zombiesToSpawn = Mathf.RoundToInt(baseZombieCount * Mathf.Pow(zombiesMultiplier, currentWave - 1));
 
         Debug.Log($"Wave {currentWave} started, Zombies spawned: {zombiesToSpawn}");
 
-        for (int i = 0; i < zombiesToSpawn; i++) {
+        for (int i = 0; i < zombiesToSpawn; i++)
+        {
             Zombie.MovementState zombieType = GetRandomZombieSpeed(currentWave);
             SpawnZombie(zombieType);
 
@@ -55,7 +70,8 @@ public class WaveManager : MonoBehaviour {
 
     //Calculates the weights of the Zombies depending on the current Wave
     //The more Waves the more faster and less slower Zombies appear
-    private Zombie.MovementState GetRandomZombieSpeed(int wave) {
+    private Zombie.MovementState GetRandomZombieSpeed(int wave)
+    {
         float slowWeight = Mathf.Max(0f, slowWeightCurve.Evaluate(wave));
         float fastWeight = Mathf.Max(0f, fastWeightCurve.Evaluate(wave));
         float runWeight = Mathf.Max(0f, runWeightCurve.Evaluate(wave));
@@ -64,16 +80,22 @@ public class WaveManager : MonoBehaviour {
 
         float randomValue = Random.Range(0f, totalWeight);
 
-        if (randomValue < slowWeight) {
+        if (randomValue < slowWeight)
+        {
             return Zombie.MovementState.Walk;
-        } else if (randomValue < slowWeight + fastWeight) {
+        }
+        else if (randomValue < slowWeight + fastWeight)
+        {
             return Zombie.MovementState.Fast;
-        } else {
+        }
+        else
+        {
             return Zombie.MovementState.Run;
         }
     }
 
-    private void SpawnZombie(Zombie.MovementState type) {
+    private void SpawnZombie(Zombie.MovementState type)
+    {
         SpawnPoint spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
         Vector3 randomSpawnPoint = spawnPoint.GetRandomSpawnPosition();
 
@@ -83,28 +105,24 @@ public class WaveManager : MonoBehaviour {
         zombie.SetTarget(playerReference);
         zombie.SetSpeed(type);
 
-        if (spawnPoint.OutOfGround) {
+        if (spawnPoint.OutOfGround)
+        {
             zombie.StartOutOfGroundAnimation();
-        } else {
+        }
+        else
+        {
             zombie.StartMovement();
         }
     }
 
-    public void RemoveZombieFromList(Zombie zombie) {
+    public void RemoveZombieFromList(Zombie zombie)
+    {
         currentZombies.Remove(zombie);
 
-        if (currentZombies.Count == 0) {
+        if (currentZombies.Count == 0)
+        {
             GameEventSystem.OnWaveEnded?.Invoke();
             StartNextWave();
         }
-    }
-
-
-    private void OnEnable() {
-        GameEventSystem.OnEnemyKilled += RemoveZombieFromList;
-    }
-
-    private void OnDisable() {
-        GameEventSystem.OnEnemyKilled -= RemoveZombieFromList;
     }
 }

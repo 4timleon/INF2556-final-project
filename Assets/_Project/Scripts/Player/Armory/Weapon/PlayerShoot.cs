@@ -24,6 +24,7 @@ public class PlayerShoot : MonoBehaviour
 
     private float roundsPerSecond;
     private int bulletAmount;
+    private float damage;
     private float recoil;
     private float accuracy;
     private float spread;
@@ -56,6 +57,7 @@ public class PlayerShoot : MonoBehaviour
 
         roundsPerSecond = weaponController.GetStat(StatType.Firerate);
         bulletAmount = (int)weaponController.GetStat(StatType.BulletAmount);
+        damage = weaponController.GetStat(StatType.Damage);
         recoil = 1f - (weaponController.GetStat(StatType.Handling) / 100f);
         accuracy = 1f - (weaponController.GetStat(StatType.Accuracy) / 100f);
         spread = accuracy / 2f;
@@ -146,7 +148,11 @@ public class PlayerShoot : MonoBehaviour
             if (Physics.Raycast(playerCamera.transform.position, shootDirection, out RaycastHit hit, maxRange, hitMask))
             {
                 targetPoint = hit.point;
-                //todo: hier zomvbie hit zeug rein
+
+                if (hit.collider.TryGetComponent<BodyPart>(out var bodyPart))
+                {
+                    bodyPart.TakeDamage(damage);
+                }
             }
             else
             {

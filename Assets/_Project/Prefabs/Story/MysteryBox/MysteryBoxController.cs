@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using WeaponNamespace;
 
 public class MysteryBoxController : MonoBehaviour
 {
@@ -22,13 +23,13 @@ public class MysteryBoxController : MonoBehaviour
     private List<WeaponWeightEntry> weaponWeights = new List<WeaponWeightEntry>
     {
         new WeaponWeightEntry { type = WeaponType.Shotgun, weight = 10f, hasModules = true },
-        new WeaponWeightEntry { type = WeaponType.SMG, weight = 10f, hasModules = true },
-        new WeaponWeightEntry { type = WeaponType.Sturmgewehr, weight = 10f, hasModules = true },
-        new WeaponWeightEntry { type = WeaponType.Sniper, weight = 10f, hasModules = true },
-        new WeaponWeightEntry { type = WeaponType.Pistole, weight = 10f, hasModules = true },
-        new WeaponWeightEntry { type = WeaponType.RPG, weight = 25f, hasModules = false },
-        new WeaponWeightEntry { type = WeaponType.Granate, weight = 25f, hasModules = false },
-        new WeaponWeightEntry { type = WeaponType.ChiliCheeseBurgerBait, weight = 25f, hasModules = false },
+        new WeaponWeightEntry { type = WeaponType.SubmachineGun, weight = 10f, hasModules = true },
+        new WeaponWeightEntry { type = WeaponType.AssaultRifle, weight = 10f, hasModules = true },
+        new WeaponWeightEntry { type = WeaponType.SniperRifle, weight = 10f, hasModules = true },
+        new WeaponWeightEntry { type = WeaponType.Pistol, weight = 10f, hasModules = true },
+        // new WeaponWeightEntry { type = WeaponType.RPG, weight = 25f, hasModules = false },
+        // new WeaponWeightEntry { type = WeaponType.Granate, weight = 25f, hasModules = false },
+        // new WeaponWeightEntry { type = WeaponType.ChiliCheeseBurgerBait, weight = 25f, hasModules = false },
     };
 
     [Header("Module Rarity Weights")]

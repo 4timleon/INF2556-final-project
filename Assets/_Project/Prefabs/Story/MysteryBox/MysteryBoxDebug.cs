@@ -1,4 +1,5 @@
 using UnityEngine;
+using WeaponNamespace;
 
 public class MysteryBoxTestDebug : MonoBehaviour
 {
