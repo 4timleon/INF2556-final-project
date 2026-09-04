@@ -27,13 +27,14 @@ public class SoundManager : MonoBehaviour {
     [SerializeField] private int maxSoundInstances = 30;
 
     private void Awake() {
-        if (Instance == null) {
-            Instance = this;
+        if (Instance != null && Instance != this) {
+            Destroy(gameObject);
+            return;
         }
 
-        //volume = PlayerPrefs.GetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, 1f);
-
+        Instance = this;
         DontDestroyOnLoad(gameObject);
+        //volume = PlayerPrefs.GetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, 1f);
     }
 
     private void Start() {

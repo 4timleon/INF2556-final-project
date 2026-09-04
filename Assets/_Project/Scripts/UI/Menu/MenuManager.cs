@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -114,6 +113,8 @@ public class MenuManager : MonoBehaviour {
 
     #region Main Menu
     public void Play() {
+        StartGameSoundEffect.Instance.PlaySound();
+
         _ = LoadScene(_mainScene, true);
     }
 
@@ -163,6 +164,8 @@ public class MenuManager : MonoBehaviour {
 
     public void MainMenu() {
         Time.timeScale = 1f;
+        StartGameSoundEffect.Instance.SetAudioListener(true);
+
         _ = LoadScene(_mainMenuScene, false);
     }
 

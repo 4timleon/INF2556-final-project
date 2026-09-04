@@ -1,10 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MenuEventSystemHandler : MonoBehaviour {
@@ -25,6 +23,7 @@ public class MenuEventSystemHandler : MonoBehaviour {
 
     [Header("Sounds")]
     [SerializeField] protected UnityEvent SoundEvent;
+    [SerializeField] protected UnityEvent SoundClickEvent;
 
     protected Dictionary<Selectable, Vector3> _scales = new Dictionary<Selectable, Vector3>();
 

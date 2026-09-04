@@ -1,12 +1,11 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour {
 
-    //private PlayerRegistry registry;
+    private const string MOUSE_SENS_KEY = "MouseSensitivity";
 
     [Header("References")]
     [SerializeField] private CharacterController characterController;
@@ -73,9 +72,12 @@ public class Player : MonoBehaviour {
     private float nextDamageTime = 0f;
     private float deathCounter;
 
+    //Event
     public static event Action<float> OnPreDeathCounter;
 
     private void Start() {
+        mouseSensitivity = PlayerPrefs.GetFloat(MOUSE_SENS_KEY, 0.1f);
+
         deathCounter = 0f;
 
         Cursor.visible = cursorVisible;
@@ -84,10 +86,12 @@ public class Player : MonoBehaviour {
 
     private void OnEnable() {
         PauseMenuController.OnGamePaused += PauseMenuController_OnGamePaused;
+        ControlsSettings.OnMouseSensitivityChanged += SetMouseSensitivity;
     }
 
     private void OnDisable() {
         PauseMenuController.OnGamePaused -= PauseMenuController_OnGamePaused;
+        ControlsSettings.OnMouseSensitivityChanged -= SetMouseSensitivity;
     }
 
     private void Update() {
@@ -301,11 +305,16 @@ public class Player : MonoBehaviour {
     private void PauseMenuController_OnGamePaused(bool state) {
         isPaused = state;
 
+        //Pause the heartbeat Sound
         if (lowHpAudioSource.isPlaying && state) {
             lowHpAudioSource.Pause();
         } else if (currentHealth < 50f && !state) {
             lowHpAudioSource.Play();
         }
+    }
+
+    public void SetMouseSensitivity(float value) {
+        mouseSensitivity = value;
     }
 
     public PlayerInputHandler GetPlayerInputHandler() {

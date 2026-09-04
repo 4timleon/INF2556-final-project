@@ -92,9 +92,6 @@ public class LoadingManager : MonoBehaviour {
     private async Awaitable RunTransitionAsync(string sceneName, int buildIndex, bool useOverlay, CancellationToken ct) {
         _isTransitioning = true;
 
-        //Deactivate the Camera Audio Listener
-        Camera.main.GetComponent<AudioListener>().enabled = false;
-
         //EventSystem
         EventSystem.current.enabled = false;
 
