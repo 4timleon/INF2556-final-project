@@ -48,13 +48,13 @@ public class PlayerShoot : MonoBehaviour
     {
         this.weaponController = weaponController;
 
+        nextAttackTimestamp = Time.time;
+
         roundsPerSecond = weaponController.GetStat(StatType.Firerate);
         bulletAmount = (int)weaponController.GetStat(StatType.BulletAmount);
         recoil = 1f - (weaponController.GetStat(StatType.Handling) / 100f);
         accuracy = 1f - (weaponController.GetStat(StatType.Accuracy) / 100f);
         spread = accuracy / 2f;
-
-        Debug.Log(bulletAmount);
 
         isAuto = IsAutoFire();
     }
