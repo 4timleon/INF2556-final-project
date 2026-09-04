@@ -35,13 +35,11 @@ public class GripController : MonoBehaviour
 
     void Event_ReloadStarted()
     {
-        if (weaponController.CurrentAmmo >= weaponController.WeaponData.Stats[StatType.MagazineSize]) return;
+        if (weaponController.CurrentAmmo >= weaponController.GetStat(StatType.MagazineSize)) return;
 
-        var modules = weaponController.WeaponData.Modules;
-
-        if (((BodyModule)modules[ModuleType.Body]).HasMagazine)
+        if (((BodyModule)weaponController.GetModule(ModuleType.Body)).HasMagazine)
         {
-            ChangeGrip(modules[ModuleType.Magazine].GripType, 0.12f);
+            ChangeGrip(weaponController.GetModule(ModuleType.Magazine).GripType, 0.12f);
         }
         else
         {

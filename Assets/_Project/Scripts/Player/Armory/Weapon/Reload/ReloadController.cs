@@ -62,7 +62,7 @@ public class ReloadController : MonoBehaviour
     {
         if (weaponController == null || weaponController.IsReloading || weaponController.ReloadBase == null) return;
 
-        if (weaponController.CurrentAmmo >= weaponController.WeaponData.Stats[StatType.MagazineSize])
+        if (weaponController.CurrentAmmo >= weaponController.GetStat(StatType.MagazineSize))
         {
             return;
         }
