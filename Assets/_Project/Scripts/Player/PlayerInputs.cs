@@ -1,0 +1,56 @@
+using System;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerInputs : MonoBehaviour
+{
+    private InputSystem_Actions inputActions;
+
+    public Vector2 MoveInput => inputActions.Player.Move.ReadValue<Vector2>();
+    public Vector2 LookInput => inputActions.Player.Look.ReadValue<Vector2>();
+    public Vector2 ScrollInput => inputActions.Player.MouseWheel.ReadValue<Vector2>();
+
+    public bool IsMoving => MoveInput.magnitude >= 0.1f;
+
+    void Awake()
+    {
+        inputActions = GameControls.GetInputActions();
+
+    }
+
+    void OnEnable()
+    {
+        inputActions.Player.Sprint.started += Input_SprintStarted;
+        inputActions.Player.Sprint.canceled += Input_SprintCanceled;
+
+        inputActions.Player.Attack.started += Input_AttackStarted;
+        inputActions.Player.Attack.canceled += Input_AttackCanceled;
+
+        inputActions.Player.Reload.started += Input_ReloadStarted;
+
+        inputActions.Player.Jump.started += Input_Jump;
+
+        inputActions.Player.MouseWheel.performed += Input_WeaponScroll;
+    }
+
+    void OnDisable()
+    {
+        inputActions.Player.Sprint.started -= Input_SprintStarted;
+        inputActions.Player.Sprint.canceled -= Input_SprintCanceled;
+
+        inputActions.Player.Attack.started -= Input_AttackStarted;
+        inputActions.Player.Attack.canceled -= Input_AttackCanceled;
+
+        inputActions.Player.Jump.started -= Input_Jump;
+
+        inputActions.Player.MouseWheel.performed -= Input_WeaponScroll;
+    }
+
+    private void Input_WeaponScroll(InputAction.CallbackContext context) => GameEventSystem.OnPlayerWeaponScroll?.Invoke(context.ReadValue<Vector2>());
+    private void Input_Jump(InputAction.CallbackContext context) => GameEventSystem.OnPlayerJump?.Invoke();
+    private void Input_SprintStarted(InputAction.CallbackContext context) => GameEventSystem.OnPlayerSprintStarted?.Invoke();
+    private void Input_SprintCanceled(InputAction.CallbackContext context) => GameEventSystem.OnPlayerSprintEnded?.Invoke();
+    private void Input_AttackStarted(InputAction.CallbackContext context) => GameEventSystem.OnPlayerAttackStarted?.Invoke();
+    private void Input_AttackCanceled(InputAction.CallbackContext context) => GameEventSystem.OnPlayerAttackEnded?.Invoke();
+    private void Input_ReloadStarted(InputAction.CallbackContext context) => GameEventSystem.OnPlayerReloadStarted?.Invoke();
+}

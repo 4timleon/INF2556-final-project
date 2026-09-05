@@ -3,8 +3,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class Player : MonoBehaviour {
-
+public class Player : MonoBehaviour
+{
     private const string MOUSE_SENS_KEY = "MouseSensitivity";
 
     [Header("References")]
@@ -33,7 +33,6 @@ public class Player : MonoBehaviour {
     [SerializeField] private float rotationThreshold = 30;
 
     [Header("Health")]
-    [SerializeField] private float currentHealth = 100;
     [SerializeField] private float maxHealth = 100;
     [SerializeField] private float preDeathTimer = 10f;
     [SerializeField] private bool revive = true; //Test: Set to false
@@ -46,9 +45,14 @@ public class Player : MonoBehaviour {
     [SerializeField] private AudioSource hitAudioSource;
     [SerializeField] private AudioSource gameOverSoundSource;
 
+    [Header("Weapons")]
+    [SerializeField] private WeaponBuilder weaponBuilder;
+    [SerializeField] private PlayerArmory playerArmory;
+
     public bool IsIdling { get; private set; } = false;
     public float RotationMismatch { get; private set; } = 0f;
     public bool IsRotatingToTarget { get; private set; } = false;
+    public float Health { get; private set; } = 100f;
 
     private Vector3 currentMovement;
     private float currentSpeed => walkSpeed * (GetIsSprinting() ? sprintMultiplier : 1f);
@@ -75,40 +79,53 @@ public class Player : MonoBehaviour {
     //Event
     public static event Action<float> OnPreDeathCounter;
 
-    private void Start() {
+    private void Start()
+    {
         mouseSensitivity = PlayerPrefs.GetFloat(MOUSE_SENS_KEY, 0.1f);
 
         deathCounter = 0f;
 
         Cursor.visible = cursorVisible;
         Cursor.lockState = cursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
+
+        Invoke("GiveFirstWeapon", 1f);
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         PauseMenuController.OnGamePaused += PauseMenuController_OnGamePaused;
         ControlsSettings.OnMouseSensitivityChanged += SetMouseSensitivity;
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         PauseMenuController.OnGamePaused -= PauseMenuController_OnGamePaused;
         ControlsSettings.OnMouseSensitivityChanged -= SetMouseSensitivity;
     }
 
-    private void Update() {
-        if (!IsDead) {
+    // testing
+
+
+    private void Update()
+    {
+        if (!IsDead)
+        {
             HandleMovement();
         }
 
         HandleFall();
     }
 
-    private void LateUpdate() {
-        if (!isPaused && !IsDead) {
+    private void LateUpdate()
+    {
+        if (!isPaused && !IsDead)
+        {
             HandleLook();
         }
     }
 
-    private void HandleMovement() {
+    private void HandleMovement()
+    {
         (Vector3 cameraRight, Vector3 cameraForward) = GetCameraDirection();
 
         Vector3 inputDirection = cameraRight * playerInputHandler.MovementInput.x +
@@ -120,16 +137,21 @@ public class Player : MonoBehaviour {
         characterController.Move(currentMovement * Time.deltaTime);
     }
 
-    private void HandleFall() {
-        if (characterController.isGrounded) {
+    private void HandleFall()
+    {
+        if (characterController.isGrounded)
+        {
             currentMovement.y = -0.5f;
-        } else {
+        }
+        else
+        {
             currentMovement.y += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
         }
     }
 
     #region Rotation
-    private void HandleLook() {
+    private void HandleLook()
+    {
         cameraRotation.x += playerInputHandler.LookInput.x * mouseSensitivity;
         cameraRotation.y = Mathf.Clamp(cameraRotation.y - playerInputHandler.LookInput.y * mouseSensitivity, -upDownLookRange, upDownLookRange);
 
@@ -138,9 +160,12 @@ public class Player : MonoBehaviour {
         IsIdling = playerInputHandler.MovementInput == Vector2.zero;
 
         //Rotate if not idle
-        if (!IsIdling) {
+        if (!IsIdling)
+        {
             RotatePlayerToTarget();
-        } else if (Mathf.Abs(RotationMismatch) > rotationThreshold || rotatingToTargetTimer > 0) {//If rotation mismatch not within threshold or rotate to Target Timer is true then rotate
+        }
+        else if (Mathf.Abs(RotationMismatch) > rotationThreshold || rotatingToTargetTimer > 0)
+        {//If rotation mismatch not within threshold or rotate to Target Timer is true then rotate
             UpdateIdleRotation(rotationThreshold);
         }
 
@@ -153,46 +178,57 @@ public class Player : MonoBehaviour {
         RotationMismatch = sign * Vector3.Angle(transform.forward, cameraForwardProjectedXZ);
     }
 
-    private void UpdateIdleRotation(float rotationThreshold) {
+    private void UpdateIdleRotation(float rotationThreshold)
+    {
         //Start new rotation direction
-        if (Mathf.Abs(RotationMismatch) > rotationThreshold) {
+        if (Mathf.Abs(RotationMismatch) > rotationThreshold)
+        {
             rotatingToTargetTimer = rotateToTargetTime;
             isRotatingClockwise = RotationMismatch > rotationThreshold;
         }
         rotatingToTargetTimer -= Time.deltaTime;
 
         if (isRotatingClockwise && RotationMismatch > 0f ||
-            !isRotatingClockwise && RotationMismatch < 0f) {
+            !isRotatingClockwise && RotationMismatch < 0f)
+        {
             RotatePlayerToTarget();
         }
     }
 
-    private void RotatePlayerToTarget() {
+    private void RotatePlayerToTarget()
+    {
         Quaternion targetRotationX = Quaternion.Euler(0f, playerTargetRotation.x, 0f);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotationX, playerModelRotationSpeed * Time.deltaTime);
     }
     #endregion
 
-    public void TakeDamage(float value) {
+    private void GiveFirstWeapon()
+    {
+        playerArmory.AddWeapon(weaponBuilder.BuildWeapon());
+    }
+
+    public void TakeDamage(float value)
+    {
         if (IsInPreDeath || IsDead) return;
 
         // Check if still in invincibility frames
         if (Time.time < nextDamageTime) return;
 
-        currentHealth -= value;
-        currentHealth = Mathf.Max(currentHealth, 0);
+        Health -= value;
+        Health = Mathf.Max(Health, 0);
 
         // Set next damage time
         nextDamageTime = Time.time + invincibilityFrameDuration;
 
-        GameEventSystem.OnPlayerHealthChanged(currentHealth, maxHealth);
+        GameEventSystem.OnPlayerHealthChanged(Health, maxHealth);
 
         if (hitAudioSource.isPlaying) hitAudioSource.Stop();
         SoundManager.Instance?.PlayHitSound(hitAudioSource);
 
         //Debug.Log("Health: " + currentHealth);
 
-        if (healCoroutine != null) {
+        if (healCoroutine != null)
+        {
             StopCoroutine(healCoroutine);
             healCoroutine = null;
         }
@@ -201,36 +237,44 @@ public class Player : MonoBehaviour {
         if (currentHealth < 50f)
             SoundManager.Instance?.PlayLowHPSound(lowHpAudioSource);
 
-        if (currentHealth <= 0) {
-            if (revive) {
+        if (currentHealth <= 0)
+        {
+            if (revive)
+            {
                 IsInPreDeath = true;
                 globalVolume.profile = monochromeVolumeProfile;
                 StartCoroutine(PreDeath());
-            } else {
+            }
+            else
+            {
                 IsDead = true;
                 Die();
             }
         }
     }
 
-    public IEnumerator HealAfter() {
+    public IEnumerator HealAfter()
+    {
         yield return new WaitForSecondsRealtime(healDelay);
 
         LeanTween.cancel(gameObject);
-        LeanTween.value(gameObject, currentHealth, maxHealth, healTillFull)
-            .setOnUpdate((float value) => {
-                currentHealth = value;
+        LeanTween.value(gameObject, Health, maxHealth, healTillFull)
+            .setOnUpdate((float value) =>
+            {
+                Health = value;
 
-                GameEventSystem.OnPlayerHealthChanged(currentHealth, maxHealth);
+                GameEventSystem.OnPlayerHealthChanged(Health, maxHealth);
 
-                if (currentHealth >= 50 && lowHpAudioSource.isPlaying) {
+                if (Health >= 50 && lowHpAudioSource.isPlaying)
+                {
                     lowHpAudioSource.Stop();
                 }
             })
             .setIgnoreTimeScale(true);
     }
 
-    private IEnumerator PreDeath() {
+    private IEnumerator PreDeath()
+    {
         deathCounter++;
 
         GameEventSystem.OnPlayerPreDeath?.Invoke(true);
@@ -239,7 +283,8 @@ public class Player : MonoBehaviour {
         OnPreDeathCounter?.Invoke(preDeathTimer);
 
         LeanTween.value(gameObject, Time.timeScale, 0.3f, 1f)
-            .setOnUpdate((float value) => {
+            .setOnUpdate((float value) =>
+            {
                 Time.timeScale = value;
             })
             .setIgnoreTimeScale(true);
@@ -256,10 +301,12 @@ public class Player : MonoBehaviour {
         //Remove Revive Perk
     }
 
-    private void Die() {
+    private void Die()
+    {
         deathCounter++;
 
-        if (healCoroutine != null && IsDead) {
+        if (healCoroutine != null && IsDead)
+        {
             StopCoroutine(healCoroutine);
             healCoroutine = null;
         }
@@ -275,7 +322,8 @@ public class Player : MonoBehaviour {
         GameEventSystem.OnPlayerDeath?.Invoke(deathCounter);
     }
 
-    public (Vector3, Vector3) GetCameraDirection() {
+    public (Vector3, Vector3) GetCameraDirection()
+    {
         Vector3 cameraForward = mainCamera.transform.forward;
         Vector3 cameraRight = mainCamera.transform.right;
         cameraForward.y = 0f;
@@ -286,8 +334,10 @@ public class Player : MonoBehaviour {
         return (cameraRight, cameraForward);
     }
 
-    public bool GetIsSprinting() {
-        if (!playerInputHandler.SprintTriggered) {
+    public bool GetIsSprinting()
+    {
+        if (!playerInputHandler.SprintTriggered)
+        {
             return false;
         }
 
@@ -295,29 +345,37 @@ public class Player : MonoBehaviour {
         Vector3 inputDirection = cameraRight * playerInputHandler.MovementInput.x +
                                  cameraForward * playerInputHandler.MovementInput.y;
 
-        if (inputDirection.sqrMagnitude <= 0.0001f) {
+        if (inputDirection.sqrMagnitude <= 0.0001f)
+        {
             return false;
         }
 
         return Vector3.Dot(inputDirection.normalized, cameraForward) > 0f;
     }
 
-    private void PauseMenuController_OnGamePaused(bool state) {
+    private void PauseMenuController_OnGamePaused(bool state)
+    {
         isPaused = state;
 
         //Pause the heartbeat Sound
-        if (lowHpAudioSource.isPlaying && state) {
+        if (lowHpAudioSource.isPlaying && state)
+        {
             lowHpAudioSource.Pause();
-        } else if (currentHealth < 50f && !state) {
+        }
+        else if (currentHealth < 50f && !state)
+        {
             lowHpAudioSource.Play();
         }
     }
 
-    public void SetMouseSensitivity(float value) {
+    public void SetMouseSensitivity(float value)
+    {
         mouseSensitivity = value;
     }
 
-    public PlayerInputHandler GetPlayerInputHandler() {
+    public PlayerInputHandler GetPlayerInputHandler()
+    {
         return playerInputHandler;
     }
+
 }

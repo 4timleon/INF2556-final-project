@@ -6,8 +6,10 @@ using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
-public class Zombie : MonoBehaviour {
-    public enum MovementState {
+public class Zombie : MonoBehaviour
+{
+    public enum MovementState
+    {
         Idle,
         Walk,
         Fast,
@@ -85,28 +87,34 @@ public class Zombie : MonoBehaviour {
     //Sound Cooldown;
     private float randomWait;
 
-    private void Awake() {
+    private void Awake()
+    {
         jumpAreaID = NavMesh.GetAreaFromName("Jump");
         zombieAnimations = GetComponent<ZombieAnimations>();
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         System.Array.Clear(hitColliders, 0, hitColliders.Length);
     }
 
-    private void Start() {
+    private void Start()
+    {
         foreach (var joint in joints) joint.isKinematic = true;
 
         randomWait = Random.Range(2f, 5f);
     }
 
-    private void Update() {
+    private void Update()
+    {
         //UpdateMovementState();
         HandleOffMeshLinkAnimation();
 
         //Give Players time at the start
-        if (initial && !initialWaitFinished) {
-            if (!initialWaitStarted) {
+        if (initial && !initialWaitFinished)
+        {
+            if (!initialWaitStarted)
+            {
                 initialWaitStarted = true;
                 StartCoroutine(InitialWait());
             }
@@ -117,25 +125,34 @@ public class Zombie : MonoBehaviour {
             return;
         }
 
-        if (!player.IsInPreDeath && !player.IsDead && !IsDead && !startOutOfGround) {
+        if (!player.IsInPreDeath && !player.IsDead && !IsDead && !startOutOfGround)
+        {
             CheckPlayer();
 
-            if (isAttacking) {
+            if (isAttacking)
+            {
                 SlowDownMovementOnAttack();
-            } else {
+            }
+            else
+            {
                 ResetMovementAfterAttack();
             }
-        } else {
+        }
+        else
+        {
             StopAgent();
         }
 
-        if (Keyboard.current.digit1Key.wasPressedThisFrame) {
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
+        {
             TakeDamage(100f);
         }
 
         //Damage Zombie if head is detached
-        if (noHead && !IsDead) {
-            if (Time.time >= nextDamageTaken) {
+        if (noHead && !IsDead)
+        {
+            if (Time.time >= nextDamageTaken)
+            {
                 TakeDamage(5f);
                 nextDamageTaken = Time.time + damageCooldown;
                 //Debug.Log("Damage Taken! HP left: " + health);
@@ -143,9 +160,11 @@ public class Zombie : MonoBehaviour {
         }
 
         //Random Zombie Soundsd
-        if (!noHead && !IsDead && !isAttacking) {
+        if (!noHead && !IsDead && !isAttacking)
+        {
             randomWait -= Time.deltaTime;
-            if (randomWait <= 0) {
+            if (randomWait <= 0)
+            {
                 SoundManager.Instance?.PlayZombieChaseSound(zombieAudioSource);
 
                 randomWait = Random.Range(4f, 8f);
@@ -155,9 +174,11 @@ public class Zombie : MonoBehaviour {
 
     #region Movement
 
-    private void HandleOffMeshLinkAnimation() {
+    private void HandleOffMeshLinkAnimation()
+    {
         bool isOnLink = agent.isOnOffMeshLink;
-        if (isOnLink && !wasOnOffMeshLink) {
+        if (isOnLink && !wasOnOffMeshLink)
+        {
             OffMeshLinkData link = agent.currentOffMeshLinkData;
 
             StopAllCoroutines();
@@ -167,21 +188,26 @@ public class Zombie : MonoBehaviour {
         wasOnOffMeshLink = isOnLink;
     }
 
-    private IEnumerator DoOffMeshLink(OffMeshLinkData link) {
+    private IEnumerator DoOffMeshLink(OffMeshLinkData link)
+    {
         var dir = (link.endPos - link.startPos).normalized;
         dir.y = 0;
         transform.rotation = Quaternion.LookRotation(dir);
 
-        if (ShouldJumpOnLink(link) && link.endPos.y > transform.position.y) {
+        if (ShouldJumpOnLink(link) && link.endPos.y > transform.position.y)
+        {
             zombieAnimations.SetJumpUpTrigger();
-        } else {
+        }
+        else
+        {
             zombieAnimations.SetJumpDownTrigger();
         }
 
         var duration = 0.6f;
         var time = 0f;
 
-        while (time < duration) {
+        while (time < duration)
+        {
             time += Time.deltaTime;
 
             float t = Mathf.Clamp01(time / duration);
@@ -195,8 +221,10 @@ public class Zombie : MonoBehaviour {
         agent.CompleteOffMeshLink();
     }
 
-    private bool ShouldJumpOnLink(OffMeshLinkData link) {
-        if (link.owner is NavMeshLink navMeshLink) {
+    private bool ShouldJumpOnLink(OffMeshLinkData link)
+    {
+        if (link.owner is NavMeshLink navMeshLink)
+        {
             return navMeshLink.area == jumpAreaID;
         }
 
@@ -204,19 +232,24 @@ public class Zombie : MonoBehaviour {
     }
 
     //Check if Player is in attack range. If not then move
-    private void CheckPlayer() {
+    private void CheckPlayer()
+    {
         //Set Animations
         float sqrDistance = (player.transform.position - transform.position).sqrMagnitude;
-        if (sqrDistance <= attackRange * attackRange && !pauseMovement) {
+        if (sqrDistance <= attackRange * attackRange && !pauseMovement)
+        {
             //Stop and Attack
             StopAgent();
 
-            if (Time.time >= nextAttackTime && !isAttacking) {
+            if (Time.time >= nextAttackTime && !isAttacking)
+            {
                 Attack();
 
                 nextAttackTime = Time.time + attackCooldown;
             }
-        } else {
+        }
+        else
+        {
             //Set Target
             StartAgent(CurrentMovementState);
             isAttacking = false;
@@ -226,14 +259,16 @@ public class Zombie : MonoBehaviour {
         }
     }
 
-    private void SlowDownMovementOnAttack() {
+    private void SlowDownMovementOnAttack()
+    {
         CurrentMovementState = MovementState.Walk;
         speed = slowSpeed;
 
         zombieAnimations.SetTemporaryWalk(0);
     }
 
-    public void ResetMovementAfterAttack() {
+    public void ResetMovementAfterAttack()
+    {
         StartAgent(tempMovementState);
 
         zombieAnimations.SetMovementBack();
@@ -241,13 +276,17 @@ public class Zombie : MonoBehaviour {
     #endregion
 
     //Starts Attacking the Player when in range
-    private void Attack() {
+    private void Attack()
+    {
         isAttacking = true;
 
-        if (useFirstAttack) {
+        if (useFirstAttack)
+        {
             zombieAnimations.SetAttackIndex(attackIndex);
             zombieAnimations.SetAttackTrigger();
-        } else {
+        }
+        else
+        {
             zombieAnimations.SetAttackIndex(attackIndex);
             zombieAnimations.SetAttackTrigger();
         }
@@ -256,21 +295,26 @@ public class Zombie : MonoBehaviour {
         useFirstAttack = !useFirstAttack;
     }
 
-    public void PlayAttackSound() {
+    public void PlayAttackSound()
+    {
         //Play Sound
-        if (zombieAudioSource.isPlaying) {
+        if (zombieAudioSource.isPlaying)
+        {
             zombieAudioSource.Stop();
         }
         SoundManager.Instance?.PlayZombieAttackSound(zombieAudioSource);
     }
 
-    public void DealDamage() {
+    public void DealDamage()
+    {
         int hitCount = Physics.OverlapSphereNonAlloc(centerTransform.position, armAttackRange, hitColliders, playerLayer);
 
-        for (int i = 0; i < hitCount; i++) {
+        for (int i = 0; i < hitCount; i++)
+        {
             Collider hit = hitColliders[i];
 
-            if (hit.TryGetComponent(out Player player)) {
+            if (hit.TryGetComponent(out Player player))
+            {
                 player.TakeDamage(damage);
                 return;
             }
@@ -283,24 +327,28 @@ public class Zombie : MonoBehaviour {
     } */
 
     //Zombie Takes Damage by given value
-    public void TakeDamage(float value) {
+    public void TakeDamage(float value)
+    {
         if (IsDead) return;
 
         health -= value;
         health = Mathf.Max(health, 0);
 
-        if (zombieAudioSource.isPlaying) {
+        if (zombieAudioSource.isPlaying)
+        {
             zombieAudioSource.Stop();
         }
         SoundManager.Instance.PlayZombieHitSound(zombieAudioSource);
 
-        if (health <= 0f) {
+        if (health <= 0f)
+        {
             Die();
         }
     }
 
     //Starts one of 3 Death Animations and activates Ragdoll
-    public void Die() {
+    public void Die()
+    {
         if (IsDead) return;
         IsDead = true;
 
@@ -318,7 +366,8 @@ public class Zombie : MonoBehaviour {
     }
 
     //Start OutOfGround Animation
-    public void StartOutOfGroundAnimation() {
+    public void StartOutOfGroundAnimation()
+    {
         StopAgent();
         StopMovement(true);
         startOutOfGround = true;
@@ -326,31 +375,36 @@ public class Zombie : MonoBehaviour {
     }
 
     #region Animation Event
-    public void ContinueMovement() {
+    public void ContinueMovement()
+    {
         StartAgent(CurrentMovementState);
         StopMovement(false);
         startOutOfGround = false;
     }
     #endregion
 
-    public void StartMovement() {
+    public void StartMovement()
+    {
         startOutOfGround = false;
         zombieAnimations.SetOutOfGroundBool(false);
     }
 
     //Stops the NavMesh Agent
-    public void StopAgent() {
+    public void StopAgent()
+    {
         agent.isStopped = true;
         speed = 0;
     }
 
     //Starts the NavMeshAgent and sets the speed
-    public void StartAgent(MovementState state) {
+    public void StartAgent(MovementState state)
+    {
         CurrentMovementState = state;
 
         agent.isStopped = false;
 
-        switch (state) {
+        switch (state)
+        {
             case MovementState.Walk:
                 speed = slowSpeed;
                 break;
@@ -363,15 +417,18 @@ public class Zombie : MonoBehaviour {
         }
     }
 
-    public void StopMovement(bool state) {
+    public void StopMovement(bool state)
+    {
         pauseMovement = state;
     }
 
-    public void SetTarget(Player player) {
+    public void SetTarget(Player player)
+    {
         this.player = player;
     }
 
-    public void SetSpeed(MovementState state) {
+    public void SetSpeed(MovementState state)
+    {
         initial = false;
 
         StartAgent(state);
@@ -379,24 +436,28 @@ public class Zombie : MonoBehaviour {
         tempMovementState = state;
     }
 
-    public void SetIsAttacking(bool state) {
+    public void SetIsAttacking(bool state)
+    {
         isAttacking = state;
     }
 
-    public void SetNoHead() {
+    public void SetNoHead()
+    {
         noHead = true;
         zombieAudioSource.Stop();
     }
 
     //Wait a few seconds before chasing the player and playing the walk animation
-    private IEnumerator InitialWait() {
+    private IEnumerator InitialWait()
+    {
         yield return new WaitForSeconds(initialIdleWaitTime);
         initialWaitFinished = true;
         CurrentMovementState = MovementState.Walk;
         speed = slowSpeed;
     }
 
-    private IEnumerator StartRagdoll(float seconds) {
+    private IEnumerator StartRagdoll(float seconds)
+    {
         yield return new WaitForSeconds(seconds);
 
         zombieAnimations.SetAnimator(false);

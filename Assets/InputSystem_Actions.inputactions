@@ -73,7 +73,7 @@
                     "name": "Next",
                     "type": "Button",
                     "id": "b7230bb6-fc9b-4f52-8b25-f5e19cb2c2ba",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -95,6 +95,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "cbe99a11-2c2d-40b0-bdcf-541e96421d6e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Mouse Wheel",
+                    "type": "Value",
+                    "id": "1815078a-f754-47c2-9762-b9ccb0084106",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -485,34 +503,34 @@
                 },
                 {
                     "name": "",
-                    "id": "8b21a39c-75aa-40c7-9b87-85cafe043c45",
-                    "path": "<Mouse>/rightButton",
+                    "id": "88a390a4-2eb1-447c-b7eb-9cfd5c2bb647",
+                    "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Aim",
+                    "groups": "",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "f48a7c69-1709-49ea-a9b8-01e9c395cab3",
-                    "path": "<DualShockGamepad>/leftShoulder",
+                    "id": "184e2a46-c8d2-446c-a88c-b343f6a91fa6",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Aim",
+                    "groups": "",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "193f52dc-dca9-4de3-840f-6843191d7d97",
-                    "path": "<XInputController>/leftShoulder",
+                    "id": "9a0e168d-415f-4ed1-ae1c-5d48657d9f72",
+                    "path": "<Mouse>/scroll",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Aim",
+                    "groups": "",
+                    "action": "Mouse Wheel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
