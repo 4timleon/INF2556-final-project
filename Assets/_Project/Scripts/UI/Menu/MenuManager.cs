@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public enum Menus {
+public enum Menus
+{
     InGame,
     MainMenu,
     Settings,
@@ -13,10 +14,11 @@ public enum Menus {
     Quit
 }
 
-public class MenuManager : MonoBehaviour {
+public class MenuManager : MonoBehaviour
+{
 
     [Header("References")]
-    [SerializeField] private PlayerInputHandler playerInputHandler;
+    [SerializeField] private GeneralInputHandler playerInputHandler;
     [SerializeField] private PauseMenuController pauseMenuController;
     [SerializeField] private ControlsSettings controlsSettings;
 
@@ -48,8 +50,10 @@ public class MenuManager : MonoBehaviour {
 
     private MerchantUI merchantUI;
 
-    private void Start() {
-        if (!isPauseMenu) {
+    private void Start()
+    {
+        if (!isPauseMenu)
+        {
             mainMenuContainer.SetActive(true);
             MenuState = Menus.MainMenu;
             mainMenuMusicSource.Play();
@@ -61,28 +65,35 @@ public class MenuManager : MonoBehaviour {
         soundContainer.SetActive(false);
         quitConfirmationContainer.SetActive(false);
 
-        if (merchantMenuContainer != null) {
+        if (merchantMenuContainer != null)
+        {
             merchantMenuContainer.SetActive(false);
             merchantUI = merchantMenuContainer.GetComponent<MerchantUI>();
         }
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         playerInputHandler.OnCancelAction += PlayerInputHandler_OnCancelAction;
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         playerInputHandler.OnCancelAction -= PlayerInputHandler_OnCancelAction;
     }
 
-    private void Update() {
-        if (Keyboard.current.digit5Key.wasPressedThisFrame) {
+    private void Update()
+    {
+        if (Keyboard.current.digit5Key.wasPressedThisFrame)
+        {
             OpenMerchantMenu();
         }
     }
 
-    private void PlayerInputHandler_OnCancelAction() {
-        switch (MenuState) {
+    private void PlayerInputHandler_OnCancelAction()
+    {
+        switch (MenuState)
+        {
             case Menus.InGame:
                 break;
             case Menus.MainMenu:
@@ -112,17 +123,22 @@ public class MenuManager : MonoBehaviour {
     }
 
     #region Main Menu
-    public void Play() {
+    public void Play()
+    {
         StartGameSoundEffect.Instance.PlaySound();
 
         _ = LoadScene(_mainScene, true);
     }
 
-    public void OpenSettings() {
-        if (isPauseMenu) {
+    public void OpenSettings()
+    {
+        if (isPauseMenu)
+        {
             pauseMenuContainer.SetActive(false);
             MenuState = Menus.Settings;
-        } else {
+        }
+        else
+        {
             mainMenuContainer.SetActive(false);
             MenuState = Menus.Settings;
         }
@@ -133,15 +149,20 @@ public class MenuManager : MonoBehaviour {
         soundContainer.SetActive(false);
     }
 
-    public void OpenCredits() {
+    public void OpenCredits()
+    {
 
     }
 
-    public void SettingsBack() {
-        if (isPauseMenu) {
+    public void SettingsBack()
+    {
+        if (isPauseMenu)
+        {
             pauseMenuContainer.SetActive(true);
             MenuState = Menus.PauseMenu;
-        } else {
+        }
+        else
+        {
             mainMenuContainer.SetActive(true);
             MenuState = Menus.MainMenu;
         }
@@ -149,42 +170,51 @@ public class MenuManager : MonoBehaviour {
         settingsMenuContainer.SetActive(false);
     }
 
-    public void OpenMerchantMenu() {
+    public void OpenMerchantMenu()
+    {
         pauseMenuController.StopTime(true);
         merchantMenuContainer.gameObject.SetActive(true);
         MenuState = Menus.MerchantMenu;
     }
 
-    public void CloseMerchantMenu() {
+    public void CloseMerchantMenu()
+    {
         pauseMenuController.StopTime(false);
         merchantMenuContainer.gameObject.SetActive(false);
         merchantUI.SetCardPositionAndRotation();
         MenuState = Menus.InGame;
     }
 
-    public void MainMenu() {
+    public void MainMenu()
+    {
         Time.timeScale = 1f;
         StartGameSoundEffect.Instance.SetAudioListener(true);
 
         _ = LoadScene(_mainMenuScene, false);
     }
 
-    public void ShowQuitConfirmation() {
+    public void ShowQuitConfirmation()
+    {
         MenuState = Menus.QuitConfirmation;
         quitConfirmationContainer.SetActive(true);
     }
 
-    public void HideQuitConfirmation() {
-        if (isPauseMenu) {
+    public void HideQuitConfirmation()
+    {
+        if (isPauseMenu)
+        {
             MenuState = Menus.PauseMenu;
-        } else {
+        }
+        else
+        {
             MenuState = Menus.MainMenu;
         }
 
         quitConfirmationContainer.SetActive(false);
     }
 
-    public void QuitGame() {
+    public void QuitGame()
+    {
         MenuState = Menus.Quit;
 
         Application.Quit();
@@ -196,30 +226,35 @@ public class MenuManager : MonoBehaviour {
     #endregion
 
     #region Settings
-    public void GraphicsOpen() {
+    public void GraphicsOpen()
+    {
         graphicsContainer.SetActive(true);
         controlsContainer.SetActive(false);
         soundContainer.SetActive(false);
     }
 
-    public void ControlsOpen() {
+    public void ControlsOpen()
+    {
         graphicsContainer.SetActive(false);
         controlsContainer.SetActive(true);
         soundContainer.SetActive(false);
     }
 
-    public void SoundOpen() {
+    public void SoundOpen()
+    {
         graphicsContainer.SetActive(false);
         controlsContainer.SetActive(false);
         soundContainer.SetActive(true);
     }
     #endregion
 
-    public async Awaitable LoadScene(string sceneName, bool useOverlay) {
+    public async Awaitable LoadScene(string sceneName, bool useOverlay)
+    {
         await LoadingManager.Instance.TransitionToSceneAsync(sceneName, useOverlay);
     }
 
-    public void SetMenuState(Menus state) {
+    public void SetMenuState(Menus state)
+    {
         MenuState = state;
     }
 }

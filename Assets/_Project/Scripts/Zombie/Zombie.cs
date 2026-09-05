@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -53,6 +54,7 @@ public class Zombie : MonoBehaviour
 
     private Player player;
     private ZombieAnimations zombieAnimations;
+    private DetachController detachController;
 
     //Attack Variables
     private bool isAttacking = false;
@@ -91,6 +93,7 @@ public class Zombie : MonoBehaviour
     {
         jumpAreaID = NavMesh.GetAreaFromName("Jump");
         zombieAnimations = GetComponent<ZombieAnimations>();
+        detachController = GetComponent<DetachController>();
     }
 
     private void OnDisable()
@@ -146,6 +149,7 @@ public class Zombie : MonoBehaviour
         if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             TakeDamage(100f);
+            Debug.Log("Died!");
         }
 
         //Damage Zombie if head is detached
@@ -234,6 +238,12 @@ public class Zombie : MonoBehaviour
     //Check if Player is in attack range. If not then move
     private void CheckPlayer()
     {
+        // An interrupted attack may not fire AttackFinished, so do not keep the attack state forever.
+        if (isAttacking && Time.time >= nextAttackTime)
+        {
+            isAttacking = false;
+        }
+
         //Set Animations
         float sqrDistance = (player.transform.position - transform.position).sqrMagnitude;
         if (sqrDistance <= attackRange * attackRange && !pauseMovement)
@@ -279,6 +289,8 @@ public class Zombie : MonoBehaviour
     private void Attack()
     {
         isAttacking = true;
+
+        transform.forward = (player.transform.position - transform.position).normalized;
 
         if (useFirstAttack)
         {
@@ -334,11 +346,11 @@ public class Zombie : MonoBehaviour
         health -= value;
         health = Mathf.Max(health, 0);
 
-        if (zombieAudioSource.isPlaying)
-        {
-            zombieAudioSource.Stop();
-        }
-        SoundManager.Instance.PlayZombieHitSound(zombieAudioSource);
+        /*  if (zombieAudioSource.isPlaying)
+         {
+             zombieAudioSource.Stop();
+         }
+         SoundManager.Instance.PlayZombieHitSound(zombieAudioSource); */
 
         if (health <= 0f)
         {
@@ -363,6 +375,11 @@ public class Zombie : MonoBehaviour
         GameEventSystem.OnEnemyKilled?.Invoke(this);
 
         StartCoroutine(StartRagdoll(1f));
+    }
+
+    public void Dissolve()
+    {
+        detachController.DissolveZombie();
     }
 
     //Start OutOfGround Animation

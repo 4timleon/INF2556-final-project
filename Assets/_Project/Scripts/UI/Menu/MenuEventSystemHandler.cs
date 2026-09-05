@@ -5,7 +5,8 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MenuEventSystemHandler : MonoBehaviour {
+public class MenuEventSystemHandler : MonoBehaviour
+{
     [Header("References")]
     [SerializeField] protected List<Selectable> selectables = new List<Selectable>();
     [SerializeField] protected Selectable _firstSelected;
@@ -14,7 +15,7 @@ public class MenuEventSystemHandler : MonoBehaviour {
     [SerializeField] private SoundSettings soundSettings;
 
     [Header("Controls")]
-    [SerializeField] protected PlayerInputHandler playerInputHandler;
+    [SerializeField] protected GeneralInputHandler playerInputHandler;
 
     [Header("Animation")]
     [SerializeField] protected float _selectedAnimationScale = 1.1f;
@@ -32,16 +33,20 @@ public class MenuEventSystemHandler : MonoBehaviour {
     protected LTDescr _scaleUpTween;
     protected LTDescr _scaleDownTween;
 
-    private void Awake() {
-        foreach (var selectable in selectables) {
+    private void Awake()
+    {
+        foreach (var selectable in selectables)
+        {
             AddSelectionListeners(selectable);
             _scales.Add(selectable, selectable.transform.localScale);
         }
     }
 
-    public virtual void OnEnable() {
+    public virtual void OnEnable()
+    {
         //Ensure all selectables are reset back to original size
-        for (int i = 0; i < selectables.Count; i++) {
+        for (int i = 0; i < selectables.Count; i++)
+        {
             selectables[i].transform.localScale = _scales[selectables[i]];
         }
 
@@ -50,31 +55,37 @@ public class MenuEventSystemHandler : MonoBehaviour {
         playerInputHandler.OnNavigateAction += PlayerInputHandler_OnNavigate;
     }
 
-    protected virtual IEnumerator SelectAfterDelay() {
+    protected virtual IEnumerator SelectAfterDelay()
+    {
         yield return null;
         EventSystem.current.SetSelectedGameObject(_firstSelected.gameObject);
     }
 
-    public virtual void OnDisable() {
+    public virtual void OnDisable()
+    {
         playerInputHandler.OnNavigateAction -= PlayerInputHandler_OnNavigate;
     }
 
-    protected virtual void AddSelectionListeners(Selectable selectable) {
+    protected virtual void AddSelectionListeners(Selectable selectable)
+    {
         //Add Listener
         EventTrigger trigger = selectable.gameObject.GetComponent<EventTrigger>();
-        if (trigger == null) {
+        if (trigger == null)
+        {
             trigger = selectable.gameObject.AddComponent<EventTrigger>();
         }
 
         //Remove old listeners
-        for (int i = trigger.triggers.Count - 1; i >= 0; i--) {
+        for (int i = trigger.triggers.Count - 1; i >= 0; i--)
+        {
             EventTrigger.Entry entry = trigger.triggers[i];
             if (entry.eventID == EventTriggerType.Select ||
                 entry.eventID == EventTriggerType.Deselect ||
                 entry.eventID == EventTriggerType.PointerEnter ||
                 entry.eventID == EventTriggerType.PointerExit ||
                 entry.eventID == EventTriggerType.PointerClick ||
-                entry.eventID == EventTriggerType.PointerUp) {
+                entry.eventID == EventTriggerType.PointerUp)
+            {
                 trigger.triggers.RemoveAt(i);
             }
         }
@@ -110,7 +121,8 @@ public class MenuEventSystemHandler : MonoBehaviour {
         trigger.triggers.Add(pointerUpEntry);
     }
 
-    public void OnSelect(BaseEventData eventData) {
+    public void OnSelect(BaseEventData eventData)
+    {
         SoundEvent?.Invoke();
         _lastSelected = eventData.selectedObject.GetComponent<Selectable>();
 
@@ -121,7 +133,8 @@ public class MenuEventSystemHandler : MonoBehaviour {
         _scaleUpTween = eventData.selectedObject.transform.LeanScale(newScale, _scaleDuration).setIgnoreTimeScale(true);
     }
 
-    public void OnDeselect(BaseEventData eventData) {
+    public void OnDeselect(BaseEventData eventData)
+    {
         if (_animationExclusion.Contains(eventData.selectedObject))
             return;
 
@@ -129,11 +142,14 @@ public class MenuEventSystemHandler : MonoBehaviour {
         _scaleDownTween = eventData.selectedObject.transform.LeanScale(_scales[selectable], _scaleDuration).setIgnoreTimeScale(true);
     }
 
-    private void OnPointerEnter(BaseEventData eventData) {
+    private void OnPointerEnter(BaseEventData eventData)
+    {
         PointerEventData pointerEventData = eventData as PointerEventData;
-        if (pointerEventData != null) {
+        if (pointerEventData != null)
+        {
             Selectable selectable = pointerEventData.pointerEnter.GetComponentInParent<Selectable>();
-            if (selectable == null) {
+            if (selectable == null)
+            {
                 selectable = pointerEventData.pointerEnter.GetComponentInChildren<Selectable>();
             }
 
@@ -141,45 +157,59 @@ public class MenuEventSystemHandler : MonoBehaviour {
         }
     }
 
-    private void OnPointerExit(BaseEventData eventData) {
+    private void OnPointerExit(BaseEventData eventData)
+    {
         PointerEventData pointerEventData = eventData as PointerEventData;
-        if (pointerEventData != null) {
+        if (pointerEventData != null)
+        {
             pointerEventData.selectedObject = null;
         }
     }
 
-    private void OnPointerClick(BaseEventData eventData) {
+    private void OnPointerClick(BaseEventData eventData)
+    {
         PointerEventData pointerEventData = eventData as PointerEventData;
-        if (pointerEventData != null) {
-            if (pointerEventData.button == PointerEventData.InputButton.Left) {
+        if (pointerEventData != null)
+        {
+            if (pointerEventData.button == PointerEventData.InputButton.Left)
+            {
                 //Play Sound
             }
         }
     }
 
-    private void OnPointerUp(BaseEventData eventData) {
+    private void OnPointerUp(BaseEventData eventData)
+    {
         PointerEventData pointerEventData = eventData as PointerEventData;
-        if (pointerEventData != null) {
+        if (pointerEventData != null)
+        {
             Slider slider = pointerEventData.pointerPress != null
                 ? pointerEventData.pointerPress.GetComponentInParent<Slider>()
                 : null;
-            if (slider != null) {
+            if (slider != null)
+            {
                 OnSliderReleased(slider);
             }
         }
     }
 
-    protected virtual void OnSliderReleased(Slider slider) {
+    protected virtual void OnSliderReleased(Slider slider)
+    {
         //Saves automatically all PlayerPrefs if the values got changed
-        if (soundSettings != null) {
+        if (soundSettings != null)
+        {
             soundSettings.SaveSoundSettings();
-        } else {
+        }
+        else
+        {
             PlayerPrefs.Save();
         }
     }
 
-    protected virtual void PlayerInputHandler_OnNavigate() {
-        if (EventSystem.current.currentSelectedGameObject == null && _lastSelected != null) {
+    protected virtual void PlayerInputHandler_OnNavigate()
+    {
+        if (EventSystem.current.currentSelectedGameObject == null && _lastSelected != null)
+        {
             EventSystem.current.SetSelectedGameObject(_lastSelected.gameObject);
         }
     }

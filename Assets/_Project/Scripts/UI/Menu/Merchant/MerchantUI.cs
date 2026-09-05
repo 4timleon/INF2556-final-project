@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class MerchantUI : MonoBehaviour {
+public class MerchantUI : MonoBehaviour
+{
 
-    [SerializeField] private PlayerInputHandler playerInputHandler;
+    [SerializeField] private GeneralInputHandler playerInputHandler;
     [SerializeField] private Button rerollButton;
     [SerializeField] private CardUI card;
     [SerializeField] private RectTransform[] cardPivots;
@@ -23,45 +24,54 @@ public class MerchantUI : MonoBehaviour {
     private bool[] isAnimating;
     private bool[] isSelected;
 
-    private void Awake() {
+    private void Awake()
+    {
         isAnimating = new bool[cardPivots.Length];
         isSelected = new bool[cardPivots.Length];
         previousCards = new GameObject[cardPivots.Length];
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         System.Array.Clear(isAnimating, 0, isAnimating.Length);
         rerollButton.onClick.AddListener(RerollWeaponCards);
         buyButton.onClick.AddListener(BuyWeapon);
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         LeanTween.cancelAll();
         rerollButton.onClick.RemoveListener(RerollWeaponCards);
         buyButton.onClick.RemoveListener(BuyWeapon);
     }
 
-    private void BuyWeapon() {
+    private void BuyWeapon()
+    {
         if (isAnimating.All(a => a)) return;
 
-        foreach (GameObject card in previousCards) {
+        foreach (GameObject card in previousCards)
+        {
             CardUI cardUI = card.GetComponent<CardUI>();
-            if (cardUI.Outline.enabled) {
+            if (cardUI.Outline.enabled)
+            {
                 //Give Weapon
             }
         }
     }
 
-    public void RerollWeaponCards() {
+    public void RerollWeaponCards()
+    {
         if (isAnimating.All(a => a)) return;
 
         SetAllSelected(false);
 
-        for (int i = 0; i < cardPivots.Length; i++) {
+        for (int i = 0; i < cardPivots.Length; i++)
+        {
             ClearPreviousCard(i);
         }
 
-        for (int i = 0; i < cardPivots.Length; i++) {
+        for (int i = 0; i < cardPivots.Length; i++)
+        {
             CardUI cardInstance = Instantiate(card, transform);
             RectTransform cardRect = cardInstance.GetComponent<RectTransform>();
             cardRect.anchoredPosition = deckPivot.anchoredPosition;
@@ -75,15 +85,18 @@ public class MerchantUI : MonoBehaviour {
         }
     }
 
-    private void ClearPreviousCard(int slotIndex) {
-        if (previousCards[slotIndex] != null) {
+    private void ClearPreviousCard(int slotIndex)
+    {
+        if (previousCards[slotIndex] != null)
+        {
             LeanTween.cancel(previousCards[slotIndex]);
             Destroy(previousCards[slotIndex]);
             previousCards[slotIndex] = null;
         }
     }
 
-    private void AnimateCard(CardUI card, Vector2 targetAnchoredPosition, int slotIndex) {
+    private void AnimateCard(CardUI card, Vector2 targetAnchoredPosition, int slotIndex)
+    {
         card.SetAnimate(true);
         isAnimating[slotIndex] = true;
         card.ResetFrontSideRotation();
@@ -91,7 +104,8 @@ public class MerchantUI : MonoBehaviour {
         //Tween position to target
         LeanTween.moveLocal(card.gameObject, targetAnchoredPosition, duration)
             .setEase(easeType)
-            .setOnComplete(() => {
+            .setOnComplete(() =>
+            {
                 isAnimating[slotIndex] = false;
                 card.SetAnimate(false);
                 card.FlipCard();
@@ -104,9 +118,12 @@ public class MerchantUI : MonoBehaviour {
             .setIgnoreTimeScale(true);
     }
 
-    public void SetCardPositionAndRotation() {
-        for (int i = 0; i < previousCards.Length; i++) {
-            if (previousCards[i] != null) {
+    public void SetCardPositionAndRotation()
+    {
+        for (int i = 0; i < previousCards.Length; i++)
+        {
+            if (previousCards[i] != null)
+            {
                 CardUI card = previousCards[i].GetComponent<CardUI>();
                 previousCards[i].transform.position = cardPivots[i].transform.position;
                 previousCards[i].transform.rotation = cardPivots[i].transform.rotation;
@@ -117,28 +134,34 @@ public class MerchantUI : MonoBehaviour {
         }
     }
 
-    public bool GetIsSelected(int slotIndex) {
-        if (isSelected[slotIndex]) {
+    public bool GetIsSelected(int slotIndex)
+    {
+        if (isSelected[slotIndex])
+        {
             return true;
         }
 
         return false;
     }
 
-    private void SetSelected(int slotIndex) {
+    private void SetSelected(int slotIndex)
+    {
         SetAllSelected(false);
 
         isSelected[slotIndex] = true;
 
-        for (int i = 0; i < previousCards.Length; i++) {
+        for (int i = 0; i < previousCards.Length; i++)
+        {
             if (i == slotIndex) continue;
 
             previousCards[i].GetComponent<CardUI>().ResetScale();
         }
     }
 
-    private void SetAllSelected(bool state) {
-        for (int i = 0; i < isSelected.Length; i++) {
+    private void SetAllSelected(bool state)
+    {
+        for (int i = 0; i < isSelected.Length; i++)
+        {
             isSelected[i] = state;
         }
     }

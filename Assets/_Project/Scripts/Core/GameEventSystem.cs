@@ -5,16 +5,17 @@ using WeaponNamespace;
 
 public static class GameEventSystem
 {
-    // Story
+    // -- Pause --
+    public static Action<bool> OnGamePause;
+
+    // -- Story --
     public static Action<string> OnDoorOpened; // string = doorId, z.B. "Door_A1"
     public static Action OnPowerTurnedOn;
 
-    // Mystery Box
+    // -- Mystery Box --
     public static Action<WeaponType, List<ModuleType>> OnWeaponWon;
 
     public static Action<float, float> OnPlayerHealthChanged; // (current, max)
-
-    public static Action<int, int> OnPlayerHealthChanged; // (current, max)
 
     public static Action<Zombie> OnEnemyKilled;
 

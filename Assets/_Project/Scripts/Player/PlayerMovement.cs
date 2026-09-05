@@ -1,13 +1,12 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using EditorAttributes;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
+    private const string MOUSE_SENS_KEY = "MouseSensitivity";
+
     [Title("Inputs:", 14)]
     [SerializeField] private PlayerInputs playerInputs;
     [Space]
@@ -48,6 +47,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float recoilReturnSpeed = 15f;
 
     private CharacterController characterController;
+    private Player player;
 
     private float currentArmPitch = 0.0f;
     private float armPitchVelocity = 0.0f;
@@ -71,20 +71,29 @@ public class PlayerMovement : MonoBehaviour
     private float recoilPitch = 0f;
     private float recoilYaw = 0f;
 
+    //Pause
+    private bool isPaused = false;
+
     private void Start()
     {
+        player = GetComponent<Player>();
         characterController = GetComponent<CharacterController>();
 
-        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        sensitivity = PlayerPrefs.GetFloat(MOUSE_SENS_KEY, 0.1f);
 
         isInStanceHash = Animator.StringToHash("isInStance");
         isSprintingHash = Animator.StringToHash("isSprinting");
         isWalkingHash = Animator.StringToHash("isWalking");
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
+        ControlsSettings.OnMouseSensitivityChanged += SetMouseSensitivity;
+        GameEventSystem.OnGamePause += GameEventSystem_OnGamePause;
+
         GameEventSystem.OnPlayerAttackStarted += Event_AttackStarted;
         GameEventSystem.OnPlayerAttackEnded += Event_AttackEnded;
 
@@ -102,8 +111,11 @@ public class PlayerMovement : MonoBehaviour
         GameEventSystem.OnPlayerWeaponRecoil += Event_WeaponRecoil;
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
+        ControlsSettings.OnMouseSensitivityChanged -= SetMouseSensitivity;
+        GameEventSystem.OnGamePause -= GameEventSystem_OnGamePause;
+
         GameEventSystem.OnPlayerReloadStarted -= Event_ReloadStarted;
         GameEventSystem.OnPlayerReloadEnded -= Event_ReloadEnded;
 
@@ -118,16 +130,16 @@ public class PlayerMovement : MonoBehaviour
         GameEventSystem.OnPlayerWeaponRecoil -= Event_WeaponRecoil;
     }
 
-    void Event_AttackStarted() => isAttacking = true;
-    void Event_AttackEnded() => isAttacking = false;
-    void Event_WeaponHolster() => isSwitching = true;
-    void Event_WeaponDraw(WeaponController controller) => isSwitching = false;
-    void Event_ReloadEnded() => isReloading = false;
-    void Event_ReloadStarted() => isReloading = true;
-    void Event_SprintStarted() => isSprinting = CanSprint();
-    void Event_SprintCanceled() => isSprinting = false;
+    private void Event_AttackStarted() => isAttacking = true;
+    private void Event_AttackEnded() => isAttacking = false;
+    private void Event_WeaponHolster() => isSwitching = true;
+    private void Event_WeaponDraw(WeaponController controller) => isSwitching = false;
+    private void Event_ReloadEnded() => isReloading = false;
+    private void Event_ReloadStarted() => isReloading = true;
+    private void Event_SprintStarted() => isSprinting = CanSprint();
+    private void Event_SprintCanceled() => isSprinting = false;
 
-    void Event_Jump()
+    private void Event_Jump()
     {
         if (characterController.isGrounded)
         {
@@ -141,15 +153,28 @@ public class PlayerMovement : MonoBehaviour
         recoilYaw += yawKick;
     }
 
-    void Update()
+    private void GameEventSystem_OnGamePause(bool state)
     {
+        isPaused = state;
+    }
+
+    private void Update()
+    {
+        if (isPaused || player.IsDead) return;
+
         BodyMovement();
         LeanMovement();
-        CameraMovement();
         AnimationMovement();
     }
 
-    void BodyMovement()
+    private void LateUpdate()
+    {
+        if (isPaused || player.IsDead) return;
+
+        CameraMovement();
+    }
+
+    private void BodyMovement()
     {
         Vector2 input = playerInputs.MoveInput;
         Vector3 targetDirection = new Vector3(input.x, 0, input.y);
@@ -201,7 +226,7 @@ public class PlayerMovement : MonoBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    void AnimationMovement()
+    private void AnimationMovement()
     {
         Vector3 planarVelocity = new Vector3(characterController.velocity.x, 0f, characterController.velocity.z);
 
@@ -212,7 +237,7 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat(movementBlend, animationSpeed, 0.1f, Time.deltaTime);
     }
 
-    void LeanMovement()
+    private void LeanMovement()
     {
         if (playerInputs.MoveInput.x == 0)
         {
@@ -229,7 +254,7 @@ public class PlayerMovement : MonoBehaviour
         LeanTween.rotateLocal(cameraRigTransform.gameObject, new Vector3(0, 0, lean), .15f);
     }
 
-    void CameraMovement()
+    private void CameraMovement()
     {
         float mouseX = playerInputs.LookInput.x * (sensitivity / 10);
         float mouseY = playerInputs.LookInput.y * (sensitivity / 10);
@@ -265,6 +290,12 @@ public class PlayerMovement : MonoBehaviour
         armsTransform.localRotation = yawRotation * pitchRotation;
     }
 
-    bool CanSprint() => !isReloading && !isSwitching && !isAttacking;
-    float GetSpeed() => isSprinting ? maxSprintSpeed : maxWalkSpeed;
+    private bool CanSprint() => !isReloading && !isSwitching && !isAttacking;
+    private float GetSpeed() => isSprinting ? maxSprintSpeed : maxWalkSpeed;
+
+    public void SetMouseSensitivity(float value)
+    {
+        sensitivity = value;
+    }
+
 }

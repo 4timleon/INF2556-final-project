@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
 
-public class PauseMenuController : MonoBehaviour {
+public class PauseMenuController : MonoBehaviour
+{
 
     [Header("References")]
-    [SerializeField] private PlayerInputHandler playerInputHandler;
+    [SerializeField] private GeneralInputHandler playerInputHandler;
     [SerializeField] private MenuManager menuManager;
 
     [Header("Panels")]
@@ -17,31 +18,33 @@ public class PauseMenuController : MonoBehaviour {
     private bool isPaused;
     private bool playerIsDead;
 
-    //Event
-    public static event Action<bool> OnGamePaused;
-
-    private void Start() {
+    private void Start()
+    {
         playerIsDead = false;
         Resume();
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         playerInputHandler.OnCancelAction += PlayerInputHandler_OnCancelAction;
         GameEventSystem.OnPlayerDeath += GameEventSystem_OnPlayerDeath;
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         playerInputHandler.OnCancelAction -= PlayerInputHandler_OnCancelAction;
         GameEventSystem.OnPlayerDeath -= GameEventSystem_OnPlayerDeath;
     }
 
     #region Pause Button Action
-    public void Pause() {
+    public void Pause()
+    {
         menuManager.SetMenuState(Menus.PauseMenu);
 
         StopTime(true);
 
-        if (backgroundMusic.isPlaying) {
+        if (backgroundMusic.isPlaying)
+        {
             backgroundMusic.Pause();
         }
 
@@ -49,8 +52,10 @@ public class PauseMenuController : MonoBehaviour {
         settingsPanel.SetActive(false);
     }
 
-    public void Resume() {
+    public void Resume()
+    {
         menuManager.SetMenuState(Menus.InGame);
+        GameEventSystem.OnGamePause?.Invoke(false);
 
         StopTime(false);
 
@@ -61,23 +66,28 @@ public class PauseMenuController : MonoBehaviour {
     }
     #endregion
 
-    public void StopTime(bool state) {
+    public void StopTime(bool state)
+    {
         isPaused = state;
         Cursor.visible = state;
-        OnGamePaused?.Invoke(state);
+        GameEventSystem.OnGamePause?.Invoke(state);
 
-        if (state) {
+        if (state)
+        {
             Time.timeScale = 0f;
 
             Cursor.lockState = CursorLockMode.None;
-        } else {
+        }
+        else
+        {
             Time.timeScale = 1f;
 
             Cursor.lockState = CursorLockMode.Locked;
         }
     }
 
-    private void PlayerInputHandler_OnCancelAction() {
+    private void PlayerInputHandler_OnCancelAction()
+    {
         if (playerIsDead) return;
 
         if (menuManager.MenuState == Menus.PauseMenu
@@ -92,7 +102,8 @@ public class PauseMenuController : MonoBehaviour {
         else Pause();
     }
 
-    private void GameEventSystem_OnPlayerDeath(float deathCounter) {
+    private void GameEventSystem_OnPlayerDeath(float deathCounter)
+    {
         playerIsDead = true;
     }
 

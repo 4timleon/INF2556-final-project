@@ -45,3 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
   soundSource: {fileID: 74233821255468100, guid: e8d7f07582b28c242974f06d1ca89c51, type: 3}
+  audioClipRefsSO: {fileID: 11400000, guid: 80ffebcd6d7422146a8e09d736c431a8, type: 2}
+  soundEmitterPrefab: {fileID: 1819180444679256415, guid: a51e4b9418b403d4dae3a7388efb5ba6, type: 3}
+  collectionCheck: 1
+  defaultCapacity: 10
+  maxPoolSize: 100
+  maxSoundInstances: 30

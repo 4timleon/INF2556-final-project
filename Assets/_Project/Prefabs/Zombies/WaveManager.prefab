@@ -44,14 +44,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c92b5c276fad844fbee7792a454aae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveManager
-  zombiePrefab: {fileID: 0}
-  spawnPoint:
+  playerReference: {fileID: 0}
+  zombiePrefab: {fileID: 4493914613880827488, guid: 6dc4cf4496348884d8ee27743ae38562, type: 3}
+  spawnPoints:
   - {fileID: 0}
   - {fileID: 0}
   timeBetweenSpawns: 1
-  timeBetweenWaves: 5
   baseZombieCount: 6
-  zombiesMultiplier: 1.3
+  maxSimultaneousZombies: 60
+  zombiesMultiplier: 1.1
   slowWeightCurve:
     serializedVersion: 2
     m_Curve:
@@ -124,3 +125,4 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  currentWave: 3

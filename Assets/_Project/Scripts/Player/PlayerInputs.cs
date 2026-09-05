@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,13 +11,12 @@ public class PlayerInputs : MonoBehaviour
 
     public bool IsMoving => MoveInput.magnitude >= 0.1f;
 
-    void Awake()
+    private void Awake()
     {
         inputActions = GameControls.GetInputActions();
-
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
         inputActions.Player.Sprint.started += Input_SprintStarted;
         inputActions.Player.Sprint.canceled += Input_SprintCanceled;
@@ -33,13 +31,15 @@ public class PlayerInputs : MonoBehaviour
         inputActions.Player.MouseWheel.performed += Input_WeaponScroll;
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         inputActions.Player.Sprint.started -= Input_SprintStarted;
         inputActions.Player.Sprint.canceled -= Input_SprintCanceled;
 
         inputActions.Player.Attack.started -= Input_AttackStarted;
         inputActions.Player.Attack.canceled -= Input_AttackCanceled;
+
+        inputActions.Player.Reload.started -= Input_ReloadStarted;
 
         inputActions.Player.Jump.started -= Input_Jump;
 
