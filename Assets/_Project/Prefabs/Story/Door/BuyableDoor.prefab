@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 6322016270584729928}
   - component: {fileID: 210147937973303948}
   - component: {fileID: 2028565815127642113}
+  - component: {fileID: -3132816855820121750}
   m_Layer: 0
   m_Name: BuyableDoor
   m_TagString: Untagged
@@ -161,6 +162,23 @@ MonoBehaviour:
   cost: 500
   blockingCollider: {fileID: 4958951814955663449}
   doorAnimator: {fileID: 5377722756428489115}
+  navMeshObstacle: {fileID: -3132816855820121750}
+--- !u!208 &-3132816855820121750
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3483911506118676144}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.5, y: 1.6, z: 0.25}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.6, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &4057976687117185111
 GameObject:
   m_ObjectHideFlags: 0

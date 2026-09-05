@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class DoorController : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class DoorController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Collider blockingCollider; // der Mesh Collider vom Tuerblatt
     [SerializeField] private Animator doorAnimator;
+    [SerializeField] private NavMeshObstacle navMeshObstacle;
 
     private bool playerInRange;
     private bool isOpen;
@@ -44,6 +46,9 @@ public class DoorController : MonoBehaviour
 
         if (blockingCollider != null)
             blockingCollider.enabled = false;
+
+        if (navMeshObstacle != null)
+            navMeshObstacle.enabled = false;
 
         GameEventSystem.OnDoorOpened?.Invoke(doorId);
     }
