@@ -31,7 +31,7 @@ public class PlayerArmory : MonoBehaviour
         weaponControllers = new();
         weaponControllersPointer = -1;
         currentIndex = -1;
-        maxWeaponControllers = 20;
+        maxWeaponControllers = 2;
 
         for (int i = 0; i < maxWeaponControllers; i++)
         {
@@ -89,19 +89,23 @@ public class PlayerArmory : MonoBehaviour
         maxWeaponControllers = amount;
     }
 
-    public bool AddWeapon(WeaponController weaponController)
+    public void AddWeapon(WeaponController weaponController)
     {
-        if (weaponControllersPointer >= maxWeaponControllers - 1) return false;
+        if (weaponControllersPointer >= maxWeaponControllers - 1)
+        {
+            ReplaceWeapon(weaponController);
+            return;
+        }
 
         weaponControllersPointer++;
         weaponControllers[weaponControllersPointer] = weaponController;
         TransformWeapon(weaponController);
 
         StartCoroutine(SwitchWeapon(weaponControllersPointer));
-        return true;
+        return;
     }
 
-    public void ReplaceWeapon(WeaponController weaponController)
+    void ReplaceWeapon(WeaponController weaponController)
     {
         if (currentIndex < 0 || currentIndex > weaponControllersPointer) return;
 
