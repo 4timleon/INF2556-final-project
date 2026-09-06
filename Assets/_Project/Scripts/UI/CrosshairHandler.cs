@@ -1,8 +1,9 @@
+using System;
 using EditorAttributes;
 using UnityEngine;
 using WeaponNamespace;
 
-[RequireComponent(typeof(RectTransform))]
+[RequireComponent(typeof(RectTransform), typeof(CanvasGroup))]
 public class CrosshairHandler : MonoBehaviour
 {
     [Title("References:", 14)]
@@ -16,6 +17,7 @@ public class CrosshairHandler : MonoBehaviour
 
     private RectTransform rectTransform;
     private RectTransform canvasRect;
+    private CanvasGroup canvasGroup;
 
     private float accuracyNormalized;
     private float currentVisualSpread;
@@ -24,6 +26,7 @@ public class CrosshairHandler : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         canvasRect = canvas.GetComponent<RectTransform>();
+        canvasGroup = GetComponent<CanvasGroup>();
     }
 
     void Start()
@@ -35,11 +38,15 @@ public class CrosshairHandler : MonoBehaviour
     void OnEnable()
     {
         GameEventSystem.OnPlayerWeaponDraw += Event_WeaponDraw;
+        GameEventSystem.OnPlayerPreDeath += Event_PreDeath;
+        GameEventSystem.OnPlayerDeath += Event_PlayerDeath;
     }
 
     void OnDisable()
     {
         GameEventSystem.OnPlayerWeaponDraw -= Event_WeaponDraw;
+        GameEventSystem.OnPlayerPreDeath -= Event_PreDeath;
+        GameEventSystem.OnPlayerDeath -= Event_PlayerDeath;
     }
 
     void Update()
@@ -61,5 +68,18 @@ public class CrosshairHandler : MonoBehaviour
     void Event_WeaponDraw(WeaponController weaponController)
     {
         accuracyNormalized = 1f - (weaponController.GetStat(StatType.Accuracy) / 100f);
+    }
+
+    void Event_PreDeath(bool started) => ToggleCrosshair(!started);
+    void Event_PlayerDeath(float c) => ToggleCrosshair(false);
+
+    void ToggleCrosshair(bool status)
+    {
+        float to = status ? 1f : 0f;
+
+        LeanTween.value(canvasGroup.alpha, to, .5f).setOnUpdate((value) =>
+        {
+            canvasGroup.alpha = value;
+        });
     }
 }
