@@ -60,7 +60,7 @@ public class PlayerShoot : MonoBehaviour
         damage = weaponController.GetStat(StatType.Damage);
         recoil = 1f - (weaponController.GetStat(StatType.Handling) / 100f);
         accuracy = 1f - (weaponController.GetStat(StatType.Accuracy) / 100f);
-        spread = accuracy / 2f;
+        spread = accuracy / 5f;
 
         isAuto = IsAutoFire();
     }
@@ -94,7 +94,7 @@ public class PlayerShoot : MonoBehaviour
             return;
         }
 
-        spread = playerInputs.IsMoving ? accuracy : accuracy / 2f;
+        spread = playerInputs.IsMoving ? accuracy : accuracy / 5f;
 
         if (!isPerformingAttack)
         {
