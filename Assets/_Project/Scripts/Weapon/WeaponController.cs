@@ -15,6 +15,8 @@ public class WeaponController : MonoBehaviour
     public float LeftHandGripDistance { get; private set; }
     public ReloadBase ReloadBase { get; private set; }
 
+    public Bounds VisualBounds { get; private set; }
+
     public void Initialize(WeaponData weaponData)
     {
         WeaponData = weaponData;
@@ -24,6 +26,7 @@ public class WeaponController : MonoBehaviour
         CurrentAmmo = (int)WeaponData.Stats[StatType.MagazineSize];
 
         CalculateLeftHandTarget();
+        UpdateVisualBounds();
     }
 
     public ModuleBase GetModule(ModuleType moduleType)
@@ -54,6 +57,45 @@ public class WeaponController : MonoBehaviour
         }
 
         return 1;
+    }
+
+    public void CenterOnSocket(Transform targetSocket)
+    {
+        transform.position = targetSocket.position;
+        transform.rotation = targetSocket.rotation;
+
+        Bounds bounds = UpdateVisualBounds();
+
+        Vector3 centerOffset = bounds.center - transform.position;
+
+        transform.position = targetSocket.position - centerOffset;
+        transform.SetParent(targetSocket, true);
+    }
+
+    Bounds UpdateVisualBounds()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+
+        if (renderers.Length == 0)
+        {
+            VisualBounds = new Bounds(transform.position, Vector3.zero);
+            return VisualBounds;
+        }
+
+        Bounds bounds = renderers[0].bounds;
+
+        for (int i = 1; i < renderers.Length; i++)
+        {
+            if (!renderers[i].enabled || renderers[i] is ParticleSystemRenderer)
+            {
+                continue;
+            }
+
+            bounds.Encapsulate(renderers[i].bounds);
+        }
+
+        VisualBounds = bounds;
+        return VisualBounds;
     }
 
     void CalculateLeftHandTarget()

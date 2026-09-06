@@ -13,7 +13,7 @@ public static class GameEventSystem
     public static Action OnPowerTurnedOn;
 
     // -- Mystery Box --
-    public static Action<WeaponType, List<ModuleType>> OnWeaponWon;
+    public static Action<Transform> OnMysteryBoxDisappear;
 
     public static Action<float, float> OnPlayerHealthChanged; // (current, max)
 
