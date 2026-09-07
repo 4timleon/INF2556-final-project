@@ -14,6 +14,7 @@ public class MerchantUI : MonoBehaviour
     [SerializeField] private RectTransform deckPivot;
     [SerializeField] private Canvas canvas;
     [SerializeField] private Button buyButton;
+    [SerializeField] private AudioSource cardSlideAudioSource;
 
     [Header("Animation Settings")]
     [SerializeField] private float duration = 0.8f;
@@ -69,6 +70,12 @@ public class MerchantUI : MonoBehaviour
         {
             ClearPreviousCard(i);
         }
+
+        if (cardSlideAudioSource.isPlaying)
+        {
+            cardSlideAudioSource.Stop();
+        }
+        SoundManager.Instance?.PlayCardSlideSound(cardSlideAudioSource);
 
         for (int i = 0; i < cardPivots.Length; i++)
         {

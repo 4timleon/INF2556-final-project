@@ -1,7 +1,8 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "AudioClipRefsSO", menuName = "Scriptable Objects/AudioClipRefsSO")]
-public class AudioClipRefsSO : ScriptableObject {
+public class AudioClipRefsSO : ScriptableObject
+{
 
     [Header("Zombie Chase Sound")]
     public AudioClip[] zombieChaseSounds;
@@ -26,4 +27,9 @@ public class AudioClipRefsSO : ScriptableObject {
     [Header("Player Hit Sound")]
     public AudioClip[] playerHitSounds;
     public float playerHitVolume;
+
+    [Space]
+    [Header("Card Sounds")]
+    public AudioClip cardSlide;
+    public float cardSlideVolume;
 }

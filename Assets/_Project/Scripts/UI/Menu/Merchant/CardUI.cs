@@ -6,9 +6,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler, IPointerClickHandler {
+public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler, IPointerClickHandler
+{
 
-    public enum WeaponRarity {
+    public enum WeaponRarity
+    {
         Common,
         Uncommon,
         Rare,
@@ -17,7 +19,8 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     }
 
     [Serializable]
-    public struct RarityEntry {
+    public struct RarityEntry
+    {
         public WeaponRarity rarity;
         public Sprite sprite;
     }
@@ -27,6 +30,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     [SerializeField] private Transform cardVisual;
     [SerializeField] private RectTransform rayCastHitbox;
     [SerializeField] private Outline outline;
+    [SerializeField] private Image shineEffectImage;
 
     [Header("Price")]
     [SerializeField] private Transform priceContainer;
@@ -59,6 +63,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     private Quaternion targetRotation;
     private Vector2 pointerPosition;
     private Camera pointerCamera;
+    private Material shineEffectMaterial;
 
     private bool isFlipped = false;
     private bool isInAnimation = false;
@@ -74,13 +79,17 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     private Vector3 targetScale = new Vector3(1.1f, 1.1f, 1.1f);
     private float scaleDuration = 0.2f;
 
-    //Cache a Function for later
+    //Callback Function
     private Action<int> onAction;
 
-    private void Start() {
+    private void Start()
+    {
         rectTransform = GetComponent<RectTransform>();
         defaultRotation = Quaternion.Euler(0f, -180f, 0f);
         cardVisual.localRotation = Quaternion.identity;
+
+        shineEffectMaterial = new Material(shineEffectImage.material);
+        shineEffectImage.material = shineEffectMaterial;
 
         frontSide.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
         frontSideTransform = frontSide.transform.localRotation;
@@ -93,19 +102,22 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         backSide.SetActive(!isFlipped);
     }
 
-    private void Update() {
+    private void Update()
+    {
         if (isInAnimation) return;
 
         LookAtMouse();
     }
 
-    public void Initialize(MerchantUI merchantUI, int slotIndex, Action<int> onAction) {
+    public void Initialize(MerchantUI merchantUI, int slotIndex, Action<int> onAction)
+    {
         this.merchantUI = merchantUI;
         this.slotIndex = slotIndex;
         this.onAction = onAction;
     }
 
-    private void ApplyStats(int priceValue, WeaponRarity rarity) {
+    private void ApplyStats(int priceValue, WeaponRarity rarity)
+    {
         //Change Rarity Background
         SetRarityBackground(rarity);
 
@@ -118,16 +130,21 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         priceNumber.SetText(stringBuilder);
     }
 
-    private void SetRarityBackground(WeaponRarity rarity) {
-        foreach (RarityEntry rarityEntry in rarityList) {
-            if (rarityEntry.rarity == rarity) {
+    private void SetRarityBackground(WeaponRarity rarity)
+    {
+        foreach (RarityEntry rarityEntry in rarityList)
+        {
+            if (rarityEntry.rarity == rarity)
+            {
                 rarityBackground.sprite = rarityEntry.sprite;
             }
         }
     }
 
-    private void LookAtMouse() {
-        if (pointerEntered) {
+    private void LookAtMouse()
+    {
+        if (pointerEntered)
+        {
             //Mouse Position relative to the Card center (-1 to +1)
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 rectTransform,
@@ -144,20 +161,29 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
             float tiltX = normalizedY * maxTiltAngle;
             float tiltY = 180f + (normalizedX * maxTiltAngle);
 
+            //Set Shine Effect Value
+            float shineValue = Mathf.InverseLerp(-1, 1f, -normalizedX);
+            shineEffectMaterial.SetFloat("_ShineValue", shineValue);
+
             targetRotation = Quaternion.Euler(tiltX, tiltY, 0f);
-        } else {
+        }
+        else
+        {
             targetRotation = defaultRotation;
+            shineEffectMaterial.SetFloat("_ShineValue", 0f);
         }
 
         cardVisual.localRotation = Quaternion.Lerp(cardVisual.localRotation, targetRotation, Time.unscaledDeltaTime * smoothSpeed);
     }
 
-    public void FlipCard() {
+    public void FlipCard()
+    {
         float targetAngle = isFlipped ? 0f : 180f;
 
         //Rotate until 90°, then deactivate the back Side and activate front Side
         LeanTween.rotateY(cardVisual.gameObject, 90f, flipDuration)
-            .setOnComplete(() => {
+            .setOnComplete(() =>
+            {
                 //Switch sides
                 isFlipped = !isFlipped;
                 frontSide.SetActive(isFlipped);
@@ -165,7 +191,8 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
                 //Rotate the other 90°
                 LeanTween.rotateY(cardVisual.gameObject, targetAngle, flipDuration)
-                    .setOnComplete(() => {
+                    .setOnComplete(() =>
+                    {
                         //Move Price Tag down
                         LeanTween.move(priceContainer.gameObject, priceContainerPivot, 0.5f)
                             .setEase(easeType)
@@ -177,16 +204,20 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
     }
 
-    public void SetAnimate(bool state) {
+    public void SetAnimate(bool state)
+    {
         isInAnimation = state;
     }
 
-    public void ResetFrontSideRotation() {
+    public void ResetFrontSideRotation()
+    {
         frontSide.transform.localRotation = frontSideTransform;
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
-        if (!merchantUI.GetIsSelected(slotIndex)) {
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!merchantUI.GetIsSelected(slotIndex))
+        {
             SetScale();
         }
 
@@ -196,13 +227,16 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         outline.enabled = true;
     }
 
-    public void OnPointerMove(PointerEventData eventData) {
+    public void OnPointerMove(PointerEventData eventData)
+    {
         pointerPosition = eventData.position;
         pointerCamera = eventData.enterEventCamera;
     }
 
-    public void OnPointerExit(PointerEventData eventData) {
-        if (!merchantUI.GetIsSelected(slotIndex)) {
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (!merchantUI.GetIsSelected(slotIndex))
+        {
             ResetScale();
         }
 
@@ -210,19 +244,30 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         outline.enabled = false;
     }
 
-    public void OnPointerClick(PointerEventData eventData) {
+    public void OnPointerClick(PointerEventData eventData)
+    {
         onAction(slotIndex);
     }
 
-    private void SetScale() {
+    private void SetScale()
+    {
         LeanTween.cancel(cardVisual.gameObject);
         LeanTween.scale(cardVisual.gameObject, targetScale, scaleDuration)
             .setIgnoreTimeScale(true);
     }
 
-    public void ResetScale() {
+    public void ResetScale()
+    {
         LeanTween.cancel(cardVisual.gameObject);
         LeanTween.scale(cardVisual.gameObject, Vector3.one, scaleDuration)
             .setIgnoreTimeScale(true);
+    }
+
+    private void OnDestroy()
+    {
+        if (shineEffectMaterial != null)
+        {
+            Destroy(shineEffectMaterial);
+        }
     }
 }

@@ -41,7 +41,7 @@ public class CorpseCollector : MonoBehaviour
         }
         else
         {
-            for (int i = currentZombiesKilled.Count - 1; i > 0; i--)
+            for (int i = currentZombiesKilled.Count - 1; i >= 0; i--)
             {
                 Zombie zombie = currentZombiesKilled[i];
                 currentZombiesKilled.RemoveAt(i);
