@@ -53,6 +53,7 @@ public class WeaponData
         Stats[StatType.Handling] = handling;
 
         TotalRarity = (Rarity)Mathf.Clamp(Mathf.CeilToInt(CalculateRMS((float)raritySize)), 1, 4);
+        TotalCost *= (int)TotalRarity;
     }
 
     void AddStat(ModuleBase moduleBase)
