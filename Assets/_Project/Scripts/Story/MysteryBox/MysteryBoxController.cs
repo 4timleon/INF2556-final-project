@@ -30,9 +30,7 @@ public class MysteryBoxController : MonoBehaviour
     void Event_MysteryBoxDisappear(Transform lastSpawn)
     {
         Transform nextSpawn = GetRandomTransformExcept(mysteryBoxSpawns, lastSpawn);
-        mysteryBox.transform.SetParent(nextSpawn);
-        mysteryBox.transform.localPosition = Vector3.zero;
-        mysteryBox.transform.localRotation = Quaternion.identity;
+        MoveBox(nextSpawn);
     }
 
     void MoveBox(Transform nextSpawn)
