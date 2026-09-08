@@ -61,37 +61,55 @@ public class WeaponController : MonoBehaviour
 
     public void CenterOnSocket(Transform targetSocket)
     {
-        transform.position = targetSocket.position;
+        transform.SetParent(null);
+        transform.localScale = Vector3.one;
+        transform.rotation = Quaternion.identity;
+
+        Bounds rawBounds = UpdateVisualBounds();
+        Vector3 weaponSize = rawBounds.size;
+
+        Vector3 targetSize = targetSocket.lossyScale;
+
+        float scaleX = weaponSize.x > 0 ? targetSize.x / weaponSize.x : 1f;
+        float scaleY = weaponSize.y > 0 ? targetSize.y / weaponSize.y : 1f;
+        float scaleZ = weaponSize.z > 0 ? targetSize.z / weaponSize.z : 1f;
+
+        float scaleFactor = Mathf.Min(scaleX, Mathf.Min(scaleY, scaleZ));
+
+        transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+
         transform.rotation = targetSocket.rotation;
 
-        Bounds bounds = UpdateVisualBounds();
+        Bounds finalBounds = UpdateVisualBounds();
 
-        Vector3 centerOffset = bounds.center - transform.position;
-
+        Vector3 centerOffset = finalBounds.center - transform.position;
         transform.position = targetSocket.position - centerOffset;
+
         transform.SetParent(targetSocket, true);
     }
 
     Bounds UpdateVisualBounds()
     {
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        Bounds bounds = new Bounds(transform.position, Vector3.zero);
+        bool hasBounds = false;
 
-        if (renderers.Length == 0)
+        foreach (Renderer rend in renderers)
         {
-            VisualBounds = new Bounds(transform.position, Vector3.zero);
-            return VisualBounds;
-        }
-
-        Bounds bounds = renderers[0].bounds;
-
-        for (int i = 1; i < renderers.Length; i++)
-        {
-            if (!renderers[i].enabled || renderers[i] is ParticleSystemRenderer)
+            if (!rend.enabled || rend is ParticleSystemRenderer)
             {
                 continue;
             }
 
-            bounds.Encapsulate(renderers[i].bounds);
+            if (!hasBounds)
+            {
+                bounds = rend.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(rend.bounds);
+            }
         }
 
         VisualBounds = bounds;
