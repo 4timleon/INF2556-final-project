@@ -281,6 +281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd35d54d8b605d84ebf7c7de8d739a0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MerchantUI
+  menuManager: {fileID: 0}
   playerInputHandler: {fileID: 0}
   canvas: {fileID: 0}
   weaponBuilder: {fileID: 0}
@@ -296,7 +297,6 @@ MonoBehaviour:
   - {fileID: 7308994890174702239}
   - {fileID: 2942155895537617941}
   deckPivot: {fileID: 9080638133332369929}
-  buyButton: {fileID: 0}
   duration: 0.8
   easeType: 2
 --- !u!1 &2948651947882233896
@@ -399,7 +399,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 5000
+  m_text: 500
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 60c9e8823ec942646b82280c6c8e6288, type: 2}
   m_sharedMaterial: {fileID: 1809137100938239552, guid: 60c9e8823ec942646b82280c6c8e6288, type: 2}
