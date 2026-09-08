@@ -84,7 +84,7 @@ MonoBehaviour:
   Rarity: 2
   ModuleType: 2
   ModuleJointSize: 4
-  ModuleCost: 0
+  ModuleCost: 165
   HasHandPlacement: 1
   HandPlacement: {fileID: 8295848920905642335}
   GripType: 3
@@ -98,6 +98,8 @@ MonoBehaviour:
     Value: 10
   - StatType: 3
     Value: 0.15
+  - StatType: 6
+    Value: 1
   ModuleSockets:
   - Joint: {fileID: 55722151754528951}
     ModuleType: 1
