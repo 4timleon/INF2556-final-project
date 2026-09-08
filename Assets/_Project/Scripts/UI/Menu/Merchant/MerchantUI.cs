@@ -109,6 +109,11 @@ public class MerchantUI : MonoBehaviour
 
     public void RerollWeaponCards()
     {
+        if (GameData.Money < 500)
+        {
+            return;
+        }
+
         if (isAnimating.All(a => a)) return;
 
         SetAllSelected(false);
@@ -122,6 +127,8 @@ public class MerchantUI : MonoBehaviour
         {
             SpawnCard(i);
         }
+
+        GameData.Money -= 500;
     }
 
     private CardUI SpawnCard(int index)
