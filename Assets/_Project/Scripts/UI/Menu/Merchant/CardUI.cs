@@ -5,20 +5,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using WeaponNamespace;
 
-public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler, IPointerClickHandler {
-
-    public enum WeaponRarity {
-        Common,
-        Uncommon,
-        Rare,
-        Epic,
-        Legendary
-    }
-
+public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler, IPointerClickHandler
+{
     [Serializable]
-    public struct RarityEntry {
-        public WeaponRarity rarity;
+    public struct RarityEntry
+    {
+        public Rarity rarity;
         public Sprite sprite;
     }
 
@@ -26,6 +20,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     [SerializeField] private MerchantCardStats cardStats;
     [SerializeField] private Transform cardVisual;
     [SerializeField] private RectTransform rayCastHitbox;
+    [SerializeField] private RawImage weaponRender;
     [SerializeField] private Outline outline;
 
     [Header("Price")]
@@ -50,10 +45,12 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     [SerializeField] private LeanTweenType easeType = LeanTweenType.easeOutQuad;
 
     public Outline Outline => outline;
+    public WeaponController WeaponController { get; private set; }
+    public int SlotIndex { get; private set; }
 
     //Initialize
     private MerchantUI merchantUI;
-    private int slotIndex;
+    private WeaponBuilder weaponBuilder;
 
     private RectTransform rectTransform;
     private Quaternion targetRotation;
@@ -75,9 +72,10 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     private float scaleDuration = 0.2f;
 
     //Cache a Function for later
-    private Action<int> onAction;
+    private Action<CardUI> onCardClicked;
 
-    private void Start() {
+    private void Start()
+    {
         rectTransform = GetComponent<RectTransform>();
         defaultRotation = Quaternion.Euler(0f, -180f, 0f);
         cardVisual.localRotation = Quaternion.identity;
@@ -93,41 +91,74 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         backSide.SetActive(!isFlipped);
     }
 
-    private void Update() {
+    private void Update()
+    {
         if (isInAnimation) return;
 
         LookAtMouse();
     }
 
-    public void Initialize(MerchantUI merchantUI, int slotIndex, Action<int> onAction) {
+    public void Initialize(MerchantUI merchantUI, WeaponBuilder weaponBuilder, int slotIndex, Action<CardUI> onCardClicked)
+    {
+        SlotIndex = slotIndex;
+
         this.merchantUI = merchantUI;
-        this.slotIndex = slotIndex;
-        this.onAction = onAction;
+        this.onCardClicked = onCardClicked;
+        this.weaponBuilder = weaponBuilder;
+
+        weaponRender.uvRect = merchantUI.RenderRects[SlotIndex];
+
+        GenerateWeapon();
+        ApplyStats();
     }
 
-    private void ApplyStats(int priceValue, WeaponRarity rarity) {
-        //Change Rarity Background
-        SetRarityBackground(rarity);
+    public void RemoveWeaponController() => WeaponController = null;
 
-        //Card Stats
-        //cardStats.SetStats();
+    private void GenerateWeapon()
+    {
+        WeaponController = weaponBuilder.BuildWeapon();
+        WeaponController.transform.SetParent(merchantUI.RenderSockets[SlotIndex]);
+        WeaponController.transform.localPosition = Vector3.zero;
+        WeaponController.transform.localRotation = Quaternion.identity;
+        WeaponController.transform.localScale = Vector3.one;
+        WeaponController.CenterOnSocket(merchantUI.RenderSockets[SlotIndex]);
+    }
+
+    private void ApplyStats()
+    {
+        WeaponData weaponData = WeaponController.WeaponData;
+
+        Debug.Log(weaponData.TotalRarity);
+
+        //Change Rarity Background
+        SetRarityBackground(weaponData.TotalRarity);
+
+        foreach (StatType statType in weaponData.Stats.Keys)
+        {
+            cardStats.SetStat(statType, WeaponController.GetStat(statType));
+        }
 
         //Price Number
         stringBuilder.Clear();
-        stringBuilder.Append(priceValue);
+        stringBuilder.Append(weaponData.TotalCost);
         priceNumber.SetText(stringBuilder);
     }
 
-    private void SetRarityBackground(WeaponRarity rarity) {
-        foreach (RarityEntry rarityEntry in rarityList) {
-            if (rarityEntry.rarity == rarity) {
+    private void SetRarityBackground(Rarity rarity)
+    {
+        foreach (RarityEntry rarityEntry in rarityList)
+        {
+            if (rarityEntry.rarity == rarity)
+            {
                 rarityBackground.sprite = rarityEntry.sprite;
             }
         }
     }
 
-    private void LookAtMouse() {
-        if (pointerEntered) {
+    private void LookAtMouse()
+    {
+        if (pointerEntered)
+        {
             //Mouse Position relative to the Card center (-1 to +1)
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 rectTransform,
@@ -145,19 +176,23 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
             float tiltY = 180f + (normalizedX * maxTiltAngle);
 
             targetRotation = Quaternion.Euler(tiltX, tiltY, 0f);
-        } else {
+        }
+        else
+        {
             targetRotation = defaultRotation;
         }
 
         cardVisual.localRotation = Quaternion.Lerp(cardVisual.localRotation, targetRotation, Time.unscaledDeltaTime * smoothSpeed);
     }
 
-    public void FlipCard() {
+    public void FlipCard()
+    {
         float targetAngle = isFlipped ? 0f : 180f;
 
         //Rotate until 90°, then deactivate the back Side and activate front Side
         LeanTween.rotateY(cardVisual.gameObject, 90f, flipDuration)
-            .setOnComplete(() => {
+            .setOnComplete(() =>
+            {
                 //Switch sides
                 isFlipped = !isFlipped;
                 frontSide.SetActive(isFlipped);
@@ -165,7 +200,8 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
                 //Rotate the other 90°
                 LeanTween.rotateY(cardVisual.gameObject, targetAngle, flipDuration)
-                    .setOnComplete(() => {
+                    .setOnComplete(() =>
+                    {
                         //Move Price Tag down
                         LeanTween.move(priceContainer.gameObject, priceContainerPivot, 0.5f)
                             .setEase(easeType)
@@ -177,16 +213,20 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
     }
 
-    public void SetAnimate(bool state) {
+    public void SetAnimate(bool state)
+    {
         isInAnimation = state;
     }
 
-    public void ResetFrontSideRotation() {
+    public void ResetFrontSideRotation()
+    {
         frontSide.transform.localRotation = frontSideTransform;
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
-        if (!merchantUI.GetIsSelected(slotIndex)) {
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!merchantUI.GetIsSelected(SlotIndex))
+        {
             SetScale();
         }
 
@@ -196,13 +236,16 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         outline.enabled = true;
     }
 
-    public void OnPointerMove(PointerEventData eventData) {
+    public void OnPointerMove(PointerEventData eventData)
+    {
         pointerPosition = eventData.position;
         pointerCamera = eventData.enterEventCamera;
     }
 
-    public void OnPointerExit(PointerEventData eventData) {
-        if (!merchantUI.GetIsSelected(slotIndex)) {
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (!merchantUI.GetIsSelected(SlotIndex))
+        {
             ResetScale();
         }
 
@@ -210,17 +253,20 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         outline.enabled = false;
     }
 
-    public void OnPointerClick(PointerEventData eventData) {
-        onAction(slotIndex);
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        onCardClicked(this);
     }
 
-    private void SetScale() {
+    private void SetScale()
+    {
         LeanTween.cancel(cardVisual.gameObject);
         LeanTween.scale(cardVisual.gameObject, targetScale, scaleDuration)
             .setIgnoreTimeScale(true);
     }
 
-    public void ResetScale() {
+    public void ResetScale()
+    {
         LeanTween.cancel(cardVisual.gameObject);
         LeanTween.scale(cardVisual.gameObject, Vector3.one, scaleDuration)
             .setIgnoreTimeScale(true);

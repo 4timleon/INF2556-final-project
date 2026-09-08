@@ -1,45 +1,48 @@
+using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
+using WeaponNamespace;
 
-public class MerchantCardStats : MonoBehaviour {
+public class MerchantCardStats : MonoBehaviour
+{
+    [SerializeField] private TextMeshProUGUI damage;
+    [SerializeField] private TextMeshProUGUI accuracy;
+    [SerializeField] private TextMeshProUGUI handling;
+    [SerializeField] private TextMeshProUGUI reloadtime;
+    [SerializeField] private TextMeshProUGUI firerate;
+    [SerializeField] private TextMeshProUGUI magazine;
 
-    public enum StatTypes {
-        Damage,
-        Accuracy,
-        Handling,
-        Reload_Time,
-        Firerate
+    float damageValue;
+    float bulletAmount = 1;
+
+    public void SetStat(StatType statType, float value)
+    {
+        if (statType == StatType.Damage)
+            damageValue = value;
+        else if (statType == StatType.BulletAmount)
+            bulletAmount = value;
+        else
+        {
+            var text = statType switch
+            {
+                StatType.Accuracy => accuracy,
+                StatType.Handling => handling,
+                StatType.ReloadTime => reloadtime,
+                StatType.Firerate => firerate,
+                StatType.MagazineSize => magazine,
+                _ => null
+            };
+
+            ChangeText(text, value);
+            return;
+        }
+
+        damage.text = $"{damageValue:F2}" + (bulletAmount > 1 ? $"x{bulletAmount:F0}" : "");
     }
 
-    [SerializeField] private TextMeshProUGUI damageStat;
-    [SerializeField] private TextMeshProUGUI stat2;
-    [SerializeField] private TextMeshProUGUI stat3;
-    [SerializeField] private TextMeshProUGUI stat4;
-    [SerializeField] private TextMeshProUGUI stat5;
-
-    private readonly StringBuilder stringBuilder = new StringBuilder(16);
-
-    public void SetStats(StatTypes statTypes, int value) {
-        stringBuilder.Clear();
-        stringBuilder.Append(value);
-
-        switch (statTypes) {
-            case StatTypes.Damage:
-                damageStat.SetText(stringBuilder);
-                break;
-            case StatTypes.Accuracy:
-                stat2.SetText(stringBuilder);
-                break;
-            case StatTypes.Handling:
-                stat3.SetText(stringBuilder);
-                break;
-            case StatTypes.Reload_Time:
-                stat4.SetText(stringBuilder);
-                break;
-            case StatTypes.Firerate:
-                stat5.SetText(stringBuilder);
-                break;
-        }
+    void ChangeText(TextMeshProUGUI text, float value)
+    {
+        text.text = value.ToString("F2");
     }
 }

@@ -1,62 +1,110 @@
 using System.Collections.Generic;
 using System.Linq;
+using EditorAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class MerchantUI : MonoBehaviour
 {
-
+    [Title("References In Scene", 14)]
+    [SerializeField] private Void v1;
+    [Header("General:")]
+    [SerializeField] private MenuManager menuManager;
     [SerializeField] private GeneralInputHandler playerInputHandler;
+    [SerializeField] private Canvas canvas;
+    [Space]
+    [Header("Weapon:")]
+    [SerializeField] private WeaponBuilder weaponBuilder;
+    [SerializeField] private PlayerArmory playerArmory;
+    [SerializeField] private int uiRenderLayer = 9;
+    [SerializeField] private Transform leftWeaponSocket;
+    [SerializeField] private Transform middleWeaponSocket;
+    [SerializeField] private Transform rightWeaponSocket;
+    [Space]
+    [Title("References In Prefab", 14)]
+    [SerializeField] private Void v2;
+    [Header("UI:")]
     [SerializeField] private Button rerollButton;
     [SerializeField] private CardUI card;
     [SerializeField] private RectTransform[] cardPivots;
     [SerializeField] private RectTransform deckPivot;
-    [SerializeField] private Canvas canvas;
-    [SerializeField] private Button buyButton;
-
-    [Header("Animation Settings")]
+    [Space]
+    [Header("Animation:")]
     [SerializeField] private float duration = 0.8f;
     [SerializeField] private LeanTweenType easeType = LeanTweenType.easeOutQuad;
 
-    private GameObject[] previousCards;
+    private CardUI[] previousCards;
 
     private bool[] isAnimating;
     private bool[] isSelected;
+
+    public readonly Rect[] RenderRects = { new Rect(0, 0, 0.333f, 1), new Rect(0.333f, 0, 0.333f, 1), new Rect(0.666f, 0, 0.333f, 1) };
+    public Transform[] RenderSockets { get; private set; }
 
     private void Awake()
     {
         isAnimating = new bool[cardPivots.Length];
         isSelected = new bool[cardPivots.Length];
-        previousCards = new GameObject[cardPivots.Length];
+        previousCards = new CardUI[cardPivots.Length];
+
+        RenderSockets = new Transform[]
+        {
+            leftWeaponSocket,
+            middleWeaponSocket,
+            rightWeaponSocket
+        };
+    }
+
+    void Start()
+    {
+        rerollButton.onClick.AddListener(RerollWeaponCards);
+        GameEventSystem.OnWaveStarted += Event_WaveStarted;
     }
 
     private void OnEnable()
     {
         System.Array.Clear(isAnimating, 0, isAnimating.Length);
-        rerollButton.onClick.AddListener(RerollWeaponCards);
-        buyButton.onClick.AddListener(BuyWeapon);
+    }
+
+    private void Event_WaveStarted()
+    {
+        RerollWeaponCards();
     }
 
     private void OnDisable()
     {
         LeanTween.cancelAll();
-        rerollButton.onClick.RemoveListener(RerollWeaponCards);
-        buyButton.onClick.RemoveListener(BuyWeapon);
     }
 
-    private void BuyWeapon()
+    private void Oestroy()
+    {
+        rerollButton.onClick.RemoveListener(RerollWeaponCards);
+    }
+
+    private void BuyWeapon(CardUI cardUI)
     {
         if (isAnimating.All(a => a)) return;
 
-        foreach (GameObject card in previousCards)
+        WeaponController weaponController = cardUI.WeaponController;
+
+        if (GameData.Money < weaponController.WeaponData.TotalCost)
         {
-            CardUI cardUI = card.GetComponent<CardUI>();
-            if (cardUI.Outline.enabled)
-            {
-                //Give Weapon
-            }
+            return;
         }
+
+        playerArmory.AddWeapon(weaponController);
+
+        cardUI.RemoveWeaponController();
+
+        int slotIndex = cardUI.SlotIndex;
+
+        ClearPreviousCard(slotIndex);
+        menuManager.CloseMerchantMenu();
+
+        GameData.Money -= weaponController.WeaponData.TotalCost;
+
+        SpawnCard(slotIndex);
     }
 
     public void RerollWeaponCards()
@@ -72,26 +120,45 @@ public class MerchantUI : MonoBehaviour
 
         for (int i = 0; i < cardPivots.Length; i++)
         {
-            CardUI cardInstance = Instantiate(card, transform);
-            RectTransform cardRect = cardInstance.GetComponent<RectTransform>();
-            cardRect.anchoredPosition = deckPivot.anchoredPosition;
-            cardRect.rotation = deckPivot.rotation;
-
-            previousCards[i] = cardInstance.gameObject;
-
-            cardInstance.Initialize(this, i, SetSelected);
-
-            AnimateCard(cardInstance, cardPivots[i].anchoredPosition, i);
+            SpawnCard(i);
         }
+    }
+
+    private CardUI SpawnCard(int index)
+    {
+        CardUI cardInstance = Instantiate(card, transform);
+        RectTransform cardRect = cardInstance.GetComponent<RectTransform>();
+        cardRect.anchoredPosition = deckPivot.anchoredPosition;
+        cardRect.rotation = deckPivot.rotation;
+
+        previousCards[index] = cardInstance;
+
+        cardInstance.Initialize(this, weaponBuilder, index, BuyWeapon);
+
+        SetChildrenLayer(cardInstance.WeaponController.transform, uiRenderLayer);
+
+        AnimateCard(cardInstance, cardPivots[index].anchoredPosition, index);
+
+        return cardInstance;
     }
 
     private void ClearPreviousCard(int slotIndex)
     {
         if (previousCards[slotIndex] != null)
         {
-            LeanTween.cancel(previousCards[slotIndex]);
-            Destroy(previousCards[slotIndex]);
+            LeanTween.cancel(previousCards[slotIndex].gameObject);
+            if (previousCards[slotIndex].WeaponController != null) Destroy(previousCards[slotIndex].WeaponController.gameObject);
+            Destroy(previousCards[slotIndex].gameObject);
             previousCards[slotIndex] = null;
+        }
+    }
+
+    void SetChildrenLayer(Transform root, int layer)
+    {
+        var children = root.GetComponentsInChildren<Transform>(includeInactive: true);
+        foreach (var child in children)
+        {
+            child.gameObject.layer = layer;
         }
     }
 
