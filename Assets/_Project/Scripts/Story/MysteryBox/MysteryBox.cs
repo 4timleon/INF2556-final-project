@@ -44,21 +44,6 @@ public class MysteryBox : MonoBehaviour
         djKhaled.SetActive(false);
     }
 
-    void Update()
-    {
-        if (GameControls.GetInputActions().Player.Crouch.WasPerformedThisFrame())
-        {
-            if (canOptain)
-            {
-                OptainWeapon();
-            }
-            else
-            {
-                TryBuyBox();
-            }
-        }
-    }
-
     public void TryBuyBox()
     {
         if (GameData.Money < cost || canOpen == false) return;
