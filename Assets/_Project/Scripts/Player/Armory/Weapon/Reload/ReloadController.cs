@@ -74,7 +74,7 @@ public class ReloadController : MonoBehaviour
 
     void CancelReload()
     {
-        if (!weaponController.IsReloading || currentReload == null) return;
+        if (weaponController == null || !weaponController.IsReloading || currentReload == null) return;
 
         StopCoroutine(currentReload);
         weaponController.ReloadBase.CancelReload(this, weaponController);
