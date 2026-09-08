@@ -34,24 +34,25 @@ public class WeaponData
     {
         Modules.Add(moduleBase.ModuleType, moduleBase);
 
-        raritySize += (int)moduleBase.Rarity;
+        raritySize += ((int)moduleBase.Rarity * (int)moduleBase.Rarity);
 
         TotalCost += moduleBase.ModuleCost;
 
         AddTypeBias(moduleBase);
         AddStat(moduleBase);
 
-        TotalRarity = CalculateTotalRarity();
         LastAddedModule = moduleBase;
     }
 
     public void FinalizeStats()
     {
-        float accuracy = CalculateRMS(StatType.Accuracy);
-        float handling = CalculateRMS(StatType.Handling);
+        float accuracy = CalculateRMS(Stats[StatType.Accuracy]);
+        float handling = CalculateRMS(Stats[StatType.Handling]);
 
         Stats[StatType.Accuracy] = accuracy;
         Stats[StatType.Handling] = handling;
+
+        TotalRarity = (Rarity)Mathf.Clamp(Mathf.CeilToInt(CalculateRMS((float)raritySize)), 1, 4);
     }
 
     void AddStat(ModuleBase moduleBase)
@@ -81,9 +82,9 @@ public class WeaponData
         }
     }
 
-    float CalculateRMS(StatType statType)
+    float CalculateRMS(float value)
     {
-        return Mathf.Sqrt(Stats[statType] / (float)Modules.Count);
+        return Mathf.Sqrt(value / (float)Modules.Count);
     }
 
     void AddTypeBias(ModuleBase moduleBase)
@@ -111,13 +112,5 @@ public class WeaponData
         {
             TotalType = weaponType;
         }
-    }
-
-    Rarity CalculateTotalRarity()
-    {
-        float averageRarity = (float)raritySize / Modules.Count;
-        int totalRarity = Mathf.RoundToInt(averageRarity);
-
-        return (Rarity)Mathf.Clamp(totalRarity, 1, 4);
     }
 }
