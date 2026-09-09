@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     [Header("Health")]
     [SerializeField] private float maxHealth = 100f;
     [SerializeField] private float preDeathTimer = 10f;
-    [SerializeField] private bool revive = true; //Test: Set to false
+    [SerializeField] private bool revive = false;
     [SerializeField] private float healDelay = 5f;
     [SerializeField] private float healTillFull = 3f;
     [SerializeField] private float invincibilityFrameDuration = 1f;
@@ -22,12 +22,14 @@ public class Player : MonoBehaviour
     [SerializeField] private AudioSource lowHpAudioSource;
     [SerializeField] private AudioSource hitAudioSource;
     [SerializeField] private AudioSource gameOverSoundSource;
+    [SerializeField] private AudioSource reviveSoundSource;
 
     [Header("Weapons")]
     [SerializeField] private WeaponBuilder weaponBuilder;
     [SerializeField] private PlayerArmory playerArmory;
 
     public float Health { get; private set; } = 100f;
+    public float MaxHealth => maxHealth;
     public bool IsInPreDeath { get; private set; } = false;
     public bool IsDead { get; private set; } = false;
 
@@ -44,6 +46,8 @@ public class Player : MonoBehaviour
         deathCounter = 0f;
 
         Invoke("GiveFirstWeapon", 1f);
+
+        GameEventSystem.OnPerkAquired?.Invoke(PerkType.Revive);
     }
 
     private void OnEnable()
@@ -110,7 +114,7 @@ public class Player : MonoBehaviour
 
     public IEnumerator HealAfter()
     {
-        yield return new WaitForSecondsRealtime(healDelay);
+        yield return new WaitForSeconds(healDelay);
 
         LeanTween.cancel(gameObject);
         LeanTween.value(gameObject, Health, maxHealth, healTillFull)
@@ -124,8 +128,7 @@ public class Player : MonoBehaviour
                 {
                     lowHpAudioSource.Stop();
                 }
-            })
-            .setIgnoreTimeScale(true);
+            });
     }
 
     private IEnumerator PreDeath()
@@ -148,12 +151,14 @@ public class Player : MonoBehaviour
         yield return new WaitForSecondsRealtime(preDeathTimer);
 
         //Stand Up
+        Health = MaxHealth;
+        GameEventSystem.OnPlayerHealthChanged?.Invoke(Health, maxHealth);
+        lowHpAudioSource.Stop();
         globalVolume.profile = globalVolumeProfile;
         revive = false;
         IsInPreDeath = false;
         Time.timeScale = 1f;
-
-        //Remove Revive Perk
+        SoundManager.Instance?.PlayPlayerRevivedSound(reviveSoundSource);
     }
 
     private void Die()

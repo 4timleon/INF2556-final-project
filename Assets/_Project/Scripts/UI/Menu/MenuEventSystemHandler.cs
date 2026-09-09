@@ -21,6 +21,7 @@ public class MenuEventSystemHandler : MonoBehaviour
     [SerializeField] protected float _selectedAnimationScale = 1.1f;
     [SerializeField] protected float _scaleDuration = 0.25f;
     [SerializeField] protected List<GameObject> _animationExclusion = new List<GameObject>();
+    [SerializeField] protected List<GameObject> _soundExclusion = new List<GameObject>();
 
     [Header("Sounds")]
     [SerializeField] protected UnityEvent SoundEvent;
@@ -168,12 +169,16 @@ public class MenuEventSystemHandler : MonoBehaviour
 
     private void OnPointerClick(BaseEventData eventData)
     {
+        if (_soundExclusion.Contains(eventData.selectedObject))
+            return;
+
         PointerEventData pointerEventData = eventData as PointerEventData;
         if (pointerEventData != null)
         {
             if (pointerEventData.button == PointerEventData.InputButton.Left)
             {
                 //Play Sound
+                SoundClickEvent?.Invoke();
             }
         }
     }

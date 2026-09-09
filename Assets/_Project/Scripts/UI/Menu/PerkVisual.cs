@@ -1,13 +1,17 @@
 using UnityEngine;
 
-public class PerkVisual : MonoBehaviour {
+public class PerkVisual : MonoBehaviour
+{
 
     [SerializeField] private GameObject perkPrefab;
 
     private int applyHash = Animator.StringToHash("Apply");
 
-    public void SpawnAndAnimatePerk(Transform parent) {
-        GameObject skullInstance = Instantiate(perkPrefab, parent);
-        skullInstance.GetComponent<Animator>().SetTrigger(applyHash);
+    public GameObject SpawnAndAnimatePerk(Transform parent)
+    {
+        GameObject perkInstance = Instantiate(perkPrefab, parent);
+        perkInstance.GetComponent<Animator>().SetTrigger(applyHash);
+
+        return perkInstance;
     }
 }

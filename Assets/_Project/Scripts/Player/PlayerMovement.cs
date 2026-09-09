@@ -45,6 +45,9 @@ public class PlayerMovement : MonoBehaviour
     [Space]
     [Title("Recoil:", 14)]
     [SerializeField] private float recoilReturnSpeed = 15f;
+    [Title("Fall Damage", 14)]
+    [SerializeField] private float minFallVelocity = 15f;
+    [SerializeField] private float fatalFallVelocity = 25f;
 
     private CharacterController characterController;
     private Player player;
@@ -70,6 +73,9 @@ public class PlayerMovement : MonoBehaviour
 
     private float recoilPitch = 0f;
     private float recoilYaw = 0f;
+
+    private float fallDamage = 0f;
+    private bool takeFallDamage = false;
 
     //Pause
     private bool isPaused = false;
@@ -189,6 +195,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (characterController.isGrounded)
         {
+            if (takeFallDamage)
+            {
+                player.TakeDamage(fallDamage);
+                takeFallDamage = false;
+            }
+
             if (input.magnitude > 0.1f)
             {
                 horizontalVelocity = Vector3.MoveTowards(
@@ -221,6 +233,7 @@ public class PlayerMovement : MonoBehaviour
         if (!characterController.isGrounded)
         {
             velocity.y -= gravity * Time.deltaTime;
+            CalculateFallDamage(velocity.y);
         }
 
         characterController.Move(velocity * Time.deltaTime);
@@ -288,6 +301,17 @@ public class PlayerMovement : MonoBehaviour
         Quaternion pitchRotation = Quaternion.AngleAxis(finalArmPitch, Vector3.right);
 
         armsTransform.localRotation = yawRotation * pitchRotation;
+    }
+
+    private void CalculateFallDamage(float yVelocity)
+    {
+        float absYVelocity = Mathf.Abs(yVelocity);
+        if (absYVelocity < minFallVelocity)
+            return;
+
+        fallDamage = Mathf.InverseLerp(minFallVelocity, fatalFallVelocity, absYVelocity) * player.MaxHealth;
+
+        takeFallDamage = true;
     }
 
     private bool CanSprint() => !isReloading && !isSwitching && !isAttacking;

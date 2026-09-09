@@ -29,7 +29,12 @@ public class AudioClipRefsSO : ScriptableObject
     public float playerHitVolume;
 
     [Space]
-    [Header("Card Sounds")]
+    [Header("Card Sound")]
     public AudioClip cardSlide;
     public float cardSlideVolume;
+
+    [Space]
+    [Header("Revive Sound")]
+    public AudioClip revivedSound;
+    public float revivedSoundVolume;
 }

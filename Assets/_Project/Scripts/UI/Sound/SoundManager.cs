@@ -147,6 +147,11 @@ public class SoundManager : MonoBehaviour
     {
         PlaySound(audioSource, audioClipRefsSO.heartbeatSound, audioClipRefsSO.heartbeatVolume);
     }
+
+    public void PlayPlayerRevivedSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.revivedSound, audioClipRefsSO.revivedSoundVolume);
+    }
     #endregion
 
     #region Zombie Sounds

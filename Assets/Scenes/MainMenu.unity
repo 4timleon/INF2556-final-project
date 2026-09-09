@@ -46710,7 +46710,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 7158594160812607270, guid: a71ec3df354685044b998fb9a16ad2f9, type: 2}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: a69e3b5946c1e3742852323b44c2b418, type: 3}
+  m_Resource: {fileID: 8300000, guid: bb955cbcd1cea184f94c7a4237b67cfe, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.1
   m_Pitch: 1
@@ -47792,6 +47792,8 @@ MonoBehaviour:
   _selectedAnimationScale: 1.1
   _scaleDuration: 0.25
   _animationExclusion: []
+  _soundExclusion:
+  - {fileID: 612642250}
   SoundEvent:
     m_PersistentCalls:
       m_Calls:
@@ -52806,6 +52808,7 @@ MonoBehaviour:
   - {fileID: 27215810}
   - {fileID: 965271141}
   - {fileID: 276357495}
+  _soundExclusion: []
   SoundEvent:
     m_PersistentCalls:
       m_Calls:
@@ -53066,9 +53069,9 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 7158594160812607270, guid: a71ec3df354685044b998fb9a16ad2f9, type: 2}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: aba3d3d54d2b62a4baf34924d2c2d507, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 0
   Mute: 0

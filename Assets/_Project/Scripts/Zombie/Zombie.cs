@@ -309,6 +309,8 @@ public class Zombie : MonoBehaviour
 
     public void PlayAttackSound()
     {
+        if (noHead) return;
+
         //Play Sound
         if (zombieAudioSource.isPlaying)
         {
