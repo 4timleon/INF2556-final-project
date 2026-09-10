@@ -128,8 +128,6 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     {
         WeaponData weaponData = WeaponController.WeaponData;
 
-        Debug.Log(weaponData.TotalRarity);
-
         //Change Rarity Background
         SetRarityBackground(weaponData.TotalRarity);
 
