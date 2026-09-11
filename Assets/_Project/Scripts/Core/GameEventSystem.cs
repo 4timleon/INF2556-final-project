@@ -18,6 +18,9 @@ public static class GameEventSystem
     // -- Perks --
     public static Action<PerkType> OnPerkAquired;
 
+    // -- Points --
+    public static Action<int> OnPointsAdded;
+
     // -- Zombies and Wave Manager --
     public static Action<Zombie> OnEnemyKilled;
     public static Action OnWaveStarted;
