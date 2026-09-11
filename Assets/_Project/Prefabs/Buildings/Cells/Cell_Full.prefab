@@ -95,7 +95,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 4.5, y: 4.5, z: 9}
   m_Center: {x: 0, y: 2.25, z: 4.5}
@@ -441,8 +441,7 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 127
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 7795026078159937718, guid: 66ee7ce560d1ddfd8a6047259e16ff94, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -694,7 +693,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 136218515616277380, guid: ac4b5c2e7c8f5534f95d55541a61f4fc, type: 3}
       propertyPath: m_Intensity
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2786043742389865755, guid: ac4b5c2e7c8f5534f95d55541a61f4fc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -856,9 +855,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 655624032055933038}
     m_Modifications:
+    - target: {fileID: 2653396008322537469, guid: 61a3cc89859bed041b593bfbe1909f1a, type: 3}
+      propertyPath: m_Intensity
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4866156371196337243, guid: 61a3cc89859bed041b593bfbe1909f1a, type: 3}
       propertyPath: m_Name
       value: Cell Deko
+      objectReference: {fileID: 0}
+    - target: {fileID: 6408719780434831750, guid: 61a3cc89859bed041b593bfbe1909f1a, type: 3}
+      propertyPath: m_Intensity
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7977507961274096083, guid: 61a3cc89859bed041b593bfbe1909f1a, type: 3}
       propertyPath: m_LocalPosition.x
