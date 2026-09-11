@@ -62,7 +62,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fd03cbbfa7b7fe4dbc3d7709b42d662, type: 3}
   m_Name: ScreenSpaceGlobalIlluminationVolume
   m_EditorClassIdentifier: SSGIURP::ScreenSpaceGlobalIlluminationVolume
-  active: 1
+  active: 0
   enable:
     m_OverrideState: 1
     m_Value: 1
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccf1aba9553839d41ae37dd52e9ebcce, type: 3}
   m_Name: MotionBlur
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.MotionBlur
-  active: 1
+  active: 0
   mode:
     m_OverrideState: 1
     m_Value: 0
@@ -159,10 +159,10 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.4
+    m_Value: 0.1
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.35
+    m_Value: 1
   rounded:
     m_OverrideState: 0
     m_Value: 0
@@ -245,7 +245,7 @@ MonoBehaviour:
     m_Value: 1
   contrast:
     m_OverrideState: 1
-    m_Value: -10
+    m_Value: 0
   colorFilter:
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -270,13 +270,13 @@ MonoBehaviour:
   active: 1
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 0.6651002, y: 0.72496444, z: 1, w: 0.078947365}
+    m_Value: {x: 0.97445613, y: 0.9871043, z: 1, w: 0.078947365}
   midtones:
-    m_OverrideState: 0
-    m_Value: {x: 0.81872857, y: 0.8658809, z: 1, w: 0}
+    m_OverrideState: 1
+    m_Value: {x: 0.9846937, y: 0.9956393, z: 1, w: 0}
   highlights:
-    m_OverrideState: 0
-    m_Value: {x: 0.6721974, y: 0.65168184, z: 1, w: 0}
+    m_OverrideState: 1
+    m_Value: {x: 0.9652762, y: 0.9876397, z: 1, w: 0}
   shadowsStart:
     m_OverrideState: 0
     m_Value: 0
