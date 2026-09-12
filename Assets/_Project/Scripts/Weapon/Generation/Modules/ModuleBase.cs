@@ -29,6 +29,9 @@ public abstract class ModuleBase : MonoBehaviour
     [SerializeField] public bool HasHighestPoint;
     [SerializeField, EnableField(nameof(HasHighestPoint)), IndentProperty(20f)] public bool HasIronSight;
     [SerializeField, EnableField(nameof(HasHighestPoint)), IndentProperty(20f)] public Transform HighestPoint;
+    [Space]
+    [SerializeField] public bool HasMuzzlePoint;
+    [SerializeField, EnableField(nameof(HasMuzzlePoint)), IndentProperty(20f)] public Transform MuzzlePoint;
     [Line(GUIColor.Gray, 1, 2f)]
     [SerializeField] private Void v0;
     [Space]

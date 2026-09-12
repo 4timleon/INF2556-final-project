@@ -9,12 +9,15 @@ public class WeaponController : MonoBehaviour
     public int CurrentMagazineAmmo { get; set; }
     public int CurrentWeaponAmmo { get; set; }
 
+    public bool IsLocked { get; set; }
+
     public bool IsReloading { get; set; }
     public bool IsAiming { get; set; }
     public bool IsShooting { get; set; }
     public bool IsInspecting { get; set; }
 
     public Transform LeftHandTarget { get; private set; }
+    public Transform MuzzlePoint { get; private set; }
     public GripType LeftHandGripType { get; private set; }
     public float LeftHandGripDistance { get; private set; }
     public float HighestModuleDistance { get; private set; }
@@ -38,6 +41,7 @@ public class WeaponController : MonoBehaviour
 
         CalculateLeftHandTarget();
         CalculateHighestPoint();
+        CalculateMuzzlePoint();
         UpdateVisualBounds();
     }
 
@@ -126,6 +130,28 @@ public class WeaponController : MonoBehaviour
 
         VisualBounds = bounds;
         return VisualBounds;
+    }
+
+    void CalculateMuzzlePoint()
+    {
+        Dictionary<ModuleType, ModuleBase> modules = WeaponData.Modules;
+        float currentHighestPoint = 0;
+        ModuleBase highestModule = modules[ModuleType.Body];
+
+        foreach (ModuleBase moduleBase in modules.Values)
+        {
+            if (!moduleBase.HasMuzzlePoint) continue;
+
+            float highestPoint = moduleBase.MuzzlePoint.position.x;
+
+            if (currentHighestPoint < highestPoint)
+            {
+                currentHighestPoint = highestPoint;
+                highestModule = moduleBase;
+            }
+        }
+
+        MuzzlePoint = highestModule.MuzzlePoint;
     }
 
     void CalculateHighestPoint()
