@@ -41,6 +41,8 @@ public class CrosshairHandler : MonoBehaviour
         GameEventSystem.OnPlayerPreDeath += Event_PreDeath;
         GameEventSystem.OnPlayerDeath += Event_PlayerDeath;
         GameEventSystem.OnPlayerInSight += Event_PlayerInSight;
+        GameEventSystem.OnPlayerSmokeJointStarted += Event_SmokeJointStarted;
+        GameEventSystem.OnPlayerSmokeJointEnded += Event_SmokeJointEnded;
     }
 
     void OnDisable()
@@ -49,6 +51,8 @@ public class CrosshairHandler : MonoBehaviour
         GameEventSystem.OnPlayerPreDeath -= Event_PreDeath;
         GameEventSystem.OnPlayerDeath -= Event_PlayerDeath;
         GameEventSystem.OnPlayerInSight -= Event_PlayerInSight;
+        GameEventSystem.OnPlayerSmokeJointStarted -= Event_SmokeJointStarted;
+        GameEventSystem.OnPlayerSmokeJointEnded -= Event_SmokeJointEnded;
     }
 
     void Update()
@@ -75,6 +79,8 @@ public class CrosshairHandler : MonoBehaviour
     void Event_PreDeath(bool started) => ToggleCrosshair(!started);
     void Event_PlayerDeath(float c) => ToggleCrosshair(false);
     void Event_PlayerInSight(bool obj) => ToggleCrosshair(!obj);
+    void Event_SmokeJointStarted() => ToggleCrosshair(false);
+    void Event_SmokeJointEnded() => ToggleCrosshair(true);
 
     void ToggleCrosshair(bool status)
     {
