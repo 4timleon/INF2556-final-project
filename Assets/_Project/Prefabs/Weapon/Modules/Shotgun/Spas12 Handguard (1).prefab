@@ -98,6 +98,7 @@ Transform:
   - {fileID: 2094145093815014174}
   - {fileID: 6280666975774793934}
   - {fileID: 5379734651367464}
+  - {fileID: 5056977850341667190}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7153801869261230204
@@ -122,6 +123,9 @@ MonoBehaviour:
   HandPlacement: {fileID: 5379734651367464}
   GripType: 0
   PlacementBias: 2
+  HasHighestPoint: 1
+  HasIronSight: 0
+  HighestPoint: {fileID: 5056977850341667190}
   StatModifiers:
   - StatType: 0
     Value: 6.5
@@ -191,6 +195,37 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &4959007661835098411
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5056977850341667190}
+  m_Layer: 0
+  m_Name: Highest Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5056977850341667190
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4959007661835098411}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.653, y: 0.411, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2698709583193066289}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6332656350079792902
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1361232486597891956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3134036669149596811}
+  m_Layer: 0
+  m_Name: Highest Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3134036669149596811
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361232486597891956}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.65, y: 0.361, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4748408968122134035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2230138614919593329
 GameObject:
   m_ObjectHideFlags: 0
@@ -190,6 +221,7 @@ Transform:
   - {fileID: 7442906832209013704}
   - {fileID: 1407447652203444631}
   - {fileID: 3316807319934372658}
+  - {fileID: 3134036669149596811}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-5885255422521700382
@@ -214,6 +246,9 @@ MonoBehaviour:
   HandPlacement: {fileID: 3316807319934372658}
   GripType: 3
   PlacementBias: 5
+  HasHighestPoint: 1
+  HasIronSight: 1
+  HighestPoint: {fileID: 3134036669149596811}
   StatModifiers:
   - StatType: 0
     Value: 4

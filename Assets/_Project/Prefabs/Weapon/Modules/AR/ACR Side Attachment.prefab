@@ -57,9 +57,12 @@ MonoBehaviour:
   HandPlacement: {fileID: 0}
   GripType: 0
   PlacementBias: 1
+  HasHighestPoint: 0
+  HasIronSight: 1
+  HighestPoint: {fileID: 0}
   StatModifiers:
   - StatType: 2
-    Value: 75
+    Value: 160
   - StatType: 1
     Value: 10
   - StatType: 4

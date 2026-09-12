@@ -31,6 +31,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8420274147617767002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &957405719762529313
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4977018819906609284}
+  m_Layer: 0
+  m_Name: Highest Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4977018819906609284
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957405719762529313}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.653, y: 0.411, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8420274147617767002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3115705479992717111
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,6 +160,7 @@ Transform:
   - {fileID: 3227293562742193125}
   - {fileID: 3818508665791904783}
   - {fileID: 1352437667611103594}
+  - {fileID: 4977018819906609284}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1541478812985855504
@@ -145,14 +177,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BasicModule
   BelongingType: 4
   TypeBias: 1
-  Rarity: 3
+  Rarity: 4
   ModuleType: 2
   ModuleJointSize: 4
-  ModuleCost: 300
+  ModuleCost: 600
   HasHandPlacement: 1
   HandPlacement: {fileID: 1352437667611103594}
   GripType: 3
   PlacementBias: 2
+  HasHighestPoint: 1
+  HasIronSight: 0
+  HighestPoint: {fileID: 4977018819906609284}
   StatModifiers:
   - StatType: 6
     Value: 3

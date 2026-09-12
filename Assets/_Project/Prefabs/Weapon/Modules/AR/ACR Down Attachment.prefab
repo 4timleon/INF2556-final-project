@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BasicModule
   BelongingType: 0
   TypeBias: 0
-  Rarity: 2
+  Rarity: 4
   ModuleType: 8
   ModuleJointSize: 4
   ModuleCost: 120
@@ -57,11 +57,16 @@ MonoBehaviour:
   HandPlacement: {fileID: 985914468396106143}
   GripType: 1
   PlacementBias: 5
+  HasHighestPoint: 0
+  HasIronSight: 1
+  HighestPoint: {fileID: 0}
   StatModifiers:
   - StatType: 1
-    Value: 65
+    Value: 150
   - StatType: 2
-    Value: 80
+    Value: 100
+  - StatType: 4
+    Value: 2.5
   ModuleSockets: []
 --- !u!33 &716355962829225760
 MeshFilter:

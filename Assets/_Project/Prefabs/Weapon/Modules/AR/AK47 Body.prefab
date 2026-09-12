@@ -69,6 +69,7 @@ Transform:
   - {fileID: 3583020834083451723}
   - {fileID: 3946648245424813651}
   - {fileID: 8123028222284765525}
+  - {fileID: 8812073485723968541}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3821437858461682515
@@ -93,6 +94,9 @@ MonoBehaviour:
   HandPlacement: {fileID: 8123028222284765525}
   GripType: 3
   PlacementBias: 1
+  HasHighestPoint: 1
+  HasIronSight: 0
+  HighestPoint: {fileID: 8812073485723968541}
   StatModifiers:
   - StatType: 0
     Value: 7.5
@@ -210,6 +214,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4986705198676296311}
   m_LocalEulerAnglesHint: {x: -62.536, y: 254.629, z: -314.3}
+--- !u!1 &4981240217917167085
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8812073485723968541}
+  m_Layer: 0
+  m_Name: Highest Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8812073485723968541
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4981240217917167085}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.45, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4986705198676296311}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6232060293204803283
 GameObject:
   m_ObjectHideFlags: 0
