@@ -34,6 +34,7 @@ public static class GameEventSystem
     public static Action<float, float> OnPlayerWeaponShoot; // args = recoil
 
     public static Action OnPlayerJump;
+    public static Action OnPlayerInspect;
 
     public static Action OnPlayerAttackStarted;
     public static Action OnPlayerAttackEnded;
@@ -47,5 +48,6 @@ public static class GameEventSystem
     public static Action OnPlayerSprintEnded;
 
     public static Action OnPlayerReloadStarted;
+    public static Action OnPlayerReloadTick;
     public static Action OnPlayerReloadEnded;
 }
