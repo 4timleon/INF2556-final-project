@@ -64,7 +64,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocity = Vector3.zero;
     private bool isSprinting;
 
-    private bool isAttacking;
     private bool isSwitching;
     private bool isAiming;
 
@@ -97,9 +96,6 @@ public class PlayerMovement : MonoBehaviour
         ControlsSettings.OnMouseSensitivityChanged += SetMouseSensitivity;
         GameEventSystem.OnGamePause += GameEventSystem_OnGamePause;
 
-        GameEventSystem.OnPlayerAttackStarted += Event_AttackStarted;
-        GameEventSystem.OnPlayerAttackEnded += Event_AttackEnded;
-
         GameEventSystem.OnPlayerWeaponDraw += Event_WeaponDraw;
         GameEventSystem.OnPlayerWeaponHolster += Event_WeaponHolster;
 
@@ -117,9 +113,6 @@ public class PlayerMovement : MonoBehaviour
         ControlsSettings.OnMouseSensitivityChanged -= SetMouseSensitivity;
         GameEventSystem.OnGamePause -= GameEventSystem_OnGamePause;
 
-        GameEventSystem.OnPlayerAttackStarted -= Event_AttackStarted;
-        GameEventSystem.OnPlayerAttackEnded -= Event_AttackEnded;
-
         GameEventSystem.OnPlayerWeaponDraw -= Event_WeaponDraw;
         GameEventSystem.OnPlayerWeaponHolster -= Event_WeaponHolster;
 
@@ -132,8 +125,6 @@ public class PlayerMovement : MonoBehaviour
         GameEventSystem.OnPlayerInSight -= Event_PlayerInSight;
     }
 
-    private void Event_AttackStarted() => isAttacking = true;
-    private void Event_AttackEnded() => isAttacking = false;
     private void Event_WeaponHolster() => isSwitching = true;
     private void Event_SprintStarted() => isSprinting = CanSprint();
     private void Event_SprintCanceled() => isSprinting = false;
@@ -301,7 +292,14 @@ public class PlayerMovement : MonoBehaviour
         armsTransform.localRotation = yawRotation * pitchRotation;
     }
 
-    private bool CanSprint() => !weaponController.IsReloading && !isSwitching && !isAttacking;
+    private bool CanSprint()
+    {
+        if (weaponController != null && !weaponController.IsReloading) return true;
+        if (!isSwitching) return true;
+        if (weaponController != null && !weaponController.IsShooting) return true;
+
+        return false;
+    }
     private float GetSpeed()
     {
         if (isSprinting)
