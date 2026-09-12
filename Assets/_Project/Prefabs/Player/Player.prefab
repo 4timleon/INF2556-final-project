@@ -2021,7 +2021,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.01
+  near clip plane: 0.1
   far clip plane: 1000
   field of view: 75
   orthographic: 0
@@ -2206,6 +2206,7 @@ GameObject:
   - component: {fileID: 7578570914147504446}
   - component: {fileID: 1726291542415004711}
   - component: {fileID: 6666395549699867304}
+  - component: {fileID: 7367181257719561695}
   m_Layer: 7
   m_Name: Armory
   m_TagString: Untagged
@@ -2300,7 +2301,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerADS
   playerCamera: {fileID: 6386906576662351938}
   ikDisplacementHandler: {fileID: 5526056262472109226}
-  playerInputs: {fileID: 3057024945015983844}
   animator: {fileID: 6566049464979649968}
   aimAnimationName: Aim
   idleAnimationName: Movement
@@ -2308,6 +2308,22 @@ MonoBehaviour:
   idleFOV: 75
   adsFOV: 50
   adsSpeed: 0.25
+--- !u!114 &7367181257719561695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3809942002704124585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ea342943c171284e9fd97ae3c312b1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInspect
+  animator: {fileID: 6566049464979649968}
+  inspectAnimationName: Inspect
+  idleAnimationName: Movement
+  animationLayer: 1
 --- !u!1 &3830106534844332777
 GameObject:
   m_ObjectHideFlags: 0
