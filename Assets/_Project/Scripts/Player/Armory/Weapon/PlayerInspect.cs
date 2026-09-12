@@ -65,7 +65,7 @@ public class PlayerInspect : MonoBehaviour
         if (isSwitching) { EndInspect(); return; }
         if (weaponController.IsReloading) { EndInspect(false); return; }
         if (weaponController.IsShooting) { EndInspect(); return; }
-        if (weaponController.IsAiming) { EndInspect(); return; }
+        if (weaponController.IsAiming) { EndInspect(false); return; }
         if (isSprinting) { EndInspect(); return; }
     }
 
