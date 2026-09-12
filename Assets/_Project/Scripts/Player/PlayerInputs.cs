@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -24,6 +25,9 @@ public class PlayerInputs : MonoBehaviour
         inputActions.Player.Attack.started += Input_AttackStarted;
         inputActions.Player.Attack.canceled += Input_AttackCanceled;
 
+        inputActions.Player.Aim.started += Input_AimStarted;
+        inputActions.Player.Aim.canceled += Input_AimCanceled;
+
         inputActions.Player.Reload.started += Input_ReloadStarted;
 
         inputActions.Player.Jump.started += Input_Jump;
@@ -39,6 +43,9 @@ public class PlayerInputs : MonoBehaviour
         inputActions.Player.Attack.started -= Input_AttackStarted;
         inputActions.Player.Attack.canceled -= Input_AttackCanceled;
 
+        inputActions.Player.Aim.started -= Input_AimStarted;
+        inputActions.Player.Aim.canceled -= Input_AimCanceled;
+
         inputActions.Player.Reload.started -= Input_ReloadStarted;
 
         inputActions.Player.Jump.started -= Input_Jump;
@@ -52,5 +59,7 @@ public class PlayerInputs : MonoBehaviour
     private void Input_SprintCanceled(InputAction.CallbackContext context) => GameEventSystem.OnPlayerSprintEnded?.Invoke();
     private void Input_AttackStarted(InputAction.CallbackContext context) => GameEventSystem.OnPlayerAttackStarted?.Invoke();
     private void Input_AttackCanceled(InputAction.CallbackContext context) => GameEventSystem.OnPlayerAttackEnded?.Invoke();
+    private void Input_AimStarted(InputAction.CallbackContext context) => GameEventSystem.OnPlayerAimStarted?.Invoke();
+    private void Input_AimCanceled(InputAction.CallbackContext context) => GameEventSystem.OnPlayerAimEnded?.Invoke();
     private void Input_ReloadStarted(InputAction.CallbackContext context) => GameEventSystem.OnPlayerReloadStarted?.Invoke();
 }

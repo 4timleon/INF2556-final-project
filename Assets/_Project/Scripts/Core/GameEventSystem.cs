@@ -38,6 +38,11 @@ public static class GameEventSystem
     public static Action OnPlayerAttackStarted;
     public static Action OnPlayerAttackEnded;
 
+    public static Action OnPlayerAimStarted;
+    public static Action OnPlayerAimEnded;
+
+    public static Action<bool> OnPlayerInSight;
+
     public static Action OnPlayerSprintStarted;
     public static Action OnPlayerSprintEnded;
 
