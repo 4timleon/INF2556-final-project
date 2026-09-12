@@ -7,6 +7,8 @@ using Random = System.Random;
 [CreateAssetMenu(fileName = "NewModuleDatabase", menuName = "Weapon/Module Database")]
 public class ModuleDatabaseSO : ScriptableObject
 {
+    [SerializeField] private List<ModuleBase> PistolBodies;
+    [Space]
     [SerializeField] private List<ModuleBase> Body;
     [SerializeField] private List<ModuleBase> Barrel;
     [SerializeField] private List<ModuleBase> Handguard;
@@ -62,6 +64,11 @@ public class ModuleDatabaseSO : ScriptableObject
     public ModuleBase GetRandomBodyModule()
     {
         return Body[random.Next(Body.Count)];
+    }
+
+    public ModuleBase GetRandomPistolBodyModule()
+    {
+        return PistolBodies[random.Next(PistolBodies.Count)];
     }
 
     void CategorizeModuleLists()
