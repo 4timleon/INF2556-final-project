@@ -30,6 +30,8 @@ public class PlayerInputs : MonoBehaviour
 
         inputActions.Player.Reload.started += Input_ReloadStarted;
 
+        inputActions.Player.Inspect.started += Input_Inspect;
+
         inputActions.Player.Jump.started += Input_Jump;
 
         inputActions.Player.MouseWheel.performed += Input_WeaponScroll;
@@ -62,4 +64,5 @@ public class PlayerInputs : MonoBehaviour
     private void Input_AimStarted(InputAction.CallbackContext context) => GameEventSystem.OnPlayerAimStarted?.Invoke();
     private void Input_AimCanceled(InputAction.CallbackContext context) => GameEventSystem.OnPlayerAimEnded?.Invoke();
     private void Input_ReloadStarted(InputAction.CallbackContext context) => GameEventSystem.OnPlayerReloadStarted?.Invoke();
+    private void Input_Inspect(InputAction.CallbackContext context) => GameEventSystem.OnPlayerInspect?.Invoke();
 }
