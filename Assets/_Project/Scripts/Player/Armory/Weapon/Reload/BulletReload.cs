@@ -37,17 +37,11 @@ public class BulletReload : ReloadBase
             yield break;
         }
 
-        GameObject bulletPrefab = GetBullet(weapon);
-        GameObject bulletInstance = null;
-
-        if (bulletPrefab != null && controller.BulletPouchSocket != null)
-        {
-            bulletInstance = Instantiate(bulletPrefab, controller.BulletPouchSocket);
-            bulletInstance.transform.localScale = Vector3.one / 100f;
-            bulletInstance.transform.localPosition = Vector3.zero;
-            bulletInstance.transform.localRotation = Quaternion.identity;
-            bulletInstance.SetActive(false);
-        }
+        GameObject bulletInstance = Instantiate(GetBullet(weapon), controller.BulletPouchSocket);
+        bulletInstance.transform.localScale = Vector3.one / 100f;
+        bulletInstance.transform.localPosition = Vector3.zero;
+        bulletInstance.transform.localRotation = Quaternion.identity;
+        bulletInstance.SetActive(false);
 
         controller.Animator.CrossFadeInFixedTime(controller.ReloadAnimationHash, 0.15f, controller.ReloadLayer);
 
@@ -63,7 +57,7 @@ public class BulletReload : ReloadBase
             controller.TargetHandler.SetHandTarget(bulletPouch, timing.timeReachPouch, () => stepFinished = true);
             yield return new WaitUntil(() => stepFinished);
 
-            if (bulletInstance != null) bulletInstance.SetActive(true);
+            bulletInstance.SetActive(true);
             if (timing.grabPause > 0f) yield return new WaitForSeconds(timing.grabPause);
 
             stepFinished = false;
@@ -71,11 +65,13 @@ public class BulletReload : ReloadBase
             yield return new WaitUntil(() => stepFinished);
 
             controller.RecoilController.ApplyRigRecoil(0, 0.35f);
-            if (bulletInstance != null) bulletInstance.SetActive(false);
+            bulletInstance.SetActive(false);
             if (timing.lockDelay > 0f) yield return new WaitForSeconds(timing.lockDelay);
 
             weapon.CurrentMagazineAmmo++;
             weapon.CurrentWeaponAmmo--;
+
+            GameEventSystem.OnPlayerReloadTick?.Invoke();
         }
 
         controller.Animator.CrossFadeInFixedTime(controller.MovementAnimationHash, 0.2f, controller.ReloadLayer);

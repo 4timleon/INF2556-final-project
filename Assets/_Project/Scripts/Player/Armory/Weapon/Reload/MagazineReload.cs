@@ -78,6 +78,7 @@ public class MagazineReload : ReloadBase
 
         weapon.CurrentWeaponAmmo -= bulletsToReload;
 
+        GameEventSystem.OnPlayerReloadTick?.Invoke();
         GameEventSystem.OnPlayerReloadEnded?.Invoke();
         weapon.IsReloading = false;
     }
