@@ -24,6 +24,9 @@ public static class GameEventSystem
 
     // -- Player Events --
 
+    public static Action OnPlayerSmokeJointStarted; // <----- hier muss noch Perk übergeben werden!
+    public static Action OnPlayerSmokeJointEnded; // <----- hier muss noch Perk übergeben werden!
+
     public static Action<bool> OnPlayerPreDeath;
     public static Action<float> OnPlayerDeath;
 
