@@ -40,14 +40,6 @@ public class PlayerSmoke : MonoBehaviour
         GameEventSystem.OnPlayerWeaponDraw -= Event_WeaponDraw;
     }
 
-    void Update()
-    {
-        if (GameControls.GetInputActions().Player.Crouch.WasPerformedThisFrame())
-        {
-            GameEventSystem.OnPlayerSmokeJointStarted?.Invoke();
-        }
-    }
-
     private void Event_WeaponDraw(WeaponController weaponController) => this.weaponController = weaponController;
 
     void Event_SmokeJointStarted()
