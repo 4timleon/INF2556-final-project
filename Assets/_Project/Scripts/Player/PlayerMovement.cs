@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [Title("Movement:", 14)]
     [SerializeField] private float maxWalkSpeed = 10f;
     [SerializeField] private float maxSprintSpeed = 20f;
+    [SerializeField] private float maxAimWalkSpeed = 5f;
     [Space]
     [SerializeField] private float groundAcceleration = 100f;
     [SerializeField] private float groundFriction = 50f;
@@ -48,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
 
     private CharacterController characterController;
     private Player player;
+    private Vector3 planarVelocity;
 
     private float currentArmPitch = 0.0f;
     private float armPitchVelocity = 0.0f;
@@ -64,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isAttacking;
     private bool isSwitching;
     private bool isReloading;
+    private bool isAiming;
 
     private float yaw = 0.0f;
     private float pitch = 0.0f;
@@ -109,6 +112,7 @@ public class PlayerMovement : MonoBehaviour
         GameEventSystem.OnPlayerJump += Event_Jump;
 
         GameEventSystem.OnPlayerWeaponRecoil += Event_WeaponRecoil;
+        GameEventSystem.OnPlayerInSight += Event_PlayerInSight;
     }
 
     private void OnDisable()
@@ -128,6 +132,7 @@ public class PlayerMovement : MonoBehaviour
         GameEventSystem.OnPlayerJump -= Event_Jump;
 
         GameEventSystem.OnPlayerWeaponRecoil -= Event_WeaponRecoil;
+        GameEventSystem.OnPlayerInSight -= Event_PlayerInSight;
     }
 
     private void Event_AttackStarted() => isAttacking = true;
@@ -138,6 +143,7 @@ public class PlayerMovement : MonoBehaviour
     private void Event_ReloadStarted() => isReloading = true;
     private void Event_SprintStarted() => isSprinting = CanSprint();
     private void Event_SprintCanceled() => isSprinting = false;
+    private void Event_PlayerInSight(bool obj) => isAiming = obj;
 
     private void Event_Jump()
     {
@@ -228,11 +234,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void AnimationMovement()
     {
-        Vector3 planarVelocity = new Vector3(characterController.velocity.x, 0f, characterController.velocity.z);
+        planarVelocity.x = characterController.velocity.x;
+        planarVelocity.z = characterController.velocity.z;
 
         float currentRealSpeed = planarVelocity.magnitude;
-
         float animationSpeed = currentRealSpeed / maxSprintSpeed;
+
+        if (!isSprinting)
+        {
+            animationSpeed = Mathf.Min(animationSpeed, 0.5f);
+        }
 
         animator.SetFloat(movementBlend, animationSpeed, 0.1f, Time.deltaTime);
     }
@@ -291,7 +302,17 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private bool CanSprint() => !isReloading && !isSwitching && !isAttacking;
-    private float GetSpeed() => isSprinting ? maxSprintSpeed : maxWalkSpeed;
+    private float GetSpeed()
+    {
+        if (isSprinting)
+        {
+            return maxSprintSpeed;
+        }
+        else
+        {
+            return isAiming ? maxAimWalkSpeed : maxWalkSpeed;
+        }
+    }
 
     public void SetMouseSensitivity(float value)
     {
