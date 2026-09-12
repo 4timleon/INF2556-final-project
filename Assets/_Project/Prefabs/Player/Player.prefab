@@ -1783,8 +1783,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   playerInputs: {fileID: 3057024945015983844}
-  maxWalkSpeed: 3.5
-  maxSprintSpeed: 7.5
+  maxWalkSpeed: 4.5
+  maxSprintSpeed: 8.5
+  maxAimWalkSpeed: 2.5
   groundAcceleration: 100
   groundFriction: 50
   airAcceleration: 20
@@ -1793,7 +1794,7 @@ MonoBehaviour:
   gravity: 20
   cameraRigTransform: {fileID: 3655300552090031932}
   cameraTransform: {fileID: 7665940984684718159}
-  sensitivity: 0.5
+  sensitivity: 2
   armsTransform: {fileID: 6851573699136066387}
   armPitchSwayAmount: 0.2
   armPitchReturnTime: 0.1
@@ -2204,6 +2205,7 @@ GameObject:
   - component: {fileID: 85461982682127862}
   - component: {fileID: 7578570914147504446}
   - component: {fileID: 1726291542415004711}
+  - component: {fileID: 6666395549699867304}
   m_Layer: 7
   m_Name: Armory
   m_TagString: Untagged
@@ -2284,6 +2286,28 @@ MonoBehaviour:
   maxRange: 100
   tracerPrefab: {fileID: 5322242136691397421, guid: f401d3d5b3f39e04a9a409298815f7e9, type: 3}
   tracerSpeed: 250
+--- !u!114 &6666395549699867304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3809942002704124585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f7520f2d863114e9fcb45ba796d8ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerADS
+  playerCamera: {fileID: 6386906576662351938}
+  ikDisplacementHandler: {fileID: 5526056262472109226}
+  playerInputs: {fileID: 3057024945015983844}
+  animator: {fileID: 6566049464979649968}
+  aimAnimationName: Aim
+  idleAnimationName: Movement
+  animationLayer: 1
+  idleFOV: 75
+  adsFOV: 50
+  adsSpeed: 0.25
 --- !u!1 &3830106534844332777
 GameObject:
   m_ObjectHideFlags: 0
@@ -6090,10 +6114,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 634eac9d6abe99443966027abb24646e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IKDisplacementHandler
-  baseOffset: {x: 0.25, y: 1.25, z: -0.5}
-  maxZ: 0
-  minZ: -0.5
+  idleOffset: {x: 0.25, y: 1.25, z: -0.5}
+  maxIdleZ: 0
+  minIdleZ: -0.5
+  adsOffset: {x: -0.06, y: 2.25, z: -0.5}
+  maxAimY: 1.75
+  minAimY: 0
   displacementTarget: {fileID: 1180640683006608988}
+  player: {fileID: 6102574486275773440}
 --- !u!114 &5278859553959763081
 MonoBehaviour:
   m_ObjectHideFlags: 0
