@@ -16,11 +16,13 @@ public class PlayerShoot : MonoBehaviour
     [SerializeField] private LayerMask hitMask;
     [SerializeField] private float maxRange = 100f;
     [Space]
-    [Title("Tracer", 14)]
+    [Title("Tracer & Muzzle Flash", 14)]
     [SerializeField] private GameObject tracerPrefab;
+    [SerializeField] private GameObject muzzleFlashPrefab;
     [SerializeField] private float tracerSpeed = 250f;
 
     private WeaponController weaponController;
+    private GameObject muzzleFlashInstance;
 
     private float roundsPerSecond;
     private int bulletAmount;
@@ -65,6 +67,8 @@ public class PlayerShoot : MonoBehaviour
         spread = accuracy / 5f;
 
         isAuto = IsAutoFire();
+
+        MoveMuzzleFlash();
     }
 
     void Event_WeaponHolster() => weaponController = null;
@@ -72,7 +76,7 @@ public class PlayerShoot : MonoBehaviour
 
     void Event_AttackStarted()
     {
-        if (weaponController == null || weaponController.IsReloading) return;
+        if (weaponController == null || weaponController.IsReloading || weaponController.IsLocked) return;
 
         weaponController.IsShooting = true;
     }
@@ -99,7 +103,7 @@ public class PlayerShoot : MonoBehaviour
             return;
         }
 
-        if (weaponController.IsReloading)
+        if (weaponController.IsReloading || weaponController.IsLocked)
         {
             weaponController.IsShooting = false;
             return;
@@ -116,6 +120,8 @@ public class PlayerShoot : MonoBehaviour
 
             nextAttackTimestamp += interval;
 
+            muzzleFlashInstance.GetComponent<ParticleSystem>().Stop();
+
             Shoot();
         }
 
@@ -123,6 +129,15 @@ public class PlayerShoot : MonoBehaviour
         {
             weaponController.IsShooting = false;
         }
+    }
+
+    void MoveMuzzleFlash()
+    {
+        if (muzzleFlashInstance == null) muzzleFlashInstance = Instantiate(muzzleFlashPrefab, Vector3.zero, Quaternion.identity);
+        muzzleFlashInstance.transform.SetParent(weaponController.MuzzlePoint);
+        muzzleFlashInstance.transform.localPosition = Vector3.zero;
+        muzzleFlashInstance.transform.localRotation = Quaternion.identity;
+        muzzleFlashInstance.transform.localScale = Vector3.one;
     }
 
     void Shoot()
@@ -136,6 +151,8 @@ public class PlayerShoot : MonoBehaviour
         float rigRecoil = isAiming ? recoil / 10f : recoil;
         float cameraRecoil = isAiming ? recoil : recoil / 10f;
         float finalSpread = isAiming ? spread / 10f : spread;
+
+        muzzleFlashInstance.GetComponent<ParticleSystem>().Play();
 
         weaponController.CurrentMagazineAmmo--;
         recoilController.ApplyRigRecoil(rigRecoil, rigRecoil);
@@ -177,16 +194,7 @@ public class PlayerShoot : MonoBehaviour
     //todo: durch pooling ersetzen (hatte kein bock)
     IEnumerator MoveTracer(Vector3 targetPoint)
     {
-        Vector3 tracerStart;
-
-        if (weaponController.TryGetModule(ModuleType.Muzzle, out var muzzleBase))
-        {
-            tracerStart = muzzleBase.transform.position;
-        }
-        else
-        {
-            tracerStart = weaponController.GetModule(ModuleType.Barrel).transform.position;
-        }
+        Vector3 tracerStart = weaponController.MuzzlePoint.position;
 
         GameObject tracer = Instantiate(tracerPrefab, tracerStart, Quaternion.identity);
 
