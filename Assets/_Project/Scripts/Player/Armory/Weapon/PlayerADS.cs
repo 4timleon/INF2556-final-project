@@ -78,13 +78,14 @@ public class PlayerADS : MonoBehaviour
         if (weaponController == null || !weaponController.IsAiming) return;
 
         if (isSwitching) { EndADS(); return; }
+        if (weaponController.IsLocked) { EndADS(); return; }
         if (weaponController.IsReloading) { EndADS(false); return; }
         if (isSprinting) { EndADS(); return; }
     }
 
     void StartADS()
     {
-        if (weaponController == null || weaponController.IsReloading || isSprinting || isSwitching) return;
+        if (weaponController == null || weaponController.IsReloading || weaponController.IsLocked || isSprinting || isSwitching) return;
 
         weaponController.IsAiming = true;
 

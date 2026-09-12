@@ -35,6 +35,7 @@ public class ReloadController : MonoBehaviour
         GameEventSystem.OnPlayerWeaponHolster += Event_WeaponHolster;
         GameEventSystem.OnPlayerReloadStarted += Event_ReloadStarted;
         GameEventSystem.OnPlayerAttackStarted += Event_AttackStarted;
+        GameEventSystem.OnPlayerSmokeJointStarted += Event_SmokeJointStarted;
     }
 
     void OnDisable()
@@ -42,9 +43,11 @@ public class ReloadController : MonoBehaviour
         GameEventSystem.OnPlayerWeaponDraw -= Event_WeaponDraw;
         GameEventSystem.OnPlayerWeaponHolster -= Event_WeaponHolster;
         GameEventSystem.OnPlayerReloadStarted -= Event_ReloadStarted;
+        GameEventSystem.OnPlayerSmokeJointStarted -= Event_SmokeJointStarted;
     }
 
     void Event_WeaponDraw(WeaponController weaponController) => this.weaponController = weaponController;
+    void Event_SmokeJointStarted() => CancelReload();
     void Event_WeaponHolster()
     {
         CancelReload();
@@ -60,7 +63,7 @@ public class ReloadController : MonoBehaviour
 
     void Event_ReloadStarted()
     {
-        if (weaponController == null || weaponController.IsReloading || weaponController.ReloadBase == null)
+        if (weaponController == null || weaponController.IsReloading || weaponController.IsLocked || weaponController.ReloadBase == null)
         {
             return;
         }

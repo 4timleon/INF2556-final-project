@@ -54,14 +54,13 @@ public class PlayerArmory : MonoBehaviour
 
     private void Event_WeaponScroll(Vector2 scrollValue)
     {
-        if (IsSwitching || weaponControllersPointer <= 0) return;
+        if (IsSwitching || weaponControllersPointer <= 0 || currentWeaponController.IsLocked) return;
 
         float scrollY = scrollValue.y;
         int nextIndex = currentIndex;
 
         if (scrollY > 0f) // Scroll Up
         {
-
             nextIndex++;
             if (nextIndex > weaponControllersPointer)
             {
@@ -143,6 +142,7 @@ public class PlayerArmory : MonoBehaviour
 
         if (currentWeaponController != null)
         {
+            currentWeaponController.IsLocked = true;
             GameEventSystem.OnPlayerWeaponHolster?.Invoke();
 
             bool holsterFinished = false;
@@ -150,6 +150,8 @@ public class PlayerArmory : MonoBehaviour
                     .SetOnComplete(() => holsterFinished = true);
 
             yield return new WaitUntil(() => holsterFinished);
+
+            currentWeaponController.IsLocked = false;
 
             if (removePrevious)
             {
@@ -165,6 +167,8 @@ public class PlayerArmory : MonoBehaviour
         currentIndex = toIndex;
         currentWeaponController.gameObject.SetActive(true);
 
+        currentWeaponController.IsLocked = true;
+
         GameEventSystem.OnPlayerWeaponTransform?.Invoke(currentWeaponController);
 
         bool drawFinished = false;
@@ -175,5 +179,6 @@ public class PlayerArmory : MonoBehaviour
 
         GameEventSystem.OnPlayerWeaponDraw?.Invoke(currentWeaponController);
         IsSwitching = false;
+        currentWeaponController.IsLocked = false;
     }
 }
