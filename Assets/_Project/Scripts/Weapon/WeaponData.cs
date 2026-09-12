@@ -14,6 +14,8 @@ public class WeaponData
     public Rarity TotalRarity { get; private set; }
     public int TotalCost { get; private set; }
 
+    private WeaponController weaponController;
+
     private Dictionary<WeaponType, int> typeBiases;
 
     private int raritySize;

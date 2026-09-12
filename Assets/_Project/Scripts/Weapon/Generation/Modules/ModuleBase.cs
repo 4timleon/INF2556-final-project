@@ -25,6 +25,10 @@ public abstract class ModuleBase : MonoBehaviour
     [SerializeField, EnableField(nameof(HasHandPlacement)), IndentProperty(20f)] public Transform HandPlacement;
     [SerializeField, EnableField(nameof(HasHandPlacement)), IndentProperty(20f)] public GripType GripType;
     [SerializeField, EnableField(nameof(HasHandPlacement)), IndentProperty(20f)] public int PlacementBias = 1;
+    [Space]
+    [SerializeField] public bool HasHighestPoint;
+    [SerializeField, EnableField(nameof(HasHighestPoint)), IndentProperty(20f)] public bool HasIronSight;
+    [SerializeField, EnableField(nameof(HasHighestPoint)), IndentProperty(20f)] public Transform HighestPoint;
     [Line(GUIColor.Gray, 1, 2f)]
     [SerializeField] private Void v0;
     [Space]
@@ -33,4 +37,17 @@ public abstract class ModuleBase : MonoBehaviour
     [SerializeField, DataTable()] public List<ModuleSocket> ModuleSockets;
 
     public virtual void PullTrigger() { }
+
+    public ModuleSocket GetModuleSocket(ModuleType moduleType)
+    {
+        foreach (ModuleSocket moduleSocket in ModuleSockets)
+        {
+            if (moduleSocket.ModuleType == moduleType)
+            {
+                return moduleSocket;
+            }
+        }
+
+        return null;
+    }
 }

@@ -13,12 +13,18 @@ public class WeaponController : MonoBehaviour
     public Transform LeftHandTarget { get; private set; }
     public GripType LeftHandGripType { get; private set; }
     public float LeftHandGripDistance { get; private set; }
+    public float HighestModuleDistance { get; private set; }
     public ReloadBase ReloadBase { get; private set; }
 
     public Bounds VisualBounds { get; private set; }
 
-    public void Initialize(WeaponData weaponData)
+    private WeaponBuilder weaponBuilder;
+    private bool hasForcedSight = false;
+
+    public void Initialize(WeaponData weaponData, WeaponBuilder weaponBuilder)
     {
+        this.weaponBuilder = weaponBuilder;
+
         WeaponData = weaponData;
 
         ReloadBase = ((BodyModule)WeaponData.Modules[ModuleType.Body]).ReloadBase;
@@ -26,6 +32,7 @@ public class WeaponController : MonoBehaviour
         CurrentAmmo = (int)WeaponData.Stats[StatType.MagazineSize];
 
         CalculateLeftHandTarget();
+        CalculateHighestPoint();
         UpdateVisualBounds();
     }
 
@@ -116,6 +123,40 @@ public class WeaponController : MonoBehaviour
         return VisualBounds;
     }
 
+    void CalculateHighestPoint()
+    {
+        Dictionary<ModuleType, ModuleBase> modules = WeaponData.Modules;
+        float currentHighestPoint = 0;
+        ModuleBase highestModule = modules[ModuleType.Body];
+
+        foreach (ModuleBase moduleBase in modules.Values)
+        {
+            if (!moduleBase.HasHighestPoint) continue;
+
+            float highestPoint = moduleBase.HighestPoint.position.y;
+
+            if (currentHighestPoint < highestPoint)
+            {
+                currentHighestPoint = highestPoint;
+                highestModule = moduleBase;
+            }
+        }
+
+        if (!highestModule.HasIronSight && !hasForcedSight)
+        {
+            if (weaponBuilder.ForcePlaceSight(WeaponData, highestModule))
+            {
+                hasForcedSight = true;
+                CalculateHighestPoint();
+                return;
+            }
+        }
+
+        HighestModuleDistance = (1.65f - currentHighestPoint) * 2f;
+
+        UpdateVisualBounds();
+    }
+
     void CalculateLeftHandTarget()
     {
         Dictionary<ModuleType, ModuleBase> modules = WeaponData.Modules;
@@ -123,8 +164,10 @@ public class WeaponController : MonoBehaviour
         ModuleBase body = modules[ModuleType.Body];
 
         float currentScore = 0;
+
         LeftHandTarget = body.HandPlacement;
         LeftHandGripType = body.GripType;
+        LeftHandGripDistance = 0;
 
         foreach (ModuleBase module in modules.Values)
         {
@@ -133,11 +176,14 @@ public class WeaponController : MonoBehaviour
                 continue;
             }
 
+            if (module.ModuleType == ModuleType.Body)
+            {
+                continue;
+            }
+
             float bodyX = body.transform.position.x;
             float moduleX = module.HandPlacement.position.x;
-            float divFactor = module.ModuleType == ModuleType.Body ? 18f : 6f;
-
-            float dst = Mathf.Abs(bodyX - moduleX) / divFactor;
+            float dst = Mathf.Abs(bodyX - moduleX) * 2f;
 
             float score = module.PlacementBias - dst;
 

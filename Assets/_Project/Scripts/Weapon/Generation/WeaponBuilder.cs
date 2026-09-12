@@ -5,7 +5,8 @@ using WeaponNamespace;
 
 public class WeaponBuilder : MonoBehaviour
 {
-    public ModuleDatabaseSO moduleDatabase;
+    [SerializeField] private ModuleDatabaseSO moduleDatabase;
+    [SerializeField] private Vector3 initialPosition;
 
     void Start()
     {
@@ -25,13 +26,43 @@ public class WeaponBuilder : MonoBehaviour
 
         weaponData.Modules[ModuleType.Body].transform.localPosition = transformedPivot;
 
-        weaponController.transform.position = Vector3.zero;
+        weaponController.transform.position = initialPosition;
         weaponController.transform.rotation = Quaternion.identity;
+        weaponController.transform.localScale = Vector3.one / 10f;
 
         weaponData.FinalizeStats();
-        weaponController.Initialize(weaponData);
+        weaponController.Initialize(weaponData, this);
 
         return weaponController;
+    }
+
+    public bool ForcePlaceSight(WeaponData weaponData, ModuleBase moduleBase)
+    {
+        ModuleSocket moduleSocket = moduleBase.GetModuleSocket(ModuleType.Sight);
+
+        if (moduleSocket == null)
+        {
+            return false;
+        }
+
+        ModuleBase nextSight = moduleDatabase.GetRandomModule(ModuleType.Sight, moduleBase.GetModuleSocket(ModuleType.Sight).AcceptedJointSizes);
+
+        if (nextSight == null)
+        {
+            return false;
+        }
+
+        ModuleBase moduleInstance = Instantiate(nextSight, Vector3.zero, Quaternion.identity);
+        moduleInstance.transform.SetParent(moduleSocket.Joint);
+        moduleInstance.transform.localPosition = Vector3.zero;
+        moduleInstance.transform.localRotation = Quaternion.identity;
+        moduleInstance.transform.localScale = Vector3.one;
+
+        weaponData.AddModule(moduleInstance);
+
+        weaponData.FinalizeStats();
+
+        return true;
     }
 
     void BuildWeaponRecursivly(WeaponData weaponData, ModuleBase modulePrefab, Transform parent)
@@ -65,21 +96,29 @@ public class WeaponBuilder : MonoBehaviour
 
     bool ModuleFilter(WeaponData weaponData, ModuleBase nextModule)
     {
-        //prevent multiple sights
-        if (nextModule.ModuleType == ModuleType.Sight && weaponData.Modules.ContainsKey(ModuleType.Sight))
+        //prevent sights
+        if (nextModule.ModuleType == ModuleType.Sight)
         {
             return true;
         }
+
+        //prevent attachments
+        if (nextModule.ModuleType == ModuleType.DownAttachment || nextModule.ModuleType == ModuleType.SideAttachment)
+        {
+            if (Random.Range(1, 100) > 25) return true;
+        }
+
+        //prevent multiple sights
+        // if (nextModule.ModuleType == ModuleType.Sight && weaponData.Modules.ContainsKey(ModuleType.Sight))
+        // {
+        //     return true;
+        // }
 
         //prevent grip magazines
         if (nextModule.ModuleType == ModuleType.Magazine && weaponData.LastAddedModule != null && weaponData.LastAddedModule.ModuleType == ModuleType.Grip)
         {
             bool hasGripMagazine = ((BodyModule)weaponData.Modules[ModuleType.Body]).HasGripMagazine;
-            if (hasGripMagazine)
-            {
-                return false;
-            }
-            else
+            if (!hasGripMagazine)
             {
                 weaponData.LastAddedModule = null;
                 return true;
