@@ -40,6 +40,7 @@ public class CrosshairHandler : MonoBehaviour
         GameEventSystem.OnPlayerWeaponDraw += Event_WeaponDraw;
         GameEventSystem.OnPlayerPreDeath += Event_PreDeath;
         GameEventSystem.OnPlayerDeath += Event_PlayerDeath;
+        GameEventSystem.OnPlayerInSight += Event_PlayerInSight;
     }
 
     void OnDisable()
@@ -47,6 +48,7 @@ public class CrosshairHandler : MonoBehaviour
         GameEventSystem.OnPlayerWeaponDraw -= Event_WeaponDraw;
         GameEventSystem.OnPlayerPreDeath -= Event_PreDeath;
         GameEventSystem.OnPlayerDeath -= Event_PlayerDeath;
+        GameEventSystem.OnPlayerInSight -= Event_PlayerInSight;
     }
 
     void Update()
@@ -72,6 +74,7 @@ public class CrosshairHandler : MonoBehaviour
 
     void Event_PreDeath(bool started) => ToggleCrosshair(!started);
     void Event_PlayerDeath(float c) => ToggleCrosshair(false);
+    void Event_PlayerInSight(bool obj) => ToggleCrosshair(!obj);
 
     void ToggleCrosshair(bool status)
     {
