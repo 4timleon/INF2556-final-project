@@ -294,11 +294,16 @@ public class PlayerMovement : MonoBehaviour
 
     private bool CanSprint()
     {
-        if (weaponController != null && !weaponController.IsReloading) return true;
-        if (!isSwitching) return true;
-        if (weaponController != null && !weaponController.IsShooting) return true;
+        if (weaponController != null)
+        {
+            if (weaponController.IsReloading) return false;
+            if (weaponController.IsShooting) return false;
+            if (weaponController.IsLocked) return false;
+        }
 
-        return false;
+        if (isSwitching) return false;
+
+        return true;
     }
     private float GetSpeed()
     {
