@@ -16,6 +16,8 @@ public class RecoilController : MonoBehaviour
 
     public void ApplyRigRecoil(float positionStrength, float rotationStrength)
     {
+        if (positionStrength == 0 && rotationStrength == 0) return;
+
         targetPosWeight = Mathf.Clamp01(targetPosWeight + positionStrength);
         targetRotWeight = Mathf.Clamp01(targetRotWeight + rotationStrength);
 
@@ -24,6 +26,8 @@ public class RecoilController : MonoBehaviour
 
     public void ApplyCameraRecoil(float positionStrength, float rotationStrength)
     {
+        if (positionStrength == 0 && rotationStrength == 0) return;
+
         float recoilPitch = rotationStrength / 5f;
         float recoilYaw = Random.Range(-1f, 1f) * (rotationStrength / 5f);
 
