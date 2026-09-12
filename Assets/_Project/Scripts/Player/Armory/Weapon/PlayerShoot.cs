@@ -32,6 +32,7 @@ public class PlayerShoot : MonoBehaviour
     private bool isPerformingAttack;
     private float nextAttackTimestamp;
     private bool isAuto;
+    private bool isAiming;
 
     void OnEnable()
     {
@@ -39,6 +40,7 @@ public class PlayerShoot : MonoBehaviour
         GameEventSystem.OnPlayerWeaponHolster += Event_WeaponHolster;
         GameEventSystem.OnPlayerAttackStarted += Event_AttackStarted;
         GameEventSystem.OnPlayerAttackEnded += Event_AttackEnded;
+        GameEventSystem.OnPlayerInSight += Event_PlayerInSight;
     }
 
     void OnDisable()
@@ -47,6 +49,7 @@ public class PlayerShoot : MonoBehaviour
         GameEventSystem.OnPlayerWeaponHolster -= Event_WeaponHolster;
         GameEventSystem.OnPlayerAttackStarted -= Event_AttackStarted;
         GameEventSystem.OnPlayerAttackEnded -= Event_AttackEnded;
+        GameEventSystem.OnPlayerInSight -= Event_PlayerInSight;
     }
 
     void Event_WeaponDraw(WeaponController weaponController)
@@ -66,6 +69,7 @@ public class PlayerShoot : MonoBehaviour
     }
 
     void Event_WeaponHolster() => weaponController = null;
+    private void Event_PlayerInSight(bool aim) => isAiming = aim;
 
     void Event_AttackStarted()
     {
@@ -130,13 +134,17 @@ public class PlayerShoot : MonoBehaviour
             return;
         }
 
-        recoilController.ApplyRigRecoil(recoil, recoil);
-        recoilController.ApplyCameraRecoil(recoil, recoil);
+        float rigRecoil = isAiming ? recoil / 10f : recoil;
+        float cameraRecoil = isAiming ? recoil : recoil / 10f;
+        float finalSpread = isAiming ? spread / 10f : spread;
+
+        recoilController.ApplyRigRecoil(rigRecoil, rigRecoil);
+        recoilController.ApplyCameraRecoil(cameraRecoil, cameraRecoil);
         weaponController.CurrentAmmo--;
 
         for (int i = 0; i < bulletAmount; i++)
         {
-            Vector2 spreadOffset = Random.insideUnitCircle * spread;
+            Vector2 spreadOffset = Random.insideUnitCircle * finalSpread;
             Vector3 shootDirection = playerCamera.transform.forward +
                                      (playerCamera.transform.right * spreadOffset.x) +
                                      (playerCamera.transform.up * spreadOffset.y);
