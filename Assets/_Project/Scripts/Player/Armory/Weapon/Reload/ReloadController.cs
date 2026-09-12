@@ -53,16 +53,19 @@ public class ReloadController : MonoBehaviour
 
     void Event_AttackStarted()
     {
-        if (weaponController == null || weaponController.CurrentAmmo <= 0) return;
+        if (weaponController == null || weaponController.CurrentMagazineAmmo <= 0) return;
 
         CancelReload();
     }
 
     void Event_ReloadStarted()
     {
-        if (weaponController == null || weaponController.IsReloading || weaponController.ReloadBase == null) return;
+        if (weaponController == null || weaponController.IsReloading || weaponController.ReloadBase == null)
+        {
+            return;
+        }
 
-        if (weaponController.CurrentAmmo >= weaponController.GetStat(StatType.MagazineSize))
+        if (weaponController.CurrentMagazineAmmo >= weaponController.GetStat(StatType.MagazineSize) || weaponController.CurrentWeaponAmmo <= 0)
         {
             return;
         }

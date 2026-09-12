@@ -6,7 +6,8 @@ public class WeaponController : MonoBehaviour
 {
     public WeaponData WeaponData { get; private set; }
 
-    public int CurrentAmmo { get; set; }
+    public int CurrentMagazineAmmo { get; set; }
+    public int CurrentWeaponAmmo { get; set; }
 
     public bool IsReloading { get; set; }
 
@@ -29,7 +30,8 @@ public class WeaponController : MonoBehaviour
 
         ReloadBase = ((BodyModule)WeaponData.Modules[ModuleType.Body]).ReloadBase;
 
-        CurrentAmmo = (int)WeaponData.Stats[StatType.MagazineSize];
+        CurrentMagazineAmmo = (int)WeaponData.Stats[StatType.MagazineSize];
+        CurrentWeaponAmmo = WeaponData.TotalMagazineSize;
 
         CalculateLeftHandTarget();
         CalculateHighestPoint();

@@ -22,7 +22,6 @@ public class PlayerADS : MonoBehaviour
     private LTDescr fovTween;
 
     private bool isAiming;
-    private bool isReloading;
     private bool isSprinting;
 
     private int aimAnimationHash;
@@ -42,7 +41,6 @@ public class PlayerADS : MonoBehaviour
         GameEventSystem.OnPlayerAimEnded += Event_AimEnded;
 
         GameEventSystem.OnPlayerReloadStarted += Event_ReloadStarted;
-        GameEventSystem.OnPlayerReloadEnded += Event_ReloadEnded;
 
         GameEventSystem.OnPlayerSprintStarted += Event_SprintStarted;
         GameEventSystem.OnPlayerSprintEnded += Event_SprintEnded;
@@ -57,7 +55,6 @@ public class PlayerADS : MonoBehaviour
         GameEventSystem.OnPlayerAimEnded -= Event_AimEnded;
 
         GameEventSystem.OnPlayerReloadStarted -= Event_ReloadStarted;
-        GameEventSystem.OnPlayerReloadEnded -= Event_ReloadEnded;
 
         GameEventSystem.OnPlayerSprintStarted -= Event_SprintStarted;
         GameEventSystem.OnPlayerSprintEnded -= Event_SprintEnded;
@@ -67,22 +64,18 @@ public class PlayerADS : MonoBehaviour
     }
 
     void Event_WeaponDraw(WeaponController weaponController) => this.weaponController = weaponController;
-    void Event_ReloadEnded() => isReloading = false;
     void Event_SprintEnded() => isSprinting = false;
-
     void Event_AimStarted() => StartADS();
     void Event_AimEnded() => EndADS();
+
+    private void Event_ReloadStarted()
+    {
+        if (isAiming) EndADS();
+    }
 
     void Event_WeaponHolster()
     {
         weaponController = null;
-
-        if (isAiming) EndADS();
-    }
-
-    void Event_ReloadStarted()
-    {
-        isReloading = true;
 
         if (isAiming) EndADS();
     }
@@ -96,7 +89,7 @@ public class PlayerADS : MonoBehaviour
 
     void StartADS()
     {
-        if (weaponController == null || isReloading || isSprinting) return;
+        if (weaponController == null || weaponController.IsReloading || isSprinting) return;
 
         isAiming = true;
 

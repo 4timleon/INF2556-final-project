@@ -31,7 +31,7 @@ public static class GameEventSystem
     public static Action<WeaponController> OnPlayerWeaponTransform;
     public static Action OnPlayerWeaponHolster;
     public static Action<Vector2> OnPlayerWeaponScroll;
-    public static Action<float, float> OnPlayerWeaponRecoil;
+    public static Action<float, float> OnPlayerWeaponShoot; // args = recoil
 
     public static Action OnPlayerJump;
 

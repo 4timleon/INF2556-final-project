@@ -48,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float recoilReturnSpeed = 15f;
 
     private CharacterController characterController;
+    private WeaponController weaponController;
     private Player player;
     private Vector3 planarVelocity;
 
@@ -65,7 +66,6 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isAttacking;
     private bool isSwitching;
-    private bool isReloading;
     private bool isAiming;
 
     private float yaw = 0.0f;
@@ -100,9 +100,6 @@ public class PlayerMovement : MonoBehaviour
         GameEventSystem.OnPlayerAttackStarted += Event_AttackStarted;
         GameEventSystem.OnPlayerAttackEnded += Event_AttackEnded;
 
-        GameEventSystem.OnPlayerReloadStarted += Event_ReloadStarted;
-        GameEventSystem.OnPlayerReloadEnded += Event_ReloadEnded;
-
         GameEventSystem.OnPlayerWeaponDraw += Event_WeaponDraw;
         GameEventSystem.OnPlayerWeaponHolster += Event_WeaponHolster;
 
@@ -111,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
 
         GameEventSystem.OnPlayerJump += Event_Jump;
 
-        GameEventSystem.OnPlayerWeaponRecoil += Event_WeaponRecoil;
+        GameEventSystem.OnPlayerWeaponShoot += Event_WeaponRecoil;
         GameEventSystem.OnPlayerInSight += Event_PlayerInSight;
     }
 
@@ -120,8 +117,8 @@ public class PlayerMovement : MonoBehaviour
         ControlsSettings.OnMouseSensitivityChanged -= SetMouseSensitivity;
         GameEventSystem.OnGamePause -= GameEventSystem_OnGamePause;
 
-        GameEventSystem.OnPlayerReloadStarted -= Event_ReloadStarted;
-        GameEventSystem.OnPlayerReloadEnded -= Event_ReloadEnded;
+        GameEventSystem.OnPlayerAttackStarted -= Event_AttackStarted;
+        GameEventSystem.OnPlayerAttackEnded -= Event_AttackEnded;
 
         GameEventSystem.OnPlayerWeaponDraw -= Event_WeaponDraw;
         GameEventSystem.OnPlayerWeaponHolster -= Event_WeaponHolster;
@@ -131,19 +128,22 @@ public class PlayerMovement : MonoBehaviour
 
         GameEventSystem.OnPlayerJump -= Event_Jump;
 
-        GameEventSystem.OnPlayerWeaponRecoil -= Event_WeaponRecoil;
+        GameEventSystem.OnPlayerWeaponShoot -= Event_WeaponRecoil;
         GameEventSystem.OnPlayerInSight -= Event_PlayerInSight;
     }
 
     private void Event_AttackStarted() => isAttacking = true;
     private void Event_AttackEnded() => isAttacking = false;
     private void Event_WeaponHolster() => isSwitching = true;
-    private void Event_WeaponDraw(WeaponController controller) => isSwitching = false;
-    private void Event_ReloadEnded() => isReloading = false;
-    private void Event_ReloadStarted() => isReloading = true;
     private void Event_SprintStarted() => isSprinting = CanSprint();
     private void Event_SprintCanceled() => isSprinting = false;
     private void Event_PlayerInSight(bool obj) => isAiming = obj;
+
+    private void Event_WeaponDraw(WeaponController weaponController)
+    {
+        this.weaponController = weaponController;
+        isSwitching = false;
+    }
 
     private void Event_Jump()
     {
@@ -301,7 +301,7 @@ public class PlayerMovement : MonoBehaviour
         armsTransform.localRotation = yawRotation * pitchRotation;
     }
 
-    private bool CanSprint() => !isReloading && !isSwitching && !isAttacking;
+    private bool CanSprint() => !weaponController.IsReloading && !isSwitching && !isAttacking;
     private float GetSpeed()
     {
         if (isSprinting)

@@ -35,7 +35,7 @@ public class GripController : MonoBehaviour
 
     void Event_ReloadStarted()
     {
-        if (weaponController.CurrentAmmo >= weaponController.GetStat(StatType.MagazineSize)) return;
+        if (weaponController.CurrentMagazineAmmo >= weaponController.GetStat(StatType.MagazineSize)) return;
 
         if (((BodyModule)weaponController.GetModule(ModuleType.Body)).HasMagazine)
         {

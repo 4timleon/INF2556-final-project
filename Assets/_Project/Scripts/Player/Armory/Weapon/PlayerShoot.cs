@@ -128,7 +128,7 @@ public class PlayerShoot : MonoBehaviour
 
     void Shoot()
     {
-        if (weaponController.CurrentAmmo <= 0)
+        if (weaponController.CurrentMagazineAmmo <= 0)
         {
             GameEventSystem.OnPlayerReloadStarted?.Invoke();
             return;
@@ -138,9 +138,13 @@ public class PlayerShoot : MonoBehaviour
         float cameraRecoil = isAiming ? recoil : recoil / 10f;
         float finalSpread = isAiming ? spread / 10f : spread;
 
+        weaponController.CurrentMagazineAmmo--;
         recoilController.ApplyRigRecoil(rigRecoil, rigRecoil);
-        recoilController.ApplyCameraRecoil(cameraRecoil, cameraRecoil);
-        weaponController.CurrentAmmo--;
+
+        float recoilPitch = cameraRecoil / 5f;
+        float recoilYaw = Random.Range(-1f, 1f) * (cameraRecoil / 5f);
+
+        GameEventSystem.OnPlayerWeaponShoot?.Invoke(recoilPitch, recoilYaw);
 
         for (int i = 0; i < bulletAmount; i++)
         {

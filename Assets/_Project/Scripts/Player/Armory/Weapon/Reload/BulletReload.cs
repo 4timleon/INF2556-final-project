@@ -55,7 +55,7 @@ public class BulletReload : ReloadBase
 
         bool stepFinished = false;
 
-        while (weapon.CurrentAmmo < weapon.WeaponData.Stats[StatType.MagazineSize])
+        while (weapon.CurrentMagazineAmmo < weapon.WeaponData.Stats[StatType.MagazineSize] && weapon.CurrentWeaponAmmo > 0)
         {
             ShellTiming timing = CalculateReloadTimes(baseTimePerShell);
 
@@ -74,7 +74,8 @@ public class BulletReload : ReloadBase
             if (bulletInstance != null) bulletInstance.SetActive(false);
             if (timing.lockDelay > 0f) yield return new WaitForSeconds(timing.lockDelay);
 
-            weapon.CurrentAmmo++;
+            weapon.CurrentMagazineAmmo++;
+            weapon.CurrentWeaponAmmo--;
         }
 
         controller.Animator.CrossFadeInFixedTime(controller.MovementAnimationHash, 0.2f, controller.ReloadLayer);

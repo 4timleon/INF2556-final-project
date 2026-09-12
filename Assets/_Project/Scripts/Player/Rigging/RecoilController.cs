@@ -24,16 +24,6 @@ public class RecoilController : MonoBehaviour
         CameraShaker.Instance.ShakeOnce(rotationStrength, rotationStrength, .1f, .5f);
     }
 
-    public void ApplyCameraRecoil(float positionStrength, float rotationStrength)
-    {
-        if (positionStrength == 0 && rotationStrength == 0) return;
-
-        float recoilPitch = rotationStrength / 5f;
-        float recoilYaw = Random.Range(-1f, 1f) * (rotationStrength / 5f);
-
-        GameEventSystem.OnPlayerWeaponRecoil?.Invoke(recoilPitch, recoilYaw);
-    }
-
     void Update()
     {
         targetPosWeight = Mathf.Lerp(targetPosWeight, 0f, returnSpeed * Time.deltaTime);

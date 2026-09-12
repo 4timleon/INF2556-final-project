@@ -68,7 +68,16 @@ public class MagazineReload : ReloadBase
         controller.TargetHandler.SetHandTarget(gripSocket, timing.timeReturnToGrip, () => stepFinished = true);
         yield return new WaitUntil(() => stepFinished);
 
-        weapon.CurrentAmmo = (int)weapon.WeaponData.Stats[StatType.MagazineSize];
+        int magSize = (int)weapon.WeaponData.Stats[StatType.MagazineSize];
+
+        int bulletsNeeded = magSize - weapon.CurrentMagazineAmmo;
+
+        int bulletsToReload = Mathf.Min(bulletsNeeded, weapon.CurrentWeaponAmmo);
+
+        weapon.CurrentMagazineAmmo += bulletsToReload;
+
+        weapon.CurrentWeaponAmmo -= bulletsToReload;
+
         GameEventSystem.OnPlayerReloadEnded?.Invoke();
         weapon.IsReloading = false;
     }

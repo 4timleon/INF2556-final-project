@@ -13,6 +13,7 @@ public class WeaponData
     public WeaponType TotalType { get; private set; }
     public Rarity TotalRarity { get; private set; }
     public int TotalCost { get; private set; }
+    public int TotalMagazineSize { get; private set; }
 
     private WeaponController weaponController;
 
@@ -56,6 +57,7 @@ public class WeaponData
 
         TotalRarity = (Rarity)Mathf.Clamp(Mathf.CeilToInt(CalculateRMS((float)raritySize)), 1, 4);
         TotalCost *= (int)TotalRarity;
+        TotalMagazineSize = CalculateMaxMagazineSize();
     }
 
     void AddStat(ModuleBase moduleBase)
@@ -83,6 +85,15 @@ public class WeaponData
                 Stats.Add(statType, value);
             }
         }
+    }
+
+    int CalculateMaxMagazineSize()
+    {
+        float rarityDiv = (int)TotalRarity * 100f;
+        float magazineSize = Stats[StatType.MagazineSize];
+        int factor = Mathf.RoundToInt(rarityDiv / magazineSize);
+
+        return Mathf.RoundToInt(factor * magazineSize);
     }
 
     float CalculateRMS(float value)
