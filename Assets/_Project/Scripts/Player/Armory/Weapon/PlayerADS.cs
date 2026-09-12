@@ -21,8 +21,8 @@ public class PlayerADS : MonoBehaviour
 
     private LTDescr fovTween;
 
-    private bool isAiming;
     private bool isSprinting;
+    private bool isSwitching;
 
     private int aimAnimationHash;
     private int idleAnimationHash;
@@ -40,8 +40,6 @@ public class PlayerADS : MonoBehaviour
         GameEventSystem.OnPlayerAimStarted += Event_AimStarted;
         GameEventSystem.OnPlayerAimEnded += Event_AimEnded;
 
-        GameEventSystem.OnPlayerReloadStarted += Event_ReloadStarted;
-
         GameEventSystem.OnPlayerSprintStarted += Event_SprintStarted;
         GameEventSystem.OnPlayerSprintEnded += Event_SprintEnded;
 
@@ -54,8 +52,6 @@ public class PlayerADS : MonoBehaviour
         GameEventSystem.OnPlayerAimStarted -= Event_AimStarted;
         GameEventSystem.OnPlayerAimEnded -= Event_AimEnded;
 
-        GameEventSystem.OnPlayerReloadStarted -= Event_ReloadStarted;
-
         GameEventSystem.OnPlayerSprintStarted -= Event_SprintStarted;
         GameEventSystem.OnPlayerSprintEnded -= Event_SprintEnded;
 
@@ -63,35 +59,34 @@ public class PlayerADS : MonoBehaviour
         GameEventSystem.OnPlayerWeaponHolster -= Event_WeaponHolster;
     }
 
-    void Event_WeaponDraw(WeaponController weaponController) => this.weaponController = weaponController;
+    void Event_SprintStarted() => isSprinting = true;
     void Event_SprintEnded() => isSprinting = false;
+
     void Event_AimStarted() => StartADS();
     void Event_AimEnded() => EndADS();
 
-    private void Event_ReloadStarted()
+    void Event_WeaponHolster() => isSwitching = true;
+
+    void Event_WeaponDraw(WeaponController weaponController)
     {
-        if (isAiming) EndADS();
+        this.weaponController = weaponController;
+        isSwitching = false;
     }
 
-    void Event_WeaponHolster()
+    void Update()
     {
-        weaponController = null;
+        if (weaponController == null || !weaponController.IsAiming) return;
 
-        if (isAiming) EndADS();
-    }
-
-    void Event_SprintStarted()
-    {
-        isSprinting = true;
-
-        if (isAiming) EndADS();
+        if (isSwitching) { EndADS(); return; }
+        if (weaponController.IsReloading) { EndADS(false); return; }
+        if (isSprinting) { EndADS(); return; }
     }
 
     void StartADS()
     {
-        if (weaponController == null || weaponController.IsReloading || isSprinting) return;
+        if (weaponController == null || weaponController.IsReloading || isSprinting || isSwitching) return;
 
-        isAiming = true;
+        weaponController.IsAiming = true;
 
         TweenFOV(adsFOV, () =>
         {
@@ -101,17 +96,17 @@ public class PlayerADS : MonoBehaviour
         ikDisplacementHandler.StartADS(adsSpeed);
     }
 
-    void EndADS()
+    void EndADS(bool returnToNormal = true)
     {
-        if (isAiming)
+        if (weaponController.IsAiming)
         {
             ikDisplacementHandler.EndADS(adsSpeed);
             TweenFOV(idleFOV);
-            animator.CrossFadeInFixedTime(idleAnimationHash, adsSpeed, animationLayer);
+            if (returnToNormal) animator.CrossFadeInFixedTime(idleAnimationHash, adsSpeed, animationLayer);
             GameEventSystem.OnPlayerInSight?.Invoke(false);
         }
 
-        isAiming = false;
+        weaponController.IsAiming = false;
     }
 
     void TweenFOV(float to, Action onComplete = null)
