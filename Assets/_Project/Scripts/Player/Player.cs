@@ -56,10 +56,10 @@ public class Player : MonoBehaviour
         GameEventSystem.OnGamePause -= GameEventSystem_OnGamePause;
     }
 
-    // testing
+    // testing -> weaponBuilder.BuildWeapon(true) -> 'true' für -> start with Pistol.
     private void GiveFirstWeapon()
     {
-        playerArmory.AddWeapon(weaponBuilder.BuildWeapon());
+        playerArmory.AddWeapon(weaponBuilder.BuildWeapon(true));
     }
 
     public void TakeDamage(float value)

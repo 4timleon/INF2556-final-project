@@ -13,11 +13,11 @@ public class WeaponBuilder : MonoBehaviour
         moduleDatabase.Initialize();
     }
 
-    public WeaponController BuildWeapon()
+    public WeaponController BuildWeapon(bool pistolBody = false)
     {
         WeaponController weaponController = new GameObject("Weapon").AddComponent<WeaponController>();
         WeaponData weaponData = new WeaponData();
-        ModuleBase bodyPrefab = moduleDatabase.GetRandomBodyModule();
+        ModuleBase bodyPrefab = pistolBody ? moduleDatabase.GetRandomPistolBodyModule() : moduleDatabase.GetRandomBodyModule();
 
         BuildWeaponRecursivly(weaponData, bodyPrefab, weaponController.transform);
 
