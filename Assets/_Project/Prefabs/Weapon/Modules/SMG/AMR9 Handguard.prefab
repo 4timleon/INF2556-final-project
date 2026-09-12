@@ -188,6 +188,8 @@ MonoBehaviour:
   HasHighestPoint: 1
   HasIronSight: 0
   HighestPoint: {fileID: 4449102918605913629}
+  HasMuzzlePoint: 0
+  MuzzlePoint: {fileID: 0}
   StatModifiers:
   - StatType: 0
     Value: 2
@@ -482,7 +484,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 27822ac1007cad449bcfbd1e0a6bae4d, type: 2}
+  - {fileID: 2100000, guid: f0786e76dd7e17740b7cfde5ce53285e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
