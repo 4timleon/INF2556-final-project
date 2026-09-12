@@ -29,7 +29,6 @@ public class PlayerShoot : MonoBehaviour
     private float accuracy;
     private float spread;
 
-    private bool isPerformingAttack;
     private float nextAttackTimestamp;
     private bool isAuto;
     private bool isAiming;
@@ -75,21 +74,16 @@ public class PlayerShoot : MonoBehaviour
     {
         if (weaponController == null || weaponController.IsReloading) return;
 
-        if (isAuto)
-        {
-            isPerformingAttack = true;
-        }
-        else
-        {
-            if (Time.time >= nextAttackTimestamp)
-            {
-                Shoot();
-                nextAttackTimestamp = Time.time + (1f / roundsPerSecond);
-            }
-        }
+        weaponController.IsShooting = true;
     }
 
-    void Event_AttackEnded() => isPerformingAttack = false;
+    void Event_AttackEnded()
+    {
+        if (weaponController != null)
+        {
+            weaponController.IsShooting = false;
+        }
+    }
 
     void Update()
     {
@@ -100,14 +94,14 @@ public class PlayerShoot : MonoBehaviour
 
         spread = playerInputs.IsMoving ? accuracy : accuracy / 5f;
 
-        if (!isPerformingAttack)
+        if (!weaponController.IsShooting)
         {
             return;
         }
 
         if (weaponController.IsReloading)
         {
-            isPerformingAttack = false;
+            weaponController.IsShooting = false;
             return;
         }
 
@@ -123,6 +117,11 @@ public class PlayerShoot : MonoBehaviour
             nextAttackTimestamp += interval;
 
             Shoot();
+        }
+
+        if (!isAuto)
+        {
+            weaponController.IsShooting = false;
         }
     }
 
