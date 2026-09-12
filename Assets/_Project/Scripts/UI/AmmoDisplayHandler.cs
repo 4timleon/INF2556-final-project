@@ -13,14 +13,14 @@ public class AmmoDisplayHandler : MonoBehaviour
     {
         GameEventSystem.OnPlayerWeaponDraw += Event_WeaponDraw;
         GameEventSystem.OnPlayerWeaponShoot += Event_WeaponShoot;
-        GameEventSystem.OnPlayerReloadEnded += Event_ReloadEnded;
+        GameEventSystem.OnPlayerReloadTick += Event_ReloadTick;
     }
 
     void OnDisable()
     {
         GameEventSystem.OnPlayerWeaponDraw -= Event_WeaponDraw;
         GameEventSystem.OnPlayerWeaponShoot -= Event_WeaponShoot;
-        GameEventSystem.OnPlayerReloadEnded -= Event_ReloadEnded;
+        GameEventSystem.OnPlayerReloadEnded -= Event_ReloadTick;
     }
 
     void Event_WeaponDraw(WeaponController weaponController)
@@ -36,7 +36,7 @@ public class AmmoDisplayHandler : MonoBehaviour
         currentAmmoText.text = weaponController.CurrentMagazineAmmo.ToString();
     }
 
-    void Event_ReloadEnded()
+    void Event_ReloadTick()
     {
         currentAmmoText.text = weaponController.CurrentMagazineAmmo.ToString();
         maxAmmoText.text = weaponController.CurrentWeaponAmmo.ToString();
