@@ -10,6 +10,9 @@ public class WeaponController : MonoBehaviour
     public int CurrentWeaponAmmo { get; set; }
 
     public bool IsReloading { get; set; }
+    public bool IsAiming { get; set; }
+    public bool IsShooting { get; set; }
+    public bool IsInspecting { get; set; }
 
     public Transform LeftHandTarget { get; private set; }
     public GripType LeftHandGripType { get; private set; }
