@@ -34,6 +34,8 @@ public class MysteryBox : MonoBehaviour
 
     private Coroutine currentBoxRoutine;
 
+    private bool playerInRange;
+
     void Start()
     {
         weaponPool = new();
@@ -42,6 +44,17 @@ public class MysteryBox : MonoBehaviour
         currentVisible = null;
         currentBoxRoutine = null;
         djKhaled.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (!playerInRange) return;
+
+        if (GameControls.GetInputActions().Player.Interact.WasPressedThisFrame())
+        {
+            if (canOpen) TryBuyBox();
+            if (canOptain) OptainWeapon();
+        }
     }
 
     public void TryBuyBox()
@@ -188,5 +201,17 @@ public class MysteryBox : MonoBehaviour
             {
                 lidObject.transform.localRotation = Quaternion.Slerp(startRot, targetRot, t);
             });
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+            playerInRange = true;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+            playerInRange = false;
     }
 }

@@ -39,6 +39,8 @@ public class ZombieAnimations : MonoBehaviour
     private int isEatingHash = Animator.StringToHash("isEating");
     private int isScreamingHash = Animator.StringToHash("isScreaming");
     private int isHitHash = Animator.StringToHash("isHit");
+    private int isClimbingWindow = Animator.StringToHash("ClimbWindow");
+    private int isClimbingWindowFinished = Animator.StringToHash("ClimbFinished");
 
     private Zombie zombie;
     private float currentBlendInput = 0;
@@ -158,6 +160,10 @@ public class ZombieAnimations : MonoBehaviour
         zombie.StopMovement(true);
     }
 
+    public void SetWindowClimb() {
+        animator.SetTrigger(isClimbingWindow);
+    }
+
     public void SetIsEating(bool state)
     {
         animator.SetBool(isEatingHash, state);
@@ -183,6 +189,11 @@ public class ZombieAnimations : MonoBehaviour
     {
         zombie.StartAgent(Zombie.MovementState.Walk);
         zombie.StopMovement(false);
+    }
+
+    public void FinishedWindowClimbed() {
+        zombie.FinishClimbAnimation();
+        animator.SetTrigger(isClimbingWindowFinished);
     }
 
     public void AttackStarted()
