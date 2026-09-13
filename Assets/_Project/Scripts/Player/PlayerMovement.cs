@@ -342,9 +342,6 @@ public class PlayerMovement : MonoBehaviour
         takeFallDamage = true;
     }
 
-    private bool CanSprint() => !isReloading && !isSwitching && !isAttacking;
-    private float GetSpeed() => isSprinting ? maxSprintSpeed : maxWalkSpeed;
-
     public void SetMouseSensitivity(float value)
     {
         sensitivity = value;
