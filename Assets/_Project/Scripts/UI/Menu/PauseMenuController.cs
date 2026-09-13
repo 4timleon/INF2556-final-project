@@ -1,62 +1,110 @@
+using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PauseMenuController : MonoBehaviour
 {
+
+    [Header("References")]
+    [SerializeField] private GeneralInputHandler playerInputHandler;
+    [SerializeField] private MenuManager menuManager;
+
     [Header("Panels")]
-    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject pauseContainer;
     [SerializeField] private GameObject settingsPanel;
 
-    [Header("Settings")]
-    [SerializeField] private string mainMenuSceneName = "MainMenu"; // TODO: echten Szenennamen eintragen
+    [Header("Sounds")]
+    [SerializeField] private AudioSource backgroundMusic;
 
     private bool isPaused;
+    private bool playerIsDead;
 
-    private void Awake()
+    private void Start()
     {
-        pausePanel.SetActive(false);
-        settingsPanel.SetActive(false);
+        playerIsDead = false;
+        Resume();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (GameControls.GetInputActions().UI.Cancel.WasPressedThisFrame())
-        {
-            if (isPaused) Resume();
-            else Pause();
-        }
+        playerInputHandler.OnCancelAction += PlayerInputHandler_OnCancelAction;
+        GameEventSystem.OnPlayerDeath += GameEventSystem_OnPlayerDeath;
     }
 
+    private void OnDisable()
+    {
+        playerInputHandler.OnCancelAction -= PlayerInputHandler_OnCancelAction;
+        GameEventSystem.OnPlayerDeath -= GameEventSystem_OnPlayerDeath;
+    }
+
+    #region Pause Button Action
     public void Pause()
     {
-        isPaused = true;
-        Time.timeScale = 0f;
-        pausePanel.SetActive(true);
+        menuManager.SetMenuState(Menus.PauseMenu);
+
+        StopTime(true);
+
+        if (backgroundMusic.isPlaying)
+        {
+            backgroundMusic.Pause();
+        }
+
+        pauseContainer.SetActive(true);
+        settingsPanel.SetActive(false);
     }
 
     public void Resume()
     {
-        isPaused = false;
-        Time.timeScale = 1f;
-        pausePanel.SetActive(false);
+        menuManager.SetMenuState(Menus.InGame);
+        GameEventSystem.OnGamePause?.Invoke(false);
+
+        StopTime(false);
+
+        backgroundMusic.Play();
+
+        pauseContainer.SetActive(false);
         settingsPanel.SetActive(false);
     }
+    #endregion
 
-    public void OpenSettings()
+    public void StopTime(bool state)
     {
-        pausePanel.SetActive(false);
-        settingsPanel.SetActive(true);
+        isPaused = state;
+        Cursor.visible = state;
+        GameEventSystem.OnGamePause?.Invoke(state);
+
+        if (state)
+        {
+            Time.timeScale = 0f;
+
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 
-    public void CloseSettings()
+    private void PlayerInputHandler_OnCancelAction()
     {
-        settingsPanel.SetActive(false);
-        pausePanel.SetActive(true);
+        if (playerIsDead) return;
+
+        if (menuManager.MenuState == Menus.PauseMenu
+            || menuManager.MenuState == Menus.Settings
+            || menuManager.MenuState == Menus.KeybindWindow
+            || menuManager.MenuState == Menus.QuitConfirmation
+            || menuManager.MenuState == Menus.Quit
+            || menuManager.MenuState == Menus.MerchantMenu)
+            return;
+
+        if (isPaused) Resume();
+        else Pause();
     }
 
-    public void QuitToMainMenu()
+    private void GameEventSystem_OnPlayerDeath(float deathCounter)
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(mainMenuSceneName);
+        playerIsDead = true;
     }
+
 }

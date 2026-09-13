@@ -2,11 +2,12 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Detach : MonoBehaviour {
+public class Detach : MonoBehaviour
+{
 
     [SerializeField] private SkinnedMeshRenderer mesh;
     [SerializeField] private BodyPartType bodyPart;
-    [SerializeField] private GameObject detachedPrefab;
+    [SerializeField] private DetachedBodyPart detachedPrefab;
     [SerializeField] private float pushForce = 3f;
     [SerializeField] private Vector3 pushDirection = new Vector3(-1f, 0.2f, 0f);
 
@@ -14,74 +15,107 @@ public class Detach : MonoBehaviour {
     public bool IsDetached { get; private set; } = false;
     public BodyPartType BodyPartType => bodyPart;
 
-    //Hit Variables for Debug
+    //Hit Variables
     private Color originalColor;
     private Material zombieMaterial;
     private readonly Color hitColor = Color.red;
 
-    private DetachController detachController;
+    //Dissolve
+    private float dissolveMeter = 1f;
+    private float dissolveTime = 1.5f;
+    private float dissolveDelay = 1f;
 
-    //Despawn Timer
-    private float despawnTimer = 2f;
+    private Coroutine hitfeedback;
 
-    private void Start() {
-        detachController = GetComponentInParent<DetachController>();//Remove Later after shooting implemented
-
-        if (mesh != null) {
+    private void Start()
+    {
+        if (mesh != null)
+        {
             zombieMaterial = mesh.material;
             originalColor = zombieMaterial.color;
         }
     }
 
-    public void TakeBodyPartDamage(float value) {
+    public void TakeBodyPartDamage(float value)
+    {
         DamageTaken += value;
 
-        StopAllCoroutines();
-        StartCoroutine(HitFeedback());
+        if (hitfeedback != null)
+        {
+            StopCoroutine(hitfeedback);
+        }
+        hitfeedback = StartCoroutine(HitFeedback());
     }
 
-    private IEnumerator HitFeedback() {
+    private IEnumerator HitFeedback()
+    {
         zombieMaterial.color = hitColor;
         yield return new WaitForSeconds(0.1f);
         zombieMaterial.color = originalColor;
     }
 
-    public void DetachMesh() {
+    public void DetachMesh()
+    {
         mesh.enabled = false;
 
-        GameObject newMesh = Instantiate(detachedPrefab, mesh.bounds.center, mesh.rootBone.rotation);
+        DetachedBodyPart newMesh = Instantiate(detachedPrefab, mesh.bounds.center, mesh.rootBone.rotation);
         Rigidbody rb = newMesh.GetComponentInChildren<Rigidbody>();
 
-        if (rb != null) {
+        if (rb != null)
+        {
             rb.AddForce(pushDirection.normalized * pushForce, ForceMode.Impulse);
         }
 
         IsDetached = true;
 
-        //Remove Later after shooting implemented
-        detachController.RemoveFromList(this);
-
-        StartCoroutine(RemoveAfterSomeTime(newMesh));
+        StartCoroutine(newMesh.Dissolve());
     }
 
-    private void DetachMesh(Vector3 pushDirection) {
-        if (!Keyboard.current.spaceKey.wasPressedThisFrame) {
-            return;
-        }
-
+    private void DetachMesh(Vector3 pushDirection)
+    {
         mesh.enabled = false;
 
-        GameObject newMesh = Instantiate(detachedPrefab, mesh.bounds.center, mesh.rootBone.rotation);
+        DetachedBodyPart newMesh = Instantiate(detachedPrefab, mesh.bounds.center, mesh.rootBone.rotation);
         Rigidbody rb = newMesh.GetComponentInChildren<Rigidbody>();
 
-        if (rb != null) {
+        if (rb != null)
+        {
             rb.AddForce(pushDirection.normalized * pushForce, ForceMode.Impulse);
         }
+
+        IsDetached = true;
+
+        StartCoroutine(newMesh.Dissolve());
     }
 
-    private IEnumerator RemoveAfterSomeTime(GameObject instance) {
-        yield return new WaitForSeconds(despawnTimer);
+    public IEnumerator DissolveBodyPart()
+    {
+        if (IsDetached) yield break;
 
-        Destroy(instance);
+        yield return new WaitForSeconds(dissolveDelay);
+
+        if (IsLeanTweenFull())
+        {
+            LeanTween.cancel(gameObject);
+            Destroy(gameObject, 2f);
+        }
+
+        LeanTween.value(gameObject, dissolveMeter, 0f, dissolveTime)
+            .setOnUpdate((float value) =>
+            {
+                zombieMaterial.SetFloat("_DissolveMeter", value);
+            })
+            .setDestroyOnComplete(true);
     }
+
+    public bool IsLeanTweenFull()
+    {
+        return LeanTween.tweensRunning >= LeanTween.maxSimulataneousTweens;
+    }
+
+    private void OnDestroy()
+    {
+        LeanTween.cancel(gameObject);
+    }
+
 }

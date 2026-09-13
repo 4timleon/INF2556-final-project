@@ -1,232 +1,198 @@
 using System;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
-public class Player : MonoBehaviour {
-
-    //private PlayerRegistry registry;
-
+public class Player : MonoBehaviour
+{
     [Header("References")]
-    [SerializeField] private CharacterController characterController;
-    [SerializeField] private PlayerInputHandler playerInputHandler;
-    [SerializeField] private Camera mainCamera;
-    [SerializeField] private AudioListener audioListener;
-    [SerializeField] private Transform aimtarget;
-    [SerializeField] private Transform weaponSocket;
-    [SerializeField] private bool cursorVisible = false;
-
-    [Header("Move Parameters")]
-    [SerializeField] private float walkSpeed = 10f;
-    [SerializeField] private float sprintMultiplier = 1.5f;
-    [SerializeField] private float gravityMultiplier = 1f;
-
-    [Header("Look Parameters")]
-    [SerializeField] private float mouseSensitivity = 0.1f;
-    [SerializeField] private float upDownLookRange = 80f;
-
-    [Header("Rotation")]
-    [SerializeField] private float playerModelRotationSpeed = 10f;
-    [SerializeField] private float rotateToTargetTime = 0.25f;
-    [SerializeField] private float rotationThreshold = 30;
+    [SerializeField] private Volume globalVolume;
+    [SerializeField] private VolumeProfile globalVolumeProfile;
+    [SerializeField] private VolumeProfile monochromeVolumeProfile;
 
     [Header("Health")]
-    [SerializeField] private float health = 100;
-    [SerializeField] private float preDeathTimer = 60f;
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float preDeathTimer = 10f;
+    [SerializeField] private bool revive = false;
+    [SerializeField] private float healDelay = 5f;
+    [SerializeField] private float healTillFull = 3f;
+    [SerializeField] private float invincibilityFrameDuration = 1f;
 
-    public bool IsIdling { get; private set; } = false;
-    public float RotationMismatch { get; private set; } = 0f;
-    public bool IsRotatingToTarget { get; private set; } = false;
+    [Header("Sound")]
+    [SerializeField] private AudioSource lowHpAudioSource;
+    [SerializeField] private AudioSource hitAudioSource;
+    [SerializeField] private AudioSource gameOverSoundSource;
+    [SerializeField] private AudioSource reviveSoundSource;
 
-    //References
-    private PlayerAnimation playerAnimation;
+    [Header("Weapons")]
+    [SerializeField] private WeaponBuilder weaponBuilder;
+    [SerializeField] private PlayerArmory playerArmory;
 
-    public Transform WeaponSocket => weaponSocket;
+    public float Health { get; private set; } = 100f;
+    public float MaxHealth => maxHealth;
+    public bool IsInPreDeath { get; private set; } = false;
+    public bool IsDead { get; private set; } = false;
 
-    private Vector3 currentMovement;
-    private float horizontalRotation;
-    private float verticalRotation;
-    private float currentSpeed => walkSpeed * (GetIsSprinting() ? sprintMultiplier : 1f);
+    //Health
+    private Coroutine healCoroutine;
+    private float nextDamageTime = 0f;
+    private float deathCounter;
 
-    //private Weapon weapon;
+    //Event
+    public static event Action<float> OnPreDeathCounter;
 
-    private bool isInPreDeath = false;
-    private bool isDead = false;
+    private void Start()
+    {
+        deathCounter = 0f;
 
-    //Camera Variables
-    private Vector2 cameraRotation = Vector2.zero;
-    private Vector2 playerTargetRotation = Vector2.zero;
+        Invoke("GiveFirstWeapon", 1f);
 
-    //Rotation Variables
-    private bool isRotatingClockwise = false;
-    private float rotatingToTargetTimer = 0f;
-
-    private void Awake() {
-        playerAnimation = GetComponent<PlayerAnimation>();
+        GameEventSystem.OnPerkAquired?.Invoke(PerkType.Revive);
     }
 
-    private void Start() {
-        Cursor.visible = cursorVisible;
-        Cursor.lockState = cursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
+    private void OnEnable()
+    {
+        GameEventSystem.OnGamePause += GameEventSystem_OnGamePause;
     }
 
-    /* public override void OnNetworkSpawn() {
-        if (IsOwner) {
-            if (mainCamera != null) mainCamera.enabled = true;
-            if (audioListener != null) audioListener.enabled = true;
+    private void OnDisable()
+    {
+        GameEventSystem.OnGamePause -= GameEventSystem_OnGamePause;
+    }
 
-            Cursor.lockState = cursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = cursorVisible;
-        } else {
-            if (mainCamera != null) mainCamera.gameObject.SetActive(false);
-            if (audioListener != null) audioListener.enabled = false;
+    // testing -> weaponBuilder.BuildWeapon(true) -> 'true' für -> start with Pistol.
+    private void GiveFirstWeapon()
+    {
+        playerArmory.AddWeapon(weaponBuilder.BuildWeapon(true));
+    }
+
+    public void TakeDamage(float value)
+    {
+        if (IsInPreDeath || IsDead) return;
+
+        // Check if still in invincibility frames
+        if (Time.time < nextDamageTime) return;
+
+        Health -= value;
+        Health = Mathf.Max(Health, 0);
+
+        // Set next damage time
+        nextDamageTime = Time.time + invincibilityFrameDuration;
+
+        GameEventSystem.OnPlayerHealthChanged(Health, maxHealth);
+
+        if (hitAudioSource.isPlaying) hitAudioSource.Stop();
+        SoundManager.Instance?.PlayHitSound(hitAudioSource);
+
+        //Debug.Log("Health: " + currentHealth);
+
+        if (healCoroutine != null)
+        {
+            StopCoroutine(healCoroutine);
+            healCoroutine = null;
         }
-    } */
+        healCoroutine = StartCoroutine(HealAfter());
 
-    private void Update() {
-        //if (!IsOwner) return;
+        if (Health < 50f)
+            SoundManager.Instance?.PlayLowHPSound(lowHpAudioSource);
 
-        HandleMovement();
-        HandleFall();
-    }
-
-    private void LateUpdate() {
-        HandleLook();
-    }
-
-    private void HandleMovement() {
-        (Vector3 cameraRight, Vector3 cameraForward) = GetCameraDirection();
-
-        Vector3 inputDirection = cameraRight * playerInputHandler.MovementInput.x +
-                                    cameraForward * playerInputHandler.MovementInput.y;
-
-        currentMovement.x = inputDirection.normalized.x * currentSpeed;
-        currentMovement.z = inputDirection.normalized.z * currentSpeed;
-
-        characterController.Move(currentMovement * Time.deltaTime);
-    }
-
-    private void HandleFall() {
-        if (characterController.isGrounded) {
-            currentMovement.y = -0.5f;
-        } else {
-            currentMovement.y += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
-        }
-    }
-
-    #region Rotation
-    private void HandleLook() {
-        cameraRotation.x += playerInputHandler.LookInput.x * mouseSensitivity;
-        cameraRotation.y = Mathf.Clamp(cameraRotation.y - playerInputHandler.LookInput.y * mouseSensitivity, -upDownLookRange, upDownLookRange);
-
-        playerTargetRotation.x += transform.eulerAngles.x + mouseSensitivity * playerInputHandler.LookInput.x;
-
-        IsIdling = playerInputHandler.MovementInput == Vector2.zero;
-
-        //Rotate if not idle
-        if (!IsIdling) {
-            RotatePlayerToTarget();
-        } else if (Mathf.Abs(RotationMismatch) > rotationThreshold || rotatingToTargetTimer > 0) {//If rotation mismatch not within threshold or rotate to Target Timer is true then rotate
-            UpdateIdleRotation(rotationThreshold);
-        }
-
-        mainCamera.transform.rotation = Quaternion.Euler(cameraRotation.y, cameraRotation.x, 0f);
-
-        //Get angle between camera and player
-        Vector3 cameraForwardProjectedXZ = new Vector3(mainCamera.transform.forward.x, 0f, mainCamera.transform.forward.z).normalized;
-        Vector3 crossProd = Vector3.Cross(transform.forward, cameraForwardProjectedXZ);
-        float sign = Mathf.Sign(Vector3.Dot(crossProd, transform.up));
-        RotationMismatch = sign * Vector3.Angle(transform.forward, cameraForwardProjectedXZ);
-    }
-
-    private void UpdateIdleRotation(float rotationThreshold) {
-        //Start new rotation direction
-        if (Mathf.Abs(RotationMismatch) > rotationThreshold) {
-            rotatingToTargetTimer = rotateToTargetTime;
-            isRotatingClockwise = RotationMismatch > rotationThreshold;
-        }
-        rotatingToTargetTimer -= Time.deltaTime;
-
-        if (isRotatingClockwise && RotationMismatch > 0f ||
-            !isRotatingClockwise && RotationMismatch < 0f) {
-            RotatePlayerToTarget();
+        if (Health <= 0)
+        {
+            if (revive)
+            {
+                IsInPreDeath = true;
+                globalVolume.profile = monochromeVolumeProfile;
+                StartCoroutine(PreDeath());
+            }
+            else
+            {
+                IsDead = true;
+                Die();
+            }
         }
     }
 
-    private void RotatePlayerToTarget() {
-        Quaternion targetRotationX = Quaternion.Euler(0f, playerTargetRotation.x, 0f);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotationX, playerModelRotationSpeed * Time.deltaTime);
+    public IEnumerator HealAfter()
+    {
+        yield return new WaitForSeconds(healDelay);
+
+        LeanTween.cancel(gameObject);
+        LeanTween.value(gameObject, Health, maxHealth, healTillFull)
+            .setOnUpdate((float value) =>
+            {
+                Health = value;
+
+                GameEventSystem.OnPlayerHealthChanged?.Invoke(Health, maxHealth);
+
+                if (Health >= 50 && lowHpAudioSource.isPlaying)
+                {
+                    lowHpAudioSource.Stop();
+                }
+            });
     }
-    #endregion
 
-    //[Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
-    public void RequestWeaponServerRpc(int weaponIndex) {
-        //WeaponManager.Instance.SpawnWeaponForPlayer(weaponIndex, this);
+    private IEnumerator PreDeath()
+    {
+        deathCounter++;
+
+        GameEventSystem.OnPlayerPreDeath?.Invoke(true);
+
+        //Sends the time in PreDeath once
+        OnPreDeathCounter?.Invoke(preDeathTimer);
+
+        LeanTween.value(gameObject, Time.timeScale, 0.3f, 2f)
+            .setOnUpdate((float value) =>
+            {
+                Time.timeScale = value;
+            })
+            .setIgnoreTimeScale(true);
+
+        //If Timer runs out the Player revives
+        yield return new WaitForSecondsRealtime(preDeathTimer);
+
+        //Stand Up
+        Health = MaxHealth;
+        GameEventSystem.OnPlayerHealthChanged?.Invoke(Health, maxHealth);
+        lowHpAudioSource.Stop();
+        globalVolume.profile = globalVolumeProfile;
+        revive = false;
+        IsInPreDeath = false;
+        Time.timeScale = 1f;
+        SoundManager.Instance?.PlayPlayerRevivedSound(reviveSoundSource);
     }
 
-    /* public Weapon GetCurrentWeapon() {
-        return weapon;
+    private void Die()
+    {
+        deathCounter++;
+
+        if (healCoroutine != null && IsDead)
+        {
+            StopCoroutine(healCoroutine);
+            healCoroutine = null;
+        }
+
+        if (lowHpAudioSource.isPlaying) lowHpAudioSource.Stop();
+        gameOverSoundSource.Play();
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        Time.timeScale = 0.3f;
+
+        GameEventSystem.OnPlayerDeath?.Invoke(deathCounter);
     }
 
-    public void SetCurrentWeapon(Weapon weapon) {
-        this.weapon = weapon;
-    } */
-
-    public void TakeDamage(float value) {
-        if (isInPreDeath) return;
-
-        health -= value;
-        health = Mathf.Max(health, 0);
-
-        Debug.Log("Health: " + health);
-
-        if (health <= 0) {
-            isInPreDeath = true;
-            PreDeath();
+    private void GameEventSystem_OnGamePause(bool state)
+    {
+        //Pause the heartbeat Sound
+        if (lowHpAudioSource.isPlaying && state)
+        {
+            lowHpAudioSource.Pause();
+        }
+        else if (Health < 50f && !state)
+        {
+            lowHpAudioSource.Play();
         }
     }
 
-    private void PreDeath() {
-        if (isDead) return;
-
-        //If Timer runs out the Player dies
-        if (Time.time <= preDeathTimer) {
-            isDead = true;
-            Die();
-        }
-    }
-
-    private void Die() {
-        GameEventSystem.OnPlayerDeath?.Invoke();
-    }
-
-    public (Vector3, Vector3) GetCameraDirection() {
-        Vector3 cameraForward = mainCamera.transform.forward;
-        Vector3 cameraRight = mainCamera.transform.right;
-        cameraForward.y = 0f;
-        cameraRight.y = 0f;
-        cameraForward = cameraForward.normalized;
-        cameraRight = cameraRight.normalized;
-
-        return (cameraRight, cameraForward);
-    }
-
-    public bool GetIsSprinting() {
-        if (!playerInputHandler.SprintTriggered) {
-            return false;
-        }
-
-        (Vector3 cameraRight, Vector3 cameraForward) = GetCameraDirection();
-        Vector3 inputDirection = cameraRight * playerInputHandler.MovementInput.x +
-                                 cameraForward * playerInputHandler.MovementInput.y;
-
-        if (inputDirection.sqrMagnitude <= 0.0001f) {
-            return false;
-        }
-
-        return Vector3.Dot(inputDirection.normalized, cameraForward) > 0f;
-    }
-
-    public PlayerInputHandler GetPlayerInputHandler() {
-        return playerInputHandler;
-    }
 }

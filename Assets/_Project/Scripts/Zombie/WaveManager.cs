@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class WaveManager : MonoBehaviour {
+public class WaveManager : MonoBehaviour, IInititalizeStart
+{
 
     [SerializeField] private Player playerReference;
 
@@ -10,10 +13,10 @@ public class WaveManager : MonoBehaviour {
     [SerializeField] private GameObject zombiePrefab;
     [SerializeField] private SpawnPoint[] spawnPoints;
     [SerializeField] private float timeBetweenSpawns = 1.0f;
-    //[SerializeField] private float timeBetweenWaves = 5.0f;
 
     [Header("Wave Scaling")]
     [SerializeField] private int baseZombieCount = 6;
+    [SerializeField] private int maxSimultaneousZombies = 60;
     [SerializeField] private float zombiesMultiplier = 1.3f;
 
     [Header("Probability Curves (X = Wave, Y = Weight)")]
@@ -21,41 +24,87 @@ public class WaveManager : MonoBehaviour {
     [SerializeField] private AnimationCurve fastWeightCurve = AnimationCurve.Linear(1, 0, 10, 50);
     [SerializeField] private AnimationCurve runWeightCurve = AnimationCurve.Linear(1, 0, 10, 80);
 
-    [Header("Current State")]
-    [SerializeField] private int currentWave = 0;
-    //private bool isSpawning = false;
+    [Header("Current State (Debug), Default: 1")]
+    [SerializeField] private int currentWave = 1;
+    private bool isSpawning = false;
+
+    private int maxZombiesToSpawn;
+    private int remainingZombiesToSpawn;
 
     //Zombies of the current Wave
     private List<Zombie> currentZombies = new();
 
-    private void Start() {
+    //Coroutine
+    private Coroutine spawnTimerCoroutine;
+
+    public int StartPriority => 1000;
+
+    private void Awake()
+    {
+        GameData.Wave = currentWave;
+    }
+
+    public async Awaitable InititalizeStart(CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        await Awaitable.NextFrameAsync(ct);
+
+        GameEventSystem.OnWaveStarted += GameEventSystem_OnWaveStarted;
+
+        maxZombiesToSpawn = 0;
+    }
+
+    private void GameEventSystem_OnWaveStarted()
+    {
         StartNextWave();
     }
 
     //Can be used to Start the next Wave after all Zombies got killed
-    public void StartNextWave() {
-        GameEventSystem.OnWaveStarted?.Invoke();
+    public void StartNextWave()
+    {
         currentWave++;
-        StartCoroutine(SpawnWaveRoutine());
+        GameData.Wave = currentWave;
+
+        //Max Zombies at the current Wave
+        remainingZombiesToSpawn = Mathf.RoundToInt(baseZombieCount * Mathf.Pow(zombiesMultiplier, currentWave - 1));
+        Debug.Log($"Wave {currentWave} started, Zombies spawned: {remainingZombiesToSpawn}");
+        maxZombiesToSpawn = remainingZombiesToSpawn;
+
+        isSpawning = true;
+        TrySpawnWaveRoutine();
     }
 
-    private IEnumerator SpawnWaveRoutine() {
-        //isSpawning = true;
-        int zombiesToSpawn = Mathf.RoundToInt(baseZombieCount * Mathf.Pow(zombiesMultiplier, currentWave - 1));
+    private void TrySpawnWaveRoutine()
+    {
+        if (!isSpawning || remainingZombiesToSpawn <= 0) return;
+        if (currentZombies.Count >= maxSimultaneousZombies) return;
 
-        Debug.Log($"Wave {currentWave} started, Zombies spawned: {zombiesToSpawn}");
-
-        for (int i = 0; i < zombiesToSpawn; i++) {
-            Zombie.MovementState zombieType = GetRandomZombieSpeed(currentWave);
-            SpawnZombie(zombieType);
-
-            yield return new WaitForSeconds(timeBetweenSpawns);
+        //Spawn Zombie
+        Zombie.MovementState zombieType = GetRandomZombieSpeed(currentWave);
+        Debug.Log("Spawning a Zombie! : " + currentZombies.Count);
+        SpawnZombie(zombieType);
+        remainingZombiesToSpawn--;
+        if (remainingZombiesToSpawn <= 0)
+        {
+            isSpawning = false;
+            return;
         }
+
+        if (spawnTimerCoroutine != null) StopCoroutine(spawnTimerCoroutine);
+        spawnTimerCoroutine = StartCoroutine(SpawnDelayRoutine());
+    }
+
+    private IEnumerator SpawnDelayRoutine()
+    {
+        yield return new WaitForSeconds(timeBetweenSpawns);
+        TrySpawnWaveRoutine();
     }
 
     //Calculates the weights of the Zombies depending on the current Wave
     //The more Waves the more faster and less slower Zombies appear
-    private Zombie.MovementState GetRandomZombieSpeed(int wave) {
+    private Zombie.MovementState GetRandomZombieSpeed(int wave)
+    {
         float slowWeight = Mathf.Max(0f, slowWeightCurve.Evaluate(wave));
         float fastWeight = Mathf.Max(0f, fastWeightCurve.Evaluate(wave));
         float runWeight = Mathf.Max(0f, runWeightCurve.Evaluate(wave));
@@ -64,16 +113,22 @@ public class WaveManager : MonoBehaviour {
 
         float randomValue = Random.Range(0f, totalWeight);
 
-        if (randomValue < slowWeight) {
+        if (randomValue < slowWeight)
+        {
             return Zombie.MovementState.Walk;
-        } else if (randomValue < slowWeight + fastWeight) {
+        }
+        else if (randomValue < slowWeight + fastWeight)
+        {
             return Zombie.MovementState.Fast;
-        } else {
+        }
+        else
+        {
             return Zombie.MovementState.Run;
         }
     }
 
-    private void SpawnZombie(Zombie.MovementState type) {
+    private void SpawnZombie(Zombie.MovementState type)
+    {
         SpawnPoint spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
         Vector3 randomSpawnPoint = spawnPoint.GetRandomSpawnPosition();
 
@@ -83,28 +138,37 @@ public class WaveManager : MonoBehaviour {
         zombie.SetTarget(playerReference);
         zombie.SetSpeed(type);
 
-        if (spawnPoint.OutOfGround) {
+        if (spawnPoint.OutOfGround)
+        {
             zombie.StartOutOfGroundAnimation();
-        } else {
+        }
+        else
+        {
             zombie.StartMovement();
         }
     }
 
-    public void RemoveZombieFromList(Zombie zombie) {
+    public void RemoveZombieFromList(Zombie zombie)
+    {
         currentZombies.Remove(zombie);
+        maxZombiesToSpawn--;
 
-        if (currentZombies.Count == 0) {
+        TrySpawnWaveRoutine();
+
+        if (currentZombies.Count == 0 && maxZombiesToSpawn == 0)
+        {
             GameEventSystem.OnWaveEnded?.Invoke();
-            StartNextWave();
         }
     }
 
-
-    private void OnEnable() {
+    private void OnEnable()
+    {
         GameEventSystem.OnEnemyKilled += RemoveZombieFromList;
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         GameEventSystem.OnEnemyKilled -= RemoveZombieFromList;
+        GameEventSystem.OnWaveStarted -= GameEventSystem_OnWaveStarted;
     }
 }
