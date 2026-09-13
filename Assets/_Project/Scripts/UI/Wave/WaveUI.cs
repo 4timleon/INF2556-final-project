@@ -2,13 +2,15 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
-public class WaveUI : MonoBehaviour {
+public class WaveUI : MonoBehaviour
+{
 
     [SerializeField] private TextMeshProUGUI waveNumberText;
     [SerializeField] private float animationDuration = 5f;
     [SerializeField] private AudioSource waveStartAudioSource;
 
-    private void Start() {
+    private void Start()
+    {
         //Update Text
         waveNumberText.text = GameData.Wave.ToString();
 
@@ -21,46 +23,57 @@ public class WaveUI : MonoBehaviour {
         StartCoroutine(InitialWave(2f));
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         GameEventSystem.OnWaveEnded += UpdateWaveNumber;
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         GameEventSystem.OnWaveEnded -= UpdateWaveNumber;
     }
 
-    private void UpdateWaveNumber() {
+    private void UpdateWaveNumber()
+    {
         int wave = GameData.Wave;
 
-        if (wave > 1) {
+        if (wave > 1)
+        {
             UpdateVisuals(wave);
         }
     }
 
-    private void UpdateVisuals(int wave) {
-        TextFadeOut(() => {
+    private void UpdateVisuals(int wave)
+    {
+        TextFadeOut(() =>
+        {
             waveNumberText.text = wave.ToString();
 
             TextFadeIn();
         });
     }
 
-    private void TextFadeOut(System.Action onComplete) {
+    private void TextFadeOut(System.Action onComplete)
+    {
         LeanTween.cancel(waveNumberText.gameObject);
 
         LeanTween.value(waveNumberText.gameObject, waveNumberText.color.a, 0f, animationDuration)
-            .setOnUpdate((float value) => {
+            .setOnUpdate((float value) =>
+            {
                 Color c = waveNumberText.color;
                 c.a = value;
                 waveNumberText.color = c;
             })
+            .setIgnoreTimeScale(true)
             .setOnComplete(onComplete);
     }
 
-    private void TextFadeIn() {
+    private void TextFadeIn()
+    {
         LeanTween.cancel(waveNumberText.gameObject);
 
-        if (!waveStartAudioSource.isPlaying) {
+        if (!waveStartAudioSource.isPlaying)
+        {
             waveStartAudioSource.Play();
         }
 
@@ -68,15 +81,19 @@ public class WaveUI : MonoBehaviour {
         Color targetColor = new Color(0.6f, 0f, 0f, 1f);
 
         LeanTween.value(waveNumberText.gameObject, startColor, targetColor, animationDuration)
-            .setOnUpdate((Color value) => {
+            .setOnUpdate((Color value) =>
+            {
                 waveNumberText.color = value;
             })
-            .setOnComplete(() => {
+            .setIgnoreTimeScale(true)
+            .setOnComplete(() =>
+            {
                 GameEventSystem.OnWaveStarted?.Invoke();
             });
     }
 
-    private IEnumerator InitialWave(float duration) {
+    private IEnumerator InitialWave(float duration)
+    {
         yield return new WaitForSeconds(duration);
 
         TextFadeIn();

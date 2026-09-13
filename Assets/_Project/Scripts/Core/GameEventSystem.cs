@@ -15,10 +15,14 @@ public static class GameEventSystem
     // -- Mystery Box --
     public static Action<Transform> OnMysteryBoxDisappear;
 
-    public static Action<float, float> OnPlayerHealthChanged; // (current, max)
+    // -- Perks --
+    public static Action<PerkType> OnPerkAquired;
 
+    // -- Points --
+    public static Action<int> OnPointsAdded;
+
+    // -- Zombies and Wave Manager --
     public static Action<Zombie> OnEnemyKilled;
-
     public static Action OnWaveStarted;
     public static Action OnWaveEnded;
 
@@ -29,6 +33,8 @@ public static class GameEventSystem
 
     public static Action<bool> OnPlayerPreDeath;
     public static Action<float> OnPlayerDeath;
+
+    public static Action<float, float> OnPlayerHealthChanged; // (current, max)
 
     public static Action<WeaponController> OnPlayerWeaponDraw;
     public static Action<WeaponController> OnPlayerWeaponTransform;

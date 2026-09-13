@@ -48,6 +48,10 @@ public class Zombie : MonoBehaviour
     [Header("Sound")]
     [SerializeField] private AudioSource zombieAudioSource;
 
+    [Space]
+    [Header("Points")]
+    [SerializeField] private int deathPoints = 100;
+
     public float Speed => speed;
     public MovementState CurrentMovementState { get; private set; }
     private bool pauseMovement = false;
@@ -309,6 +313,8 @@ public class Zombie : MonoBehaviour
 
     public void PlayAttackSound()
     {
+        if (noHead) return;
+
         //Play Sound
         if (zombieAudioSource.isPlaying)
         {
@@ -373,6 +379,7 @@ public class Zombie : MonoBehaviour
         zombieAnimations.SetDeath();
 
         GameEventSystem.OnEnemyKilled?.Invoke(this);
+        GameEventSystem.OnPointsAdded?.Invoke(deathPoints);
 
         StartCoroutine(StartRagdoll(1f));
     }

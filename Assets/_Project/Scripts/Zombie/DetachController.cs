@@ -29,6 +29,10 @@ public class DetachController : MonoBehaviour
     [SerializeField] private Detach leftPalmBodyPart;
     [SerializeField] private Detach rightPalmBodyPart;
 
+    [Header("Points per Body Part")]
+    [SerializeField] private int headPoints = 20;
+    [SerializeField] private int normalPoints = 10;
+
     [Header("Dissolve Effect")]
     [SerializeField] private ParticleSystem dissolveParticle;
 
@@ -59,7 +63,8 @@ public class DetachController : MonoBehaviour
                     bodyPart.DetachMesh();
                     zombie.SetNoHead();
                 }
-                break;
+                GameEventSystem.OnPointsAdded?.Invoke(headPoints);
+                return;
             case BodyPartType.LLegCalf or BodyPartType.RLegCalf:
                 if (bodyPart.DamageTaken >= legThreshold && !hasLostLeg)
                 {
@@ -86,6 +91,8 @@ public class DetachController : MonoBehaviour
                 zombie.TakeDamage(damageValue);
                 break;
         }
+
+        GameEventSystem.OnPointsAdded?.Invoke(normalPoints);
     }
 
     public void DissolveZombie()

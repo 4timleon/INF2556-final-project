@@ -22,6 +22,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     [SerializeField] private RectTransform rayCastHitbox;
     [SerializeField] private RawImage weaponRender;
     [SerializeField] private Outline outline;
+    [SerializeField] private Image shineEffectImage;
 
     [Header("Price")]
     [SerializeField] private Transform priceContainer;
@@ -56,6 +57,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     private Quaternion targetRotation;
     private Vector2 pointerPosition;
     private Camera pointerCamera;
+    private Material shineEffectMaterial;
 
     private bool isFlipped = false;
     private bool isInAnimation = false;
@@ -71,7 +73,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     private Vector3 targetScale = new Vector3(1.1f, 1.1f, 1.1f);
     private float scaleDuration = 0.2f;
 
-    //Cache a Function for later
+    //Callback Function
     private Action<CardUI> onCardClicked;
 
     private void Start()
@@ -79,6 +81,9 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         rectTransform = GetComponent<RectTransform>();
         defaultRotation = Quaternion.Euler(0f, -180f, 0f);
         cardVisual.localRotation = Quaternion.identity;
+
+        shineEffectMaterial = new Material(shineEffectImage.material);
+        shineEffectImage.material = shineEffectMaterial;
 
         frontSide.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
         frontSideTransform = frontSide.transform.localRotation;
@@ -173,11 +178,16 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
             float tiltX = normalizedY * maxTiltAngle;
             float tiltY = 180f + (normalizedX * maxTiltAngle);
 
+            //Set Shine Effect Value
+            float shineValue = Mathf.InverseLerp(-1, 1f, -normalizedX);
+            shineEffectMaterial.SetFloat("_ShineValue", shineValue);
+
             targetRotation = Quaternion.Euler(tiltX, tiltY, 0f);
         }
         else
         {
             targetRotation = defaultRotation;
+            shineEffectMaterial.SetFloat("_ShineValue", 0f);
         }
 
         cardVisual.localRotation = Quaternion.Lerp(cardVisual.localRotation, targetRotation, Time.unscaledDeltaTime * smoothSpeed);
@@ -268,5 +278,13 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         LeanTween.cancel(cardVisual.gameObject);
         LeanTween.scale(cardVisual.gameObject, Vector3.one, scaleDuration)
             .setIgnoreTimeScale(true);
+    }
+
+    private void OnDestroy()
+    {
+        if (shineEffectMaterial != null)
+        {
+            Destroy(shineEffectMaterial);
+        }
     }
 }

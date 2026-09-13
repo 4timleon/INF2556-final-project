@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Pool;
 
-public class PointsUI : MonoBehaviour {
+public class PointsUI : MonoBehaviour
+{
 
     [Header("Points Text")]
     [SerializeField] private TextMeshProUGUI pointsText;
@@ -30,7 +31,8 @@ public class PointsUI : MonoBehaviour {
     //Pool
     private IObjectPool<GameObject> textPool;
 
-    private void Awake() {
+    private void Awake()
+    {
         textPool = new ObjectPool<GameObject>(
             createFunc: () => Instantiate(fadingNumberText.gameObject, transform),
             actionOnGet: go => go.SetActive(true),
@@ -42,13 +44,18 @@ public class PointsUI : MonoBehaviour {
         );
     }
 
-    private void Update() {
-        if (Keyboard.current.digit4Key.wasPressedThisFrame) {
-            ApplyPoints(25);
-        }
+    private void OnEnable()
+    {
+        GameEventSystem.OnPointsAdded += GameEventSystem_OnPointsAdded;
     }
 
-    public void ApplyPoints(int value) {
+    private void OnDisable()
+    {
+        GameEventSystem.OnPointsAdded -= GameEventSystem_OnPointsAdded;
+    }
+
+    public void ApplyPoints(int value)
+    {
         if (value <= 0f) return;
 
         stringBuilder.Clear();
@@ -59,7 +66,8 @@ public class PointsUI : MonoBehaviour {
         SpawnVisual(value);
     }
 
-    private void SpawnVisual(int value) {
+    private void SpawnVisual(int value)
+    {
         //Get Object out of the Pool and set its position
         GameObject fadingNumberGameObject = textPool.Get();
         fadingNumberGameObject.transform.position = spawnPivot.position;
@@ -90,13 +98,20 @@ public class PointsUI : MonoBehaviour {
         //Make it fade out with tween
         LeanTween.alphaText(fadingNumberText.rectTransform, 0f, duration)
             .setEase(easeType)
-            .setOnComplete(() => {
+            .setOnComplete(() =>
+            {
                 LeanTween.cancel(fadingNumberGameObject);
                 textPool.Release(fadingNumberGameObject);
             });
     }
 
-    private void OnDestroy() {
+    private void GameEventSystem_OnPointsAdded(int addedPoints)
+    {
+        ApplyPoints(addedPoints);
+    }
+
+    private void OnDestroy()
+    {
         LeanTween.cancelAll();
     }
 }

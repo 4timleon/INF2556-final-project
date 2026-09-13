@@ -25,7 +25,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7610912762942580004}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -77,4 +77,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PerksUI
   juggernaut: {fileID: -8076627664041246101, guid: ccd067d1686192f4c87931d2cc55c802, type: 3}
   skull: {fileID: -5124206276847729139, guid: b88ef0f533840ce489bb740611fee74e, type: 3}
-  spawnTransform: {fileID: 0}
+  revive: {fileID: -5124206276847729139, guid: 262712844d6713b448508b0808a668fa, type: 3}
+  quickReload: {fileID: -5124206276847729139, guid: ae7c63ebd4108a6409a5045b3323fbb3, type: 3}
