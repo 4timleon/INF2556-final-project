@@ -88,7 +88,6 @@ public class DetachController : MonoBehaviour
                 }
                 break;
             default:
-                zombie.TakeDamage(damageValue);
                 break;
         }
 

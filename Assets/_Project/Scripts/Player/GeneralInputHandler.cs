@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class GeneralInputHandler : MonoBehaviour
 {
+    public static GeneralInputHandler Instance;
 
     private const string PLAYER_PREFS_BINDINGS = "InputBindings";
 
@@ -34,6 +35,14 @@ public class GeneralInputHandler : MonoBehaviour
     public event Action OnNavigateAction;
     public event Action OnPauseAction;
     public event Action OnCancelAction;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+    }
 
     private void OnEnable()
     {
@@ -221,5 +230,10 @@ public class GeneralInputHandler : MonoBehaviour
     {
         inputActions.RemoveAllBindingOverrides();
         PlayerPrefs.DeleteKey(PLAYER_PREFS_BINDINGS);
+    }
+
+    public InputSystem_Actions GetInputActions()
+    {
+        return inputActions;
     }
 }

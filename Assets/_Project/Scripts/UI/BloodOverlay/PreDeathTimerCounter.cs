@@ -1,26 +1,28 @@
-using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PreDeathTimerCounter : MonoBehaviour {
+public class PreDeathTimerCounter : MonoBehaviour
+{
     [SerializeField] private Image imageFill;
     [SerializeField] private TextMeshProUGUI counterTextMesh;
     [SerializeField] private GameObject container;
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         container.SetActive(false);
         Player.OnPreDeathCounter += StartCounter;
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         Player.OnPreDeathCounter -= StartCounter;
 
         LeanTween.cancel(gameObject);
     }
 
-    private void StartCounter(float totalDuration) {
+    private void StartCounter(float totalDuration)
+    {
         container.SetActive(true);
 
         LeanTween.cancel(gameObject);
@@ -30,7 +32,8 @@ public class PreDeathTimerCounter : MonoBehaviour {
         counterTextMesh.text = Mathf.CeilToInt(totalDuration).ToString();
 
         LeanTween.value(gameObject, 0f, 1f, totalDuration)
-            .setOnUpdate((float value) => {
+            .setOnUpdate((float value) =>
+            {
                 imageFill.fillAmount = value;
 
                 float remainingTime = value * totalDuration;
@@ -38,8 +41,8 @@ public class PreDeathTimerCounter : MonoBehaviour {
                 counterTextMesh.text = Mathf.CeilToInt(remainingTime).ToString();
             })
             .setEase(LeanTweenType.linear)
-            .setIgnoreTimeScale(true)
-            .setOnComplete(() => {
+            .setOnComplete(() =>
+            {
                 container.SetActive(false);
                 GameEventSystem.OnPlayerPreDeath?.Invoke(false);
             });

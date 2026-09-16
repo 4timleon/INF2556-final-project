@@ -17,6 +17,7 @@ public class PauseMenuController : MonoBehaviour
 
     private bool isPaused;
     private bool playerIsDead;
+    private bool playerIsInPreDeath;
 
     private void Start()
     {

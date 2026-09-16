@@ -22,6 +22,7 @@ public class ControlsSettings : MonoBehaviour
     {
         mouseSensScrollBar.value = PlayerPrefs.GetFloat(MOUSE_SENS_KEY, 0.1f);
         mouseSensText.text = mouseSensScrollBar.value.ToString("F2");
+        UpdateVisual();
     }
 
     private void OnEnable()
@@ -31,7 +32,6 @@ public class ControlsSettings : MonoBehaviour
         mouseSensScrollBar.onValueChanged.AddListener(OnSensitivityChanged);
 
         RegisterBindings();
-        UpdateVisual();
     }
 
     private void OnDisable()

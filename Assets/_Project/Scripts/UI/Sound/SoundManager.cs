@@ -143,6 +143,11 @@ public class SoundManager : MonoBehaviour
         PlaySound(audioSource, audioClipRefsSO.playerHitSounds, audioClipRefsSO.playerHitVolume);
     }
 
+    public void PlayHurtSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.playerHurtSounds, audioClipRefsSO.playerHurtVolume);
+    }
+
     public void PlayLowHPSound(AudioSource audioSource)
     {
         PlaySound(audioSource, audioClipRefsSO.heartbeatSound, audioClipRefsSO.heartbeatVolume);

@@ -27,6 +27,7 @@ public class ZombieAnimations : MonoBehaviour
     //Attack
     private int attackIndexHash = Animator.StringToHash("AttackIndex");
     private int attackHash = Animator.StringToHash("Attack");
+    private int windowAttackHash = Animator.StringToHash("PlayerToClose");
 
     //Jump
     private int jumpUpHash = Animator.StringToHash("JumpUp");
@@ -160,8 +161,14 @@ public class ZombieAnimations : MonoBehaviour
         zombie.StopMovement(true);
     }
 
-    public void SetWindowClimb() {
+    public void SetWindowClimb()
+    {
         animator.SetTrigger(isClimbingWindow);
+    }
+
+    public void SetWindowAttack(bool state)
+    {
+        animator.SetBool(windowAttackHash, state);
     }
 
     public void SetIsEating(bool state)
@@ -191,7 +198,13 @@ public class ZombieAnimations : MonoBehaviour
         zombie.StopMovement(false);
     }
 
-    public void FinishedWindowClimbed() {
+    public void StartedBarricadeAttackPlayer()
+    {
+        zombie.SetBarricadePlayerAttacking(true);
+    }
+
+    public void FinishedWindowClimbed()
+    {
         zombie.FinishClimbAnimation();
         animator.SetTrigger(isClimbingWindowFinished);
     }
@@ -209,6 +222,7 @@ public class ZombieAnimations : MonoBehaviour
     public void AttackFinished()
     {
         zombie.SetIsAttacking(false);
+        zombie.ResetMovementAfterAttack();
     }
 
     #endregion

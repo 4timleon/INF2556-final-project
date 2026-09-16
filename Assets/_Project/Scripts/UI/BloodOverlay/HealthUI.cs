@@ -21,6 +21,8 @@ public class HealthUI : MonoBehaviour
 
     private void UpdateBlood(float current, float max)
     {
+        LeanTween.cancel(gameObject);
+
         float healthPercent = current / max;
         float intensity = (1f - healthPercent) * maxAlpha;
 

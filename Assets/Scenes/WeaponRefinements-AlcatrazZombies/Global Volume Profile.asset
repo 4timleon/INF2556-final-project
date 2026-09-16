@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.Bloom
-  active: 0
+  active: 1
   skipIterations:
     m_OverrideState: 1
     m_Value: 1
@@ -21,10 +21,10 @@ MonoBehaviour:
     m_Value: 0.9
   intensity:
     m_OverrideState: 1
-    m_Value: 5
+    m_Value: 1
   scatter:
     m_OverrideState: 1
-    m_Value: 0.61
+    m_Value: 0.4
   clamp:
     m_OverrideState: 1
     m_Value: 65472
@@ -242,10 +242,10 @@ MonoBehaviour:
   active: 1
   postExposure:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 2.5
   contrast:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 5
   colorFilter:
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -254,7 +254,7 @@ MonoBehaviour:
     m_Value: 0
   saturation:
     m_OverrideState: 1
-    m_Value: -10
+    m_Value: 20
 --- !u!114 &3935319759752783672
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -267,13 +267,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 558a8e2b6826cf840aae193990ba9f2e, type: 3}
   m_Name: ShadowsMidtonesHighlights
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ShadowsMidtonesHighlights
-  active: 1
+  active: 0
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 0.97445613, y: 0.9871043, z: 1, w: 0.14878611}
+    m_Value: {x: 0.93659216, y: 0.9417733, z: 1, w: -0.00000011950083}
   midtones:
-    m_OverrideState: 1
-    m_Value: {x: 0.9846937, y: 0.9956393, z: 1, w: 1}
+    m_OverrideState: 0
+    m_Value: {x: 0.9846937, y: 0.9956393, z: 1, w: 0.000000014718949}
   highlights:
     m_OverrideState: 0
     m_Value: {x: 0.9652762, y: 0.9876397, z: 1, w: 1}
@@ -307,4 +307,4 @@ MonoBehaviour:
     m_Value: 0
   tint:
     m_OverrideState: 1
-    m_Value: -15.6
+    m_Value: 0

@@ -129,12 +129,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshLink
   m_SerializedVersion: 1
   m_AgentTypeID: 0
-  m_StartPoint: {x: -1.6789007, y: 0, z: -0.019510122}
-  m_EndPoint: {x: 0.9540482, y: 0, z: -0.0760188}
+  m_StartPoint: {x: -1.6788838, y: 0, z: -0.060958523}
+  m_EndPoint: {x: 0.5363259, y: 0, z: -0.07595649}
   m_StartTransform: {fileID: 0}
   m_EndTransform: {fileID: 0}
   m_Activated: 1
-  m_Width: 1
+  m_Width: 0.8
   m_CostModifier: 1
   m_IsOverridingCost: 0
   m_Bidirectional: 1
@@ -226,7 +226,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9080514320199782337, guid: 7e11dbc1516b46c419fbafed451c52a2, type: 3}
       propertyPath: m_Size.x
-      value: 2.3026464
+      value: 2.450431
       objectReference: {fileID: 0}
     - target: {fileID: 9080514320199782337, guid: 7e11dbc1516b46c419fbafed451c52a2, type: 3}
       propertyPath: m_Size.y
@@ -234,19 +234,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9080514320199782337, guid: 7e11dbc1516b46c419fbafed451c52a2, type: 3}
       propertyPath: m_Size.z
-      value: 1.921049
+      value: 2.432952
       objectReference: {fileID: 0}
     - target: {fileID: 9080514320199782337, guid: 7e11dbc1516b46c419fbafed451c52a2, type: 3}
       propertyPath: m_Center.x
-      value: 0.015424906
+      value: -0.06942589
       objectReference: {fileID: 0}
     - target: {fileID: 9080514320199782337, guid: 7e11dbc1516b46c419fbafed451c52a2, type: 3}
       propertyPath: m_Center.y
-      value: -0.14541057
+      value: -0.14541055
       objectReference: {fileID: 0}
     - target: {fileID: 9080514320199782337, guid: 7e11dbc1516b46c419fbafed451c52a2, type: 3}
       propertyPath: m_Center.z
-      value: 0.5716198
+      value: -0.039025515
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

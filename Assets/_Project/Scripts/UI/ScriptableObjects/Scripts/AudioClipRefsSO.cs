@@ -4,17 +4,17 @@ using UnityEngine;
 public class AudioClipRefsSO : ScriptableObject
 {
 
-    [Header("Zombie Chase Sound")]
+    [Header("Zombie Chase Sounds")]
     public AudioClip[] zombieChaseSounds;
     public float zombieChaseVolume;
 
     [Space]
-    [Header("Zombie Attack Sound")]
+    [Header("Zombie Attack Sounds")]
     public AudioClip[] zombieAttackSounds;
     public float zombieAttackVolume;
 
     [Space]
-    [Header("Zombie Hit Sound")]
+    [Header("Zombie Hit Sounds")]
     public AudioClip[] zombieHitSounds;
     public float zombieHitVolume;
 
@@ -24,9 +24,14 @@ public class AudioClipRefsSO : ScriptableObject
     public float heartbeatVolume;
 
     [Space]
-    [Header("Player Hit Sound")]
+    [Header("Player Hit Sounds")]
     public AudioClip[] playerHitSounds;
     public float playerHitVolume;
+
+    [Space]
+    [Header("Player Hurt Sounds")]
+    public AudioClip[] playerHurtSounds;
+    public float playerHurtVolume;
 
     [Space]
     [Header("Card Sound")]
@@ -37,4 +42,5 @@ public class AudioClipRefsSO : ScriptableObject
     [Header("Revive Sound")]
     public AudioClip revivedSound;
     public float revivedSoundVolume;
+
 }

@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     [Header("Sound")]
     [SerializeField] private AudioSource lowHpAudioSource;
     [SerializeField] private AudioSource hitAudioSource;
+    [SerializeField] private AudioSource hurtAudioSource;
     [SerializeField] private AudioSource gameOverSoundSource;
     [SerializeField] private AudioSource reviveSoundSource;
 
@@ -84,11 +85,15 @@ public class Player : MonoBehaviour
         if (hitAudioSource.isPlaying) hitAudioSource.Stop();
         SoundManager.Instance?.PlayHitSound(hitAudioSource);
 
+        if (hurtAudioSource.isPlaying) hurtAudioSource.Stop();
+        SoundManager.Instance?.PlayHurtSound(hurtAudioSource);
+
         //Debug.Log("Health: " + currentHealth);
 
         if (healCoroutine != null)
         {
             StopCoroutine(healCoroutine);
+            LeanTween.cancel(gameObject);
             healCoroutine = null;
         }
         healCoroutine = StartCoroutine(HealAfter());
@@ -148,7 +153,7 @@ public class Player : MonoBehaviour
             .setIgnoreTimeScale(true);
 
         //If Timer runs out the Player revives
-        yield return new WaitForSecondsRealtime(preDeathTimer);
+        yield return new WaitForSeconds(preDeathTimer);
 
         //Stand Up
         Health = MaxHealth;
@@ -168,6 +173,7 @@ public class Player : MonoBehaviour
         if (healCoroutine != null && IsDead)
         {
             StopCoroutine(healCoroutine);
+            LeanTween.cancel(gameObject);
             healCoroutine = null;
         }
 

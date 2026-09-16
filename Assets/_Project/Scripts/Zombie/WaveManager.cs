@@ -82,7 +82,6 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
 
         //Spawn Zombie
         Zombie.MovementState zombieType = GetRandomZombieSpeed(currentWave);
-        Debug.Log("Spawning a Zombie! : " + currentZombies.Count);
         SpawnZombie(zombieType);
         remainingZombiesToSpawn--;
         if (remainingZombiesToSpawn <= 0)
@@ -90,6 +89,8 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
             isSpawning = false;
             return;
         }
+
+        Debug.Log("Spawning a Zombie! : " + currentZombies.Count);
 
         if (spawnTimerCoroutine != null) StopCoroutine(spawnTimerCoroutine);
         spawnTimerCoroutine = StartCoroutine(SpawnDelayRoutine());

@@ -206,12 +206,18 @@ public class MysteryBox : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
+        {
             playerInRange = true;
+            GameEventSystem.OnShowPriceText?.Invoke(cost);
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
+        {
             playerInRange = false;
+            GameEventSystem.OnHidePriceText?.Invoke();
+        }
     }
 }

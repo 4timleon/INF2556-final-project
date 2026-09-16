@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SpawnPoint : MonoBehaviour {
-
-    public enum ColliderType {
+public class SpawnPoint : MonoBehaviour
+{
+    public enum ColliderType
+    {
         Box,
         Sphere
     }
@@ -16,18 +17,21 @@ public class SpawnPoint : MonoBehaviour {
 
     public bool OutOfGround => outOfGround;
 
-    private void OnValidate() {
+    private void OnValidate()
+    {
         if (Application.isPlaying) return;
 
         UnityEditor.EditorApplication.delayCall += UpdateCollider;
     }
 
-    private void UpdateCollider() {
+    private void UpdateCollider()
+    {
         if (this == null) return;
 
         Collider[] existingColliders = GetComponents<Collider>();
 
-        foreach (Collider collider in existingColliders) {
+        foreach (Collider collider in existingColliders)
+        {
             if (chosenCollider == ColliderType.Box && collider is BoxCollider) return;
             if (chosenCollider == ColliderType.Sphere && collider is SphereCollider) return;
 
@@ -36,7 +40,8 @@ public class SpawnPoint : MonoBehaviour {
 
         Collider newCollider = null;
 
-        switch (chosenCollider) {
+        switch (chosenCollider)
+        {
             case ColliderType.Box:
                 newCollider = gameObject.AddComponent<BoxCollider>();
                 break;
@@ -45,36 +50,44 @@ public class SpawnPoint : MonoBehaviour {
                 break;
         }
 
-        if (newCollider != null) {
+        if (newCollider != null)
+        {
             spawnZone = newCollider;
             newCollider.isTrigger = true;
         }
     }
 
-    public Vector3 GetRandomSpawnPosition() {
-        if (spawnZone != null) {
-            if (spawnZone.GetType() == typeof(BoxCollider)) {
-                Bounds bounds = spawnZone.bounds;
+    public Vector3 GetRandomSpawnPosition()
+    {
+        if (spawnZone == null) return Vector3.zero;
 
-                float x = Random.Range(bounds.min.x, bounds.max.x);
-                float y = bounds.min.y;
-                float z = Random.Range(bounds.min.z, bounds.max.z);
+        Vector3 randomPoint = Vector3.zero;
 
-                return new Vector3(x, y, z);
-            } else if (spawnZone is SphereCollider sphere) {
-                Vector2 randomCircle = Random.insideUnitCircle * sphere.radius;
+        if (spawnZone is BoxCollider box)
+        {
+            Vector3 randomLocalPoint = new Vector3(
+                Random.Range(-box.size.x / 2f, box.size.x / 2f + box.center.x),
+                box.center.y,
+                Random.Range(-box.size.z / 2f, box.size.z / 2f + box.center.z)
+            );
 
-                Vector3 center = sphere.transform.TransformPoint(sphere.center);
-                float maxScale = Mathf.Max(sphere.transform.lossyScale.x, sphere.transform.lossyScale.z);
-                Vector3 randomPoint = center + new Vector3(randomCircle.x * maxScale, 0f, randomCircle.y * maxScale);
-
-                if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 5.0f, NavMesh.AllAreas)) {
-                    return hit.position;
-                }
-
-                return randomPoint;
-            }
+            randomPoint = box.transform.TransformPoint(randomLocalPoint);
         }
-        return Vector3.zero;
+        else if (spawnZone is SphereCollider sphere)
+        {
+            Vector2 randomCircle = Random.insideUnitCircle * sphere.radius;
+            Vector3 center = sphere.transform.TransformPoint(sphere.center);
+            float maxScale = Mathf.Max(sphere.transform.lossyScale.x, sphere.transform.lossyScale.z);
+
+            randomPoint = center + new Vector3(randomCircle.x * maxScale, 0f, randomCircle.y * maxScale);
+        }
+
+
+        if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 2.0f, NavMesh.AllAreas))
+        {
+            return hit.position;
+        }
+
+        return randomPoint;
     }
 }
