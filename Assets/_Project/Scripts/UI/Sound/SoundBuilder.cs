@@ -1,33 +1,39 @@
 using AudioSystem;
 using UnityEngine;
 
-public class SoundBuilder {
+public class SoundBuilder
+{
 
     readonly SoundManager soundManager;
     SoundData soundData;
     Vector3 position = Vector3.zero;
     bool randomPitch;
 
-    public SoundBuilder(SoundManager soundManager) {
+    public SoundBuilder(SoundManager soundManager)
+    {
         this.soundManager = soundManager;
     }
 
-    public SoundBuilder WithSoundData(SoundData soundData) {
+    public SoundBuilder WithSoundData(SoundData soundData)
+    {
         this.soundData = soundData;
         return this;
     }
 
-    public SoundBuilder WithPosition(Vector3 position) {
+    public SoundBuilder WithPosition(Vector3 position)
+    {
         this.position = position;
         return this;
     }
 
-    public SoundBuilder WithRandomPitch() {
+    public SoundBuilder WithRandomPitch()
+    {
         this.randomPitch = true;
         return this;
     }
 
-    public void Play() {
+    public void Play()
+    {
         if (!SoundManager.Instance.CanPlaySound(soundData)) return;
 
         SoundEmitter soundEmitter = soundManager.Get();
@@ -35,7 +41,8 @@ public class SoundBuilder {
         soundEmitter.transform.position = position;
         soundEmitter.transform.parent = SoundManager.Instance.transform;
 
-        if (randomPitch) {
+        if (randomPitch)
+        {
             soundEmitter.WithRandomPitch();
         }
 

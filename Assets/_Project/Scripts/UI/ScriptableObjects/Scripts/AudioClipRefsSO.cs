@@ -43,4 +43,25 @@ public class AudioClipRefsSO : ScriptableObject
     public AudioClip revivedSound;
     public float revivedSoundVolume;
 
+    [Space]
+    [Header("Reload Sounds")]
+    public AudioClip pistolReloadEjectSound;
+    public AudioClip pistolReloadHomeSound;
+    public AudioClip assaultReloadEjectSound;
+    public AudioClip assaultReloadHomeSound;
+    public AudioClip smgReloadEjectSound;
+    public AudioClip smgReloadHomeSound;
+    //public AudioClip shotgunReloadEjectSound;
+    public AudioClip shotgunReloadHomeSound;
+    public AudioClip sniperReloadEjectSound;
+    public AudioClip sniperReloadHomeSound;
+
+    public float pistolReloadSoundVolume;
+    public float assaultReloadSoundVolume;
+    public float smgReloadSoundVolume;
+    public float shotgunReloadSoundVolume;
+    public float sniperReloadSoundVolume;
+
+    public AudioClip pocketSearchSound;
+    public float pocketSearchSoundVolume;
 }

@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using EditorAttributes;
 using UnityEngine;
+using Random = UnityEngine.Random;
 using WeaponNamespace;
 
 [CreateAssetMenu(fileName = "NewBulletReload", menuName = "Weapon/Reload/Bullet")]
@@ -25,7 +27,7 @@ public class BulletReload : ReloadBase
         public float lockDelay;
     }
 
-    public override IEnumerator StartReload(ReloadController controller, WeaponController weapon)
+    public override IEnumerator StartReload(ReloadController controller, WeaponController weapon, Action<int> onReloadSound)
     {
         Transform gripSocket = weapon.LeftHandTarget;
         Transform bulletPouch = controller.BulletPouchTarget;
@@ -63,6 +65,9 @@ public class BulletReload : ReloadBase
             stepFinished = false;
             controller.TargetHandler.SetHandTarget(chamberPlacement, timing.timeInsertShell, () => stepFinished = true);
             yield return new WaitUntil(() => stepFinished);
+
+            //Reload Sound
+            onReloadSound(2);
 
             controller.RecoilController.ApplyRigRecoil(0, 0.35f);
             bulletInstance.SetActive(false);

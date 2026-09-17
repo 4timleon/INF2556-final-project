@@ -130,7 +130,7 @@ MonoBehaviour:
   m_SerializedVersion: 1
   m_AgentTypeID: 0
   m_StartPoint: {x: -1.6788838, y: 0, z: -0.060958523}
-  m_EndPoint: {x: 0.5363259, y: 0, z: -0.07595649}
+  m_EndPoint: {x: 0.6947494, y: 0, z: -0.07596728}
   m_StartTransform: {fileID: 0}
   m_EndTransform: {fileID: 0}
   m_Activated: 1
@@ -152,6 +152,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Barricade
       objectReference: {fileID: 0}
+    - target: {fileID: 3978566737605262359, guid: 7e11dbc1516b46c419fbafed451c52a2, type: 3}
+      propertyPath: navMeshLink
+      value: 
+      objectReference: {fileID: 2063718925133684573}
     - target: {fileID: 3978566737605262359, guid: 7e11dbc1516b46c419fbafed451c52a2, type: 3}
       propertyPath: 'rigidbodies.Array.data[0]'
       value: 

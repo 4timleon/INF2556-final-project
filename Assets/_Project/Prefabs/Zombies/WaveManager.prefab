@@ -50,29 +50,29 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   timeBetweenSpawns: 1
-  baseZombieCount: 6
+  baseZombieCount: 2
   maxSimultaneousZombies: 60
-  zombiesMultiplier: 1.1
+  zombiesMultiplier: 1.2
   slowWeightCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 1
       value: 100
-      inSlope: 0
-      outSlope: -10.555555
+      inSlope: -28.273802
+      outSlope: -28.273802
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.039999988
     - serializedVersion: 3
       time: 10
       value: 5
-      inSlope: -10.555555
-      outSlope: 0
+      inSlope: -6.196405
+      outSlope: -6.196405
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.089230746
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -81,22 +81,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 5.5555553
+      time: 0.9994011
+      value: -0.010772705
+      inSlope: 0.39995864
+      outSlope: 0.39995864
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.06615381
     - serializedVersion: 3
       time: 10
       value: 50
-      inSlope: 5.5555553
-      outSlope: 0
+      inSlope: 3.7752604
+      outSlope: 3.7752604
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.09469271
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -107,17 +107,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: 0
-      outSlope: 8.888889
+      inSlope: 2.5793655
+      outSlope: 2.5793655
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.07384614
     - serializedVersion: 3
       time: 10
       value: 80
       inSlope: 8.888889
-      outSlope: 0
+      outSlope: 8.888889
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -125,4 +125,4 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  currentWave: 3
+  currentWave: 1

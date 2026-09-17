@@ -189,10 +189,6 @@ public class GeneralInputHandler : MonoBehaviour
                 inputAction = inputActions.Player.Attack;
                 bindingIndex = 1;
                 break;
-            case Binding.Pause:
-                inputAction = inputActions.UI.Cancel;
-                bindingIndex = 0;
-                break;
             case Binding.Jump:
                 inputAction = inputActions.Player.Jump;
                 bindingIndex = 0;
@@ -208,6 +204,7 @@ public class GeneralInputHandler : MonoBehaviour
         }
 
         inputAction?.PerformInteractiveRebinding(bindingIndex)
+            .WithCancelingThrough(inputActions.UI.Cancel.bindings[0].effectivePath)
             .OnComplete(callback =>
             {
                 callback.Dispose();

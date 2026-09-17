@@ -47,7 +47,7 @@ public class DetachController : MonoBehaviour
         zombieAnimations = GetComponent<ZombieAnimations>();
     }
 
-    public void Hit(Detach bodyPart, float damageValue)
+    public void Hit(Detach bodyPart, float damageValue, Vector3 direction, Collider collider)
     {
         if (bodyPart.IsDetached || zombie.IsDead) return;
 
@@ -60,31 +60,35 @@ public class DetachController : MonoBehaviour
             case BodyPartType.Head:
                 if (bodyPart.DamageTaken >= headThreshold)
                 {
-                    bodyPart.DetachMesh();
+                    bodyPart.DetachMesh(direction);
                     zombie.SetNoHead();
+                    collider.enabled = false;
                 }
                 GameEventSystem.OnPointsAdded?.Invoke(headPoints);
                 return;
             case BodyPartType.LLegCalf or BodyPartType.RLegCalf:
                 if (bodyPart.DamageTaken >= legThreshold && !hasLostLeg)
                 {
-                    bodyPart.DetachMesh();
+                    bodyPart.DetachMesh(direction);
                     zombieAnimations.SetLostLeg();
                     hasLostLeg = true;
+                    collider.enabled = false;
                 }
                 break;
             case BodyPartType.LForearm:
                 if (bodyPart.DamageTaken >= armThreshold)
                 {
-                    bodyPart.DetachMesh();
+                    bodyPart.DetachMesh(direction);
                     leftPalmBodyPart.gameObject.SetActive(false);
+                    collider.enabled = false;
                 }
                 break;
             case BodyPartType.RForearm:
                 if (bodyPart.DamageTaken >= armThreshold)
                 {
-                    bodyPart.DetachMesh();
+                    bodyPart.DetachMesh(direction);
                     rightPalmBodyPart.gameObject.SetActive(false);
+                    collider.enabled = false;
                 }
                 break;
             default:

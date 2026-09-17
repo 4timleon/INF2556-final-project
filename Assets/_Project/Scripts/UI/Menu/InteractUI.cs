@@ -13,7 +13,8 @@ public class InteractUI : MonoBehaviour
 
     private void Start()
     {
-
+        priceContainer.SetActive(false);
+        repairContainer.SetActive(false);
     }
 
     private void OnEnable()

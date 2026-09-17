@@ -44,6 +44,8 @@ public class PauseMenuController : MonoBehaviour
 
         StopTime(true);
 
+        GameData.GamePaused = true;
+
         if (backgroundMusic.isPlaying)
         {
             backgroundMusic.Pause();
@@ -59,6 +61,8 @@ public class PauseMenuController : MonoBehaviour
         GameEventSystem.OnGamePause?.Invoke(false);
 
         StopTime(false);
+
+        GameData.GamePaused = false;
 
         backgroundMusic.Play();
 

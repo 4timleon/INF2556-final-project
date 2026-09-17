@@ -1,4 +1,7 @@
+using System.Collections;
+using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BarricadeController : MonoBehaviour
 {
@@ -10,6 +13,9 @@ public class BarricadeController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Animator[] plankAnimators;
     [SerializeField] private Rigidbody[] rigidbodies;
+
+    [Header("NavMesh Link")]
+    [SerializeField] private NavMeshLink navMeshLink;
 
     public bool PlayerIsRepairing { get; private set; } = false;
     public bool PlayerInRange { get; private set; } = false;
@@ -39,6 +45,16 @@ public class BarricadeController : MonoBehaviour
             startRotations[i] = t.localRotation;
 
             rigidbodies[i].isKinematic = true;
+        }
+    }
+
+    private IEnumerator Start()
+    {
+        yield return null;
+
+        if (navMeshLink != null)
+        {
+            navMeshLink.UpdateLink();
         }
     }
 
@@ -105,7 +121,11 @@ public class BarricadeController : MonoBehaviour
         }
 
         if (plankAnimators != null && index < plankAnimators.Length && plankAnimators[index] != null)
+        {
             plankAnimators[index].SetTrigger("Repair");
+            GameEventSystem.OnPointsAdded?.Invoke(10);
+        }
+
     }
 
     public void BreakNextPlank()

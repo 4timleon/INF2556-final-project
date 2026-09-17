@@ -21,10 +21,10 @@ public class Zombie : MonoBehaviour
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private bool initial;
     [SerializeField] private Rigidbody[] joints;
+    [SerializeField] private Collider[] colliders;
     [SerializeField] private Transform armBarricadeTransform;
     [SerializeField] private Transform centerTransform;
     [SerializeField] private LayerMask playerLayer;
-    //[SerializeField] private Collider[] colliders;
 
     [Space]
     [Header("Zombie Movement Type")]
@@ -57,6 +57,7 @@ public class Zombie : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool debug = false;
 
+    public float BaseHealth => health;
     public float Speed => speed;
     public bool IsAttackingBarricade => isAttackingBarricade;
     public MovementState CurrentMovementState { get; private set; }
@@ -102,7 +103,7 @@ public class Zombie : MonoBehaviour
     private bool wasOnOffMeshLink = false;
     private Coroutine offMeshLinkCoroutine;
     private bool cancelOffMeshLink;
-    private Vector3 windowClimbEndPosition;
+    //private Vector3 windowClimbEndPosition;
     private int jumpAreaID;
     private int climbAreaID;
 
@@ -188,7 +189,7 @@ public class Zombie : MonoBehaviour
                 CheckIfBetterPathExists();
             }
 
-            if (isAttacking)
+            if (isAttacking && !agent.isOnOffMeshLink)
             {
                 SlowDownMovementOnAttack();
             }
@@ -261,7 +262,7 @@ public class Zombie : MonoBehaviour
         agent.updateRotation = false;
         transform.rotation = Quaternion.LookRotation(dir);
 
-        StopAgent();
+        SetIdle();
 
         //Animation for the Jump links
         if (link.endPos.y > transform.position.y)
@@ -281,19 +282,18 @@ public class Zombie : MonoBehaviour
 
     private IEnumerator DoOffMeshClimbLink(OffMeshLinkData link)
     {
-        agent.Warp(link.startPos);
-
-        Vector3 dir = (link.endPos - link.startPos).normalized;
-        dir.y = 0;
-        agent.updateRotation = false;
-        transform.rotation = Quaternion.LookRotation(dir);
-
-        StopAgent();
-
         if (barricade != null && !barricade.GetAllPlanksDestroyed())
         {
             isAttackingBarricade = true;
         }
+
+        SetIdle();
+
+        //Set the direction towards the barricade
+        agent.updateRotation = false;
+        Vector3 dir = (barricade.transform.position - transform.position).normalized;
+        dir.y = 0;
+        transform.rotation = Quaternion.LookRotation(dir);
 
         //Debug.Log((offMeshLinkCoroutine != null) + " | " + isAttackingBarricade + " | " + cancelOffMeshLink);
         //Wait and Attack the Barricade until it is broken up completely or gets canceled
@@ -313,7 +313,7 @@ public class Zombie : MonoBehaviour
                 {
                     zombieAnimations.SetWindowAttack(false);
                     isAttackingPlayerBarricade = false;
-                    Attack();
+                    Attack(barricade.transform);
                 }
 
                 nextAttackTime = Time.time + attackCooldown;
@@ -321,6 +321,15 @@ public class Zombie : MonoBehaviour
             yield return null;
         }
 
+        //Teleport the AI to the start position to prepare for the Window Climb
+        agent.Warp(link.startPos);
+
+        //Set the direction towards the barricade
+        dir = (barricade.transform.position - transform.position).normalized;
+        dir.y = 0;
+        transform.rotation = Quaternion.LookRotation(dir);
+
+        //Finish everything up
         zombieAnimations.SetWindowAttack(false);
         isAttackingPlayerBarricade = false;
         isAttackingBarricade = false;
@@ -332,13 +341,15 @@ public class Zombie : MonoBehaviour
             yield break;
         }
 
+        //Don't transition instantly
         yield return new WaitForSeconds(1f);
 
         //Barricade broken up
         //Debug.Log("Playing Window Climb Animation");
         zombieAnimations.SetWindowClimb();//Animation for the Window links
+        yield return StartCoroutine(LerpToPosition(link.startPos, link.endPos, 1f));
 
-        windowClimbEndPosition = link.endPos;
+        //windowClimbEndPosition = link.endPos;
         yield return null;
     }
 
@@ -352,10 +363,9 @@ public class Zombie : MonoBehaviour
             return;
         }
 
-        agent.Warp(windowClimbEndPosition);
+        //agent.Warp(windowClimbEndPosition);
         CleanUpOffMeshLink();
     }
-
 
     private IEnumerator LerpToPosition(Vector3 start, Vector3 end, float duration)
     {
@@ -373,7 +383,7 @@ public class Zombie : MonoBehaviour
             yield return null;
         }
 
-        transform.position = end;
+        //transform.position = end;
     }
 
     public void CleanUpOffMeshLink()
@@ -384,7 +394,7 @@ public class Zombie : MonoBehaviour
         }
 
         agent.updateRotation = true;
-        ContinueMovement();
+        StartAgent(tempMovementState);
         offMeshLinkCoroutine = null;
         isProcessingOffMeshLink = false;
     }
@@ -417,7 +427,7 @@ public class Zombie : MonoBehaviour
             StopAgent();
             if (Time.time >= nextAttackTime && !isAttacking)
             {
-                Attack();
+                Attack(player.transform);
                 nextAttackTime = Time.time + attackCooldown;
             }
         }
@@ -470,7 +480,7 @@ public class Zombie : MonoBehaviour
             {
                 float altPathCost = GetPathCost(altPath);
                 if (altPathCost < 15f)
-                {//If Path shorter then cancel barricade attack
+                {//If Path shorter, cancel barricade attack
                     //Debug.Log(altPathCost);
                     //Debug.Log("Barricade Canceled");
 
@@ -479,6 +489,7 @@ public class Zombie : MonoBehaviour
                     isAttackingBarricade = false;
                     barricade = null;
                     cancelOffMeshLink = true;
+                    agent.updateRotation = true;
 
                     if (offMeshLinkCoroutine != null)
                     {
@@ -513,18 +524,21 @@ public class Zombie : MonoBehaviour
 
     public void ResetMovementAfterAttack()
     {
+        if (agent.isOnOffMeshLink) return;
+
         StartAgent(tempMovementState);
 
         zombieAnimations.SetMovementBack();
     }
     #endregion
 
+    #region Attack
     //Starts Attacking the Player when in range
-    private void Attack()
+    private void Attack(Transform target)
     {
         isAttacking = true;
 
-        transform.forward = (player.transform.position - transform.position).normalized;
+        transform.forward = (target.position - transform.position).normalized;
 
         if (useFirstAttack)
         {
@@ -575,6 +589,8 @@ public class Zombie : MonoBehaviour
 
     private void TryDealPlayerDamage(Transform transform, float radius)
     {
+        this.transform.forward = (player.transform.position - this.transform.position).normalized;
+
         int hitCount = Physics.OverlapSphereNonAlloc(transform.position, radius, hitColliders, playerLayer);
 
         for (int i = 0; i < hitCount; i++)
@@ -588,7 +604,9 @@ public class Zombie : MonoBehaviour
             }
         }
     }
+    #endregion
 
+    #region Debug
     private void OnDrawGizmosSelected()
     {
         if (debug)
@@ -597,7 +615,9 @@ public class Zombie : MonoBehaviour
             Gizmos.DrawWireSphere(centerTransform.position, armAttackRange);
         }
     }
+    #endregion
 
+    #region Zombie Health
     //Zombie Takes Damage by given value
     public void TakeDamage(float value)
     {
@@ -624,6 +644,8 @@ public class Zombie : MonoBehaviour
         if (IsDead) return;
         IsDead = true;
 
+        foreach (var collider in colliders) collider.excludeLayers += playerLayer;
+
         int deathIndex = Random.Range(0, 3);
 
         StopAgent();
@@ -642,6 +664,7 @@ public class Zombie : MonoBehaviour
     {
         detachController.DissolveZombie();
     }
+    #endregion
 
     //Start OutOfGround Animation
     public void StartOutOfGroundAnimation()
@@ -652,12 +675,12 @@ public class Zombie : MonoBehaviour
         zombieAnimations.SetOutOfGroundBool(true);
     }
 
-    public void ContinueMovement()
+    /*public void ContinueMovement()
     {
         StartAgent(CurrentMovementState);
         StopMovement(false);
         startOutOfGround = false;
-    }
+    } */
 
     public void StartMovement()
     {
@@ -670,6 +693,13 @@ public class Zombie : MonoBehaviour
     {
         agent.isStopped = true;
         speed = 0;
+    }
+
+    public void SetIdle()
+    {
+        StopAgent();
+        tempMovementState = CurrentMovementState;
+        CurrentMovementState = MovementState.Idle;
     }
 
     //Starts the NavMeshAgent and sets the speed
@@ -715,6 +745,11 @@ public class Zombie : MonoBehaviour
                 Debug.Log($"Unbekannter Typ: {typeof(T)}");
                 break;
         }
+    }
+
+    public void SetHealth(float newHealth)
+    {
+        health = newHealth;
     }
 
     public void SetMainMenuState(bool state)

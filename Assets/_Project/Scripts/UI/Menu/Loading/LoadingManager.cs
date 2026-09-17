@@ -160,7 +160,6 @@ public class LoadingManager : MonoBehaviour
             Scene newScene = sceneName != null ? SceneManager.GetSceneByName(sceneName) : SceneManager.GetSceneByBuildIndex(buildIndex);
             SceneManager.SetActiveScene(newScene);
 
-
             if (oldScene.IsValid() && oldScene != newScene)
             {
                 AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(oldScene);
@@ -173,7 +172,6 @@ public class LoadingManager : MonoBehaviour
                         await Awaitable.NextFrameAsync(ct);
                     }
                 }
-
             }
 
             //Run Systems by Priority 

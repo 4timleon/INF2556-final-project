@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using EditorAttributes;
 using UnityEngine;
+using Random = UnityEngine.Random;
 using WeaponNamespace;
 
 [CreateAssetMenu(fileName = "NewMagazineReload", menuName = "Weapon/Reload/Magazine")]
@@ -23,7 +25,7 @@ public class MagazineReload : ReloadBase
         public float timeReturnToGrip;
     }
 
-    public override IEnumerator StartReload(ReloadController controller, WeaponController weapon)
+    public override IEnumerator StartReload(ReloadController controller, WeaponController weapon, Action<int> onReloadSound)
     {
         Transform gripSocket = weapon.LeftHandTarget;
         var magModule = weapon.WeaponData.Modules[ModuleType.Magazine];
@@ -41,6 +43,9 @@ public class MagazineReload : ReloadBase
         controller.TargetHandler.SetHandTarget(magPlacement, timing.timeToGrabMag, () => stepFinished = true);
         yield return new WaitUntil(() => stepFinished);
 
+        //Eject Sound Effect
+        onReloadSound(0);
+
         stepFinished = false;
         controller.RecoilController.ApplyRigRecoil(0, 0.5f);
         LeanTween.moveLocal(magTransform.gameObject, magEjectedPos, timing.timeToEjectMag)
@@ -48,7 +53,13 @@ public class MagazineReload : ReloadBase
             .setOnComplete(() => stepFinished = true);
         yield return new WaitUntil(() => stepFinished);
 
+        //Pocket Sound Effect
+        //onReloadSound(1);
+
         yield return new WaitForSeconds(timing.pouchDelay);
+
+        //Home Sound Effect
+        onReloadSound(2);
 
         stepFinished = false;
         LeanTween.moveLocal(magTransform.gameObject, magHomePos, timing.timeToInsertMag)

@@ -16,6 +16,9 @@ public class ReloadController : MonoBehaviour
     [SerializeField] private string reloadAnimationName;
     [SerializeField] private string movementAnimationName;
     [field: SerializeField] public int ReloadLayer { get; private set; } = 0;
+    [Space]
+    [Title("Sound:", 14)]
+    [SerializeField] private AudioSource reloadAudioSource;
 
     public int ReloadAnimationHash { get; private set; }
     public int MovementAnimationHash { get; private set; }
@@ -75,7 +78,7 @@ public class ReloadController : MonoBehaviour
 
         weaponController.IsReloading = true;
 
-        currentReload = StartCoroutine(weaponController.ReloadBase.StartReload(this, weaponController));
+        currentReload = StartCoroutine(weaponController.ReloadBase.StartReload(this, weaponController, PlayReloadEjectSound));
     }
 
     void CancelReload()
@@ -84,5 +87,21 @@ public class ReloadController : MonoBehaviour
 
         StopCoroutine(currentReload);
         weaponController.ReloadBase.CancelReload(this, weaponController);
+    }
+
+    private void PlayReloadEjectSound(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                SoundManager.Instance?.PlayReloadEjectSound(reloadAudioSource, weaponController.WeaponData.TotalType);
+                break;
+            case 1:
+                SoundManager.Instance?.PlayReloadPocketSound(reloadAudioSource);
+                break;
+            case 2:
+                SoundManager.Instance?.PlayReloadHomeSound(reloadAudioSource, weaponController.WeaponData.TotalType);
+                break;
+        }
     }
 }

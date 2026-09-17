@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using AudioSystem;
 using EditorAttributes;
 using UnityEngine;
 using WeaponNamespace;
@@ -20,6 +21,13 @@ public class PlayerShoot : MonoBehaviour
     [SerializeField] private GameObject tracerPrefab;
     [SerializeField] private GameObject muzzleFlashPrefab;
     [SerializeField] private float tracerSpeed = 250f;
+    [Space]
+    [Title("Shoot SoundData", 14)]
+    [SerializeField] private SoundData pistolShootSoundData;
+    [SerializeField] private SoundData assaultShootSoundData;
+    [SerializeField] private SoundData smgShootSoundData;
+    [SerializeField] private SoundData shotgunShootSoundData;
+    [SerializeField] private SoundData sniperShootSoundData;
 
     private WeaponController weaponController;
     private GameObject muzzleFlashInstance;
@@ -109,7 +117,7 @@ public class PlayerShoot : MonoBehaviour
             return;
         }
 
-        if (Time.time >= nextAttackTimestamp)
+        if (Time.time >= nextAttackTimestamp && !GameData.GamePaused)
         {
             float interval = 1f / roundsPerSecond;
 
@@ -162,6 +170,8 @@ public class PlayerShoot : MonoBehaviour
 
         GameEventSystem.OnPlayerWeaponShoot?.Invoke(recoilPitch, recoilYaw);
 
+        PlayShootSound();
+
         for (int i = 0; i < bulletAmount; i++)
         {
             Vector2 spreadOffset = Random.insideUnitCircle * finalSpread;
@@ -179,7 +189,7 @@ public class PlayerShoot : MonoBehaviour
 
                 if (hit.collider.TryGetComponent<BodyPart>(out var bodyPart))
                 {
-                    bodyPart.TakeDamage(damage);
+                    bodyPart.TakeDamage(damage, -targetPoint);
                 }
             }
             else
@@ -205,6 +215,38 @@ public class PlayerShoot : MonoBehaviour
         }
 
         Destroy(tracer);
+    }
+
+    private void PlayShootSound()
+    {
+        SoundData soundData = null;
+        switch (weaponController.WeaponData.TotalType)
+        {
+            case WeaponType.AssaultRifle:
+                soundData = assaultShootSoundData;
+                break;
+            case WeaponType.Pistol:
+                soundData = pistolShootSoundData;
+                break;
+            case WeaponType.SubmachineGun:
+                soundData = smgShootSoundData;
+                break;
+            case WeaponType.Shotgun:
+                soundData = shotgunShootSoundData;
+                break;
+            case WeaponType.SniperRifle:
+                soundData = sniperShootSoundData;
+                break;
+        }
+
+        if (soundData != null)
+        {
+            SoundManager.Instance?.CreateSound()
+                .WithSoundData(soundData)
+                .WithPosition(weaponController.MuzzlePoint.position)
+                .WithRandomPitch()
+                .Play();
+        }
     }
 
     bool IsAutoFire()

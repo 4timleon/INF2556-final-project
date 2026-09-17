@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class WaveManager : MonoBehaviour, IInititalizeStart
 {
@@ -18,6 +17,9 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
     [SerializeField] private int baseZombieCount = 6;
     [SerializeField] private int maxSimultaneousZombies = 60;
     [SerializeField] private float zombiesMultiplier = 1.3f;
+
+    [Header("Zombie Health Scaling")]
+    [SerializeField] private float healthIncreasePerWave = 25f;
 
     [Header("Probability Curves (X = Wave, Y = Weight)")]
     [SerializeField] private AnimationCurve slowWeightCurve = AnimationCurve.Linear(1, 100, 10, 5);
@@ -90,7 +92,7 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
             return;
         }
 
-        Debug.Log("Spawning a Zombie! : " + currentZombies.Count);
+        //Debug.Log("Spawning a Zombie! : " + currentZombies.Count);
 
         if (spawnTimerCoroutine != null) StopCoroutine(spawnTimerCoroutine);
         spawnTimerCoroutine = StartCoroutine(SpawnDelayRoutine());
@@ -138,6 +140,9 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
 
         zombie.SetTarget(playerReference);
         zombie.SetSpeed(type);
+
+        float healthForCurrentWave = zombie.BaseHealth + healthIncreasePerWave * (currentWave - 1);
+        zombie.SetHealth(healthForCurrentWave);
 
         if (spawnPoint.OutOfGround)
         {

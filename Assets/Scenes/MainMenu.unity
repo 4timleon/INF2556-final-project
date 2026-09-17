@@ -346,7 +346,7 @@ MonoBehaviour:
   spawnPoint1: {fileID: 1300546170}
   path2: {fileID: 884694934}
   spawnPoint2: {fileID: 1007988892}
-  zombiePrefab: {fileID: 9099552683909019778, guid: 6dc4cf4496348884d8ee27743ae38562, type: 3}
+  zombiePrefab: {fileID: 9099552683909019778, guid: ca354aacf1aa87444bbeb2b85e2f196c, type: 3}
 --- !u!1 &101417235
 GameObject:
   m_ObjectHideFlags: 0
@@ -1449,7 +1449,7 @@ Transform:
   m_GameObject: {fileID: 1007988891}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.85, y: 0, z: 7.51}
+  m_LocalPosition: {x: 5.85, y: 0.1, z: 7.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1556,7 +1556,7 @@ Transform:
   m_GameObject: {fileID: 1300546169}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.559, y: 0, z: -5.919}
+  m_LocalPosition: {x: 7.559, y: 0.1, z: -5.919}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1876,7 +1876,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1416487179}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
   m_Name: 
@@ -2247,6 +2247,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1118900645678232245, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1118900645678232245, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1118900645678232245, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2298022122204278746, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
       propertyPath: playerInputHandler
       value: 
@@ -2339,6 +2351,42 @@ PrefabInstance:
       propertyPath: playerInputHandler
       value: 
       objectReference: {fileID: 1087312604}
+    - target: {fileID: 2950751736446599363, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2950751736446599363, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2950751736446599363, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4037749568319129077, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4037749568319129077, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4037749568319129077, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4086646138102822402, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4086646138102822402, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4086646138102822402, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4453964474123751731, guid: df8ca75f08aac2a458d63b43ec2f4796, type: 3}
       propertyPath: playerInputHandler
       value: 
@@ -2809,7 +2857,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
   m_SerializedVersion: 0
-  m_AgentTypeID: 0
+  m_AgentTypeID: -334000983
   m_CollectObjects: 3
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 2, z: 0}
@@ -36238,6 +36286,7 @@ MonoBehaviour:
   - {fileID: 2017542487511618647}
   - {fileID: 5372773575490917000}
   - {fileID: 2485980090764526037}
+  navMeshLink: {fileID: 0}
 --- !u!4 &293647673271996293
 Transform:
   m_ObjectHideFlags: 0
@@ -39641,6 +39690,7 @@ MonoBehaviour:
   - {fileID: 1976037024623405654}
   - {fileID: 5340255539025423497}
   - {fileID: 2516512456464367572}
+  navMeshLink: {fileID: 0}
 --- !u!1 &325198462841433901
 GameObject:
   m_ObjectHideFlags: 0
@@ -62985,6 +63035,7 @@ MonoBehaviour:
   - {fileID: 1790224701871734378}
   - {fileID: 5307504030567577781}
   - {fileID: 2402703845255048168}
+  navMeshLink: {fileID: 0}
 --- !u!23 &519883359376425221
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -66677,6 +66728,7 @@ MonoBehaviour:
   - {fileID: 1761468397248233189}
   - {fileID: 5260717864814393402}
   - {fileID: 2445955596585495399}
+  navMeshLink: {fileID: 0}
 --- !u!1 &549520607777615771
 GameObject:
   m_ObjectHideFlags: 0
@@ -185574,6 +185626,7 @@ MonoBehaviour:
   - {fileID: 743197369727484887}
   - {fileID: 6566374957339772168}
   - {fileID: 3733598005019366997}
+  navMeshLink: {fileID: 0}
 --- !u!108 &1566882632682519784
 Light:
   m_ObjectHideFlags: 0
@@ -200841,6 +200894,7 @@ MonoBehaviour:
   - {fileID: 598733927935598207}
   - {fileID: 6430872536523593888}
   - {fileID: 3589114771985042429}
+  navMeshLink: {fileID: 0}
 --- !u!4 &1702740180301708587
 Transform:
   m_ObjectHideFlags: 0
@@ -227760,6 +227814,10 @@ PrefabInstance:
     - target: {fileID: 3190106145692570034, guid: b932664b86362434ab999e710aa04a88, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4309721646100182397, guid: b932664b86362434ab999e710aa04a88, type: 3}
+      propertyPath: maxSoundInstances
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7975194818372928383, guid: b932664b86362434ab999e710aa04a88, type: 3}
       propertyPath: m_Name
@@ -284088,6 +284146,7 @@ MonoBehaviour:
   - {fileID: 4484091258652896862}
   - {fileID: 8019393712485181569}
   - {fileID: 556907822011743196}
+  navMeshLink: {fileID: 0}
 --- !u!23 &2437886789305022915
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -291070,6 +291129,7 @@ MonoBehaviour:
   - {fileID: 4423590476917505165}
   - {fileID: 7787828972119226962}
   - {fileID: 352399598433741071}
+  navMeshLink: {fileID: 0}
 --- !u!33 &2489907838460265562
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -374757,6 +374817,7 @@ MonoBehaviour:
   - {fileID: 3673977655330002753}
   - {fileID: 7173312938004205982}
   - {fileID: 827728558594917059}
+  navMeshLink: {fileID: 0}
 --- !u!1 &3248478576404394680
 GameObject:
   m_ObjectHideFlags: 0
@@ -493182,6 +493243,7 @@ MonoBehaviour:
   - {fileID: 2761750815373323560}
   - {fileID: 8584873066635881463}
   - {fileID: 2293330775861180586}
+  navMeshLink: {fileID: 0}
 --- !u!1 &4160820525447271297
 GameObject:
   m_ObjectHideFlags: 0
@@ -849998,7 +850060,7 @@ MonoBehaviour:
   m_CostModifier: 1
   m_IsOverridingCost: 0
   m_Bidirectional: 1
-  m_AutoUpdatePosition: 0
+  m_AutoUpdatePosition: 1
   m_Area: 3
 --- !u!33 &7287468458977399232
 MeshFilter:
@@ -922658,6 +922720,7 @@ MonoBehaviour:
   - {fileID: 8215666624975715813}
   - {fileID: 2554601392126507834}
   - {fileID: 5441422362360703079}
+  navMeshLink: {fileID: 0}
 --- !u!23 &7921233899354739433
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -934227,6 +934290,7 @@ MonoBehaviour:
   - {fileID: 8107332953214919811}
   - {fileID: 2446340219632296540}
   - {fileID: 5261103587104420097}
+  navMeshLink: {fileID: 0}
 --- !u!4 &8029795125129620120
 Transform:
   m_ObjectHideFlags: 0
@@ -967229,6 +967293,7 @@ MonoBehaviour:
   - {fileID: 7932972603317947303}
   - {fileID: 4568824475771112824}
   - {fileID: 6311703644105989669}
+  navMeshLink: {fileID: 0}
 --- !u!33 &8212969412951733090
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1024160,6 +1024225,7 @@ MonoBehaviour:
   - {fileID: 7528097633288331696}
   - {fileID: 4109818073261975407}
   - {fileID: 5906775897482589234}
+  navMeshLink: {fileID: 0}
 --- !u!4 &8617572232187463834
 Transform:
   m_ObjectHideFlags: 0

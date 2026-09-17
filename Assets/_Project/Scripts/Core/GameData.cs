@@ -4,6 +4,8 @@ public static class GameData
 {
     // only singleplayer for now
 
+    public static bool GamePaused { get; set; }
+
     public static int Money { get; set; }
     public static int Wave { get; set; }
 

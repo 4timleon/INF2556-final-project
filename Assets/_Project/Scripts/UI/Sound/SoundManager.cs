@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AudioSystem;
 using UnityEngine;
 using UnityEngine.Pool;
+using WeaponNamespace;
 
 public class SoundManager : MonoBehaviour
 {
@@ -11,7 +12,6 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager Instance { get; private set; }
 
-    [SerializeField] private AudioSource soundSource;
     [SerializeField] private AudioClipRefsSO audioClipRefsSO;
 
     private float volume = 1f;
@@ -156,6 +156,73 @@ public class SoundManager : MonoBehaviour
     public void PlayPlayerRevivedSound(AudioSource audioSource)
     {
         PlaySound(audioSource, audioClipRefsSO.revivedSound, audioClipRefsSO.revivedSoundVolume);
+    }
+
+    public void PlayReloadEjectSound(AudioSource audioSource, WeaponType weaponType)
+    {
+        AudioClip clip = null;
+        float volume = 0f;
+        switch (weaponType)
+        {
+            case WeaponType.Pistol:
+                clip = audioClipRefsSO.pistolReloadEjectSound;
+                volume = audioClipRefsSO.pistolReloadSoundVolume;
+                break;
+            case WeaponType.AssaultRifle:
+                clip = audioClipRefsSO.assaultReloadEjectSound;
+                volume = audioClipRefsSO.assaultReloadSoundVolume;
+                break;
+            case WeaponType.SubmachineGun:
+                clip = audioClipRefsSO.smgReloadEjectSound;
+                volume = audioClipRefsSO.smgReloadSoundVolume;
+                break;
+            case WeaponType.Shotgun:
+                //clip = audioClipRefsSO.shotgunReloadEjectSound;
+                //volume = audioClipRefsSO.shotgunReloadSoundVolume;
+                break;
+            case WeaponType.SniperRifle:
+                clip = audioClipRefsSO.sniperReloadEjectSound;
+                volume = audioClipRefsSO.sniperReloadSoundVolume;
+                break;
+        }
+
+        PlaySound(audioSource, clip, volume);
+    }
+
+    public void PlayReloadPocketSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.pocketSearchSound, audioClipRefsSO.pocketSearchSoundVolume);
+    }
+
+    public void PlayReloadHomeSound(AudioSource audioSource, WeaponType weaponType)
+    {
+        AudioClip clip = null;
+        float volume = 0f;
+        switch (weaponType)
+        {
+            case WeaponType.Pistol:
+                clip = audioClipRefsSO.pistolReloadHomeSound;
+                volume = audioClipRefsSO.pistolReloadSoundVolume;
+                break;
+            case WeaponType.AssaultRifle:
+                clip = audioClipRefsSO.assaultReloadHomeSound;
+                volume = audioClipRefsSO.assaultReloadSoundVolume;
+                break;
+            case WeaponType.SubmachineGun:
+                clip = audioClipRefsSO.smgReloadHomeSound;
+                volume = audioClipRefsSO.smgReloadSoundVolume;
+                break;
+            case WeaponType.Shotgun:
+                clip = audioClipRefsSO.shotgunReloadHomeSound;
+                volume = audioClipRefsSO.shotgunReloadSoundVolume;
+                break;
+            case WeaponType.SniperRifle:
+                clip = audioClipRefsSO.sniperReloadHomeSound;
+                volume = audioClipRefsSO.sniperReloadSoundVolume;
+                break;
+        }
+
+        PlaySound(audioSource, clip, volume);
     }
     #endregion
 

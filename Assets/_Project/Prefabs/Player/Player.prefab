@@ -464,6 +464,135 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.Rig
   m_Weight: 0
   m_Effectors: []
+--- !u!1 &1519690624036259232
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4459557287678474307}
+  - component: {fileID: 2205315991903112195}
+  m_Layer: 7
+  m_Name: ReloadAudioSource
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4459557287678474307
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519690624036259232}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4275987966848159772}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &2205315991903112195
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519690624036259232}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 7158594160812607270, guid: a71ec3df354685044b998fb9a16ad2f9, type: 2}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.5
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1618956973432198105
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,6 +689,7 @@ Transform:
   - {fileID: 5663975639255832426}
   - {fileID: 36060238852047998}
   - {fileID: 7968985117419055892}
+  - {fileID: 4459557287678474307}
   m_Father: {fileID: 6102574486275773440}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1856821357569243897
@@ -1711,7 +1841,7 @@ GameObject:
   - component: {fileID: 4501964271397940781}
   m_Layer: 7
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1856,7 +1986,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.5
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
@@ -2293,6 +2423,7 @@ MonoBehaviour:
   reloadAnimationName: Reload
   movementAnimationName: Movement
   <ReloadLayer>k__BackingField: 1
+  reloadAudioSource: {fileID: 2205315991903112195}
 --- !u!114 &1726291542415004711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2315,6 +2446,51 @@ MonoBehaviour:
   tracerPrefab: {fileID: 5322242136691397421, guid: f401d3d5b3f39e04a9a409298815f7e9, type: 3}
   muzzleFlashPrefab: {fileID: 6980259576133684760, guid: 1f58a1dea6bbd9347843e4935585e6a2, type: 3}
   tracerSpeed: 250
+  pistolShootSoundData:
+    clips:
+    - {fileID: 8300000, guid: 46ad294859521ef4e900fa747225af04, type: 3}
+    mixerGroup: {fileID: 7158594160812607270, guid: a71ec3df354685044b998fb9a16ad2f9, type: 2}
+    loop: 0
+    playOnAwake: 0
+    volume: 0.1
+    frequentSound: 0
+    spatialBlend: 0
+  assaultShootSoundData:
+    clips:
+    - {fileID: 8300000, guid: ff2f3ded7fb91ee4180cf95c1b7ae8c8, type: 3}
+    mixerGroup: {fileID: 7158594160812607270, guid: a71ec3df354685044b998fb9a16ad2f9, type: 2}
+    loop: 0
+    playOnAwake: 0
+    volume: 0.1
+    frequentSound: 0
+    spatialBlend: 0
+  smgShootSoundData:
+    clips:
+    - {fileID: 8300000, guid: 1db092a9ebadbd74e8b7726bc281e765, type: 3}
+    mixerGroup: {fileID: 7158594160812607270, guid: a71ec3df354685044b998fb9a16ad2f9, type: 2}
+    loop: 0
+    playOnAwake: 0
+    volume: 0.1
+    frequentSound: 0
+    spatialBlend: 0
+  shotgunShootSoundData:
+    clips:
+    - {fileID: 8300000, guid: 8ee8937c1966bb24f9913d5862820f9d, type: 3}
+    mixerGroup: {fileID: 7158594160812607270, guid: a71ec3df354685044b998fb9a16ad2f9, type: 2}
+    loop: 0
+    playOnAwake: 0
+    volume: 0.1
+    frequentSound: 0
+    spatialBlend: 0
+  sniperShootSoundData:
+    clips:
+    - {fileID: 8300000, guid: dc2d49a555e6cf0498e3465d1be31360, type: 3}
+    mixerGroup: {fileID: 7158594160812607270, guid: a71ec3df354685044b998fb9a16ad2f9, type: 2}
+    loop: 0
+    playOnAwake: 0
+    volume: 0.1
+    frequentSound: 0
+    spatialBlend: 0
 --- !u!114 &6666395549699867304
 MonoBehaviour:
   m_ObjectHideFlags: 0

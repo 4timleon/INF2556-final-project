@@ -59,6 +59,7 @@ public class Detach : MonoBehaviour
         mesh.enabled = false;
 
         DetachedBodyPart newMesh = Instantiate(detachedPrefab, mesh.bounds.center, mesh.rootBone.rotation);
+        AlignDetachedMesh(newMesh);
         Rigidbody rb = newMesh.GetComponentInChildren<Rigidbody>();
 
         if (rb != null)
@@ -71,11 +72,12 @@ public class Detach : MonoBehaviour
         StartCoroutine(newMesh.Dissolve());
     }
 
-    private void DetachMesh(Vector3 pushDirection)
+    public void DetachMesh(Vector3 pushDirection)
     {
         mesh.enabled = false;
 
         DetachedBodyPart newMesh = Instantiate(detachedPrefab, mesh.bounds.center, mesh.rootBone.rotation);
+        AlignDetachedMesh(newMesh);
         Rigidbody rb = newMesh.GetComponentInChildren<Rigidbody>();
 
         if (rb != null)
@@ -86,6 +88,16 @@ public class Detach : MonoBehaviour
         IsDetached = true;
 
         StartCoroutine(newMesh.Dissolve());
+    }
+
+    private void AlignDetachedMesh(DetachedBodyPart newMesh)
+    {
+        MeshRenderer detachedRenderer = newMesh.GetComponentInChildren<MeshRenderer>();
+
+        if (detachedRenderer != null)
+        {
+            newMesh.transform.position += mesh.bounds.center - detachedRenderer.bounds.center;
+        }
     }
 
     public IEnumerator DissolveBodyPart()
