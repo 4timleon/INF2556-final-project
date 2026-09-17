@@ -99,6 +99,8 @@ public class PlayerADS : MonoBehaviour
 
     void EndADS(bool returnToNormal = true)
     {
+        if (weaponController == null) return;
+
         if (weaponController.IsAiming)
         {
             ikDisplacementHandler.EndADS(adsSpeed);
