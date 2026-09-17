@@ -262,7 +262,6 @@ RectTransform:
   - {fileID: 7308994890174702239}
   - {fileID: 4170116780427088255}
   - {fileID: 9080638133332369929}
-  - {fileID: 326056525486451472}
   - {fileID: 3526217112980548943}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -288,7 +287,7 @@ MonoBehaviour:
   canvas: {fileID: 0}
   weaponBuilder: {fileID: 0}
   playerArmory: {fileID: 0}
-  uiRenderLayer: 9
+  uiRenderLayer: 10
   leftWeaponSocket: {fileID: 0}
   middleWeaponSocket: {fileID: 0}
   rightWeaponSocket: {fileID: 0}
@@ -299,8 +298,7 @@ MonoBehaviour:
   - {fileID: 7308994890174702239}
   - {fileID: 2942155895537617941}
   deckPivot: {fileID: 9080638133332369929}
-  canvas: {fileID: 0}
-  buyButton: {fileID: 8064735740636132890}
+  buyButton: {fileID: 0}
   cardSlideAudioSource: {fileID: 3332261999520273609}
   duration: 0.8
   easeType: 2
