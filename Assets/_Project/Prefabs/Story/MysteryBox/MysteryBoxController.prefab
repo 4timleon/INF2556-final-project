@@ -24,13 +24,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1298242676267285958}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.9875938, z: -0, w: -0.15703055}
-  m_LocalPosition: {x: 115.14468, y: 50.0351, z: 313.01428}
+  m_LocalRotation: {x: -0, y: 0.99726963, z: -0, w: 0.07384732}
+  m_LocalPosition: {x: 137.22078, y: 50.00384, z: 169.699}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9008898535800293172}
-  m_LocalEulerAnglesHint: {x: 0, y: 198.069, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -53.47, z: 0}
 --- !u!1 &2919147540881462136
 GameObject:
   m_ObjectHideFlags: 0
@@ -62,7 +62,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 704981053462923126}
-  - {fileID: 3232917356859679151}
   - {fileID: 3821210272283332937}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -80,40 +79,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MysteryBoxController
   mysteryBoxSpawns:
   - {fileID: 704981053462923126}
-  - {fileID: 3232917356859679151}
   startingSpawn: {fileID: 704981053462923126}
-  mysteryBox: {fileID: 6196164313200279634}
---- !u!1 &4718483107028429126
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3232917356859679151}
-  m_Layer: 0
-  m_Name: Spawn (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3232917356859679151
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4718483107028429126}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.42164212, z: -0, w: -0.90676236}
-  m_LocalPosition: {x: 124.88, y: 50.0351, z: 289.68}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 9008898535800293172}
-  m_LocalEulerAnglesHint: {x: 0, y: 310.123, z: 0}
+  mysteryBox: {fileID: 3266135873569275481}
 --- !u!1001 &6094163770994886809
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -171,19 +138,19 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d39787b35ad04f4e8ebc5da4913da2f, type: 3}
---- !u!4 &3821210272283332937 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7031662554119215568, guid: 1d39787b35ad04f4e8ebc5da4913da2f, type: 3}
-  m_PrefabInstance: {fileID: 6094163770994886809}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &6196164313200279634 stripped
+--- !u!114 &3266135873569275481 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 103551130800605387, guid: 1d39787b35ad04f4e8ebc5da4913da2f, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8773422109838096064, guid: 1d39787b35ad04f4e8ebc5da4913da2f, type: 3}
   m_PrefabInstance: {fileID: 6094163770994886809}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81e00c752077a5c44908854c5dc9d88d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0879018e5ea906548afc7a3d27463ca4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MysteryBoxController
+  m_EditorClassIdentifier: Assembly-CSharp::MysteryBox
+--- !u!4 &3821210272283332937 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7031662554119215568, guid: 1d39787b35ad04f4e8ebc5da4913da2f, type: 3}
+  m_PrefabInstance: {fileID: 6094163770994886809}
+  m_PrefabAsset: {fileID: 0}
