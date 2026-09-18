@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1951329067724114899}
   - component: {fileID: 6398079373793132189}
   - component: {fileID: 6487928455719751126}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: plank5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 8992167222964670239}
   - component: {fileID: 3978566737605262359}
   - component: {fileID: 9080514320199782337}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Barricade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,6 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
   repairAnimationDuration: 1
+  breakForce: 2.5
   plankAnimators:
   - {fileID: 4024730793907417587}
   - {fileID: 7613280509737871191}
@@ -179,7 +180,7 @@ GameObject:
   - component: {fileID: 2062828479595371684}
   - component: {fileID: 7613280509737871191}
   - component: {fileID: 8648529828320821909}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: plank2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -486,7 +487,7 @@ GameObject:
   - component: {fileID: 4559042883095205261}
   - component: {fileID: 2577314968999150050}
   - component: {fileID: 6106273650359133468}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: plank3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -569,7 +570,7 @@ GameObject:
   - component: {fileID: 6352545064281370746}
   - component: {fileID: 7022361628092980126}
   - component: {fileID: 11358493608139399}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: plank4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -876,7 +877,7 @@ GameObject:
   - component: {fileID: 8261859830593191138}
   - component: {fileID: 4024730793907417587}
   - component: {fileID: 8874104223649203327}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: plank1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

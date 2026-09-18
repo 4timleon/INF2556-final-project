@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class BarricadeController : MonoBehaviour
+public class BarricadeController : MonoBehaviour, IInteractable
 {
     [Header("Settings")]
     [SerializeField] private int plankCount = 5;
-    [SerializeField] private float repairAnimationDuration = 1f;
+    // [SerializeField] private float repairAnimationDuration = 1f;
     [SerializeField] private float breakForce = 2.5f;
 
     [Header("References")]
@@ -13,6 +13,7 @@ public class BarricadeController : MonoBehaviour
 
     public bool PlayerIsRepairing { get; private set; } = false;
     public bool PlayerInRange { get; private set; } = false;
+    public bool PlayerIsInteracting { get; private set; } = false;
     private bool[] plankBroken;
     private float cooldownTimer;
 
@@ -47,7 +48,7 @@ public class BarricadeController : MonoBehaviour
         if (cooldownTimer > 0f)
             cooldownTimer -= Time.deltaTime;
 
-        if (!PlayerInRange)
+        if (!PlayerIsInteracting)
         {
             PlayerIsRepairing = false;
             return;
@@ -60,20 +61,6 @@ public class BarricadeController : MonoBehaviour
         {
             PlayerIsRepairing = false;
             return;
-        }
-
-        var interact = GameControls.GetInputActions().Player.Interact;
-
-        if (interact.IsPressed() || interact.WasPressedThisFrame())
-        {
-            RepairPlank(targetIndex);
-            PlayerIsRepairing = true;
-
-            cooldownTimer = repairAnimationDuration;
-        }
-        else
-        {
-            PlayerIsRepairing = false;
         }
     }
 
@@ -122,7 +109,7 @@ public class BarricadeController : MonoBehaviour
                     rigidbodies[i].AddForce(transform.forward * breakForce, ForceMode.Impulse);
                 }
 
-                if (!interactTextShown && PlayerInRange)
+                if (!interactTextShown && PlayerIsInteracting)
                 {
                     GameEventSystem.OnShowRepairText?.Invoke(true);
                     interactTextShown = true;
@@ -151,16 +138,30 @@ public class BarricadeController : MonoBehaviour
         return false;
     }
 
+    public void OnInteractStarted()
+    {
+        if (GetAnyPlankDestroyed())
+        {
+            PlayerIsInteracting = true;
+            PlayerIsRepairing = true;
+        }
+    }
+
+    public void OnInteractEnded()
+    {
+        PlayerIsInteracting = false;
+        PlayerIsRepairing = false;
+    }
+
+    public string GetText() => GetAnyPlankDestroyed()
+    ? "Hold <sprite name=\"keyboard_e\"> to repair Barricades"
+    : $"All Barricades repaired!";
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             PlayerInRange = true;
-            if (GetAnyPlankDestroyed())
-            {
-                GameEventSystem.OnShowRepairText?.Invoke(true);
-                interactTextShown = true;
-            }
         }
 
         zombie = other.GetComponentInParent<Zombie>();
@@ -180,9 +181,6 @@ public class BarricadeController : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerInRange = false;
-            PlayerIsRepairing = false;
-            GameEventSystem.OnShowRepairText?.Invoke(false);
-            interactTextShown = false;
         }
 
         Zombie zombie = other.GetComponentInParent<Zombie>();
