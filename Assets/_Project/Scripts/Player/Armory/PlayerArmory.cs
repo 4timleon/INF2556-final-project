@@ -24,6 +24,7 @@ public class PlayerArmory : MonoBehaviour
     private int holsterAnimationHash;
     private int movementAnimationHash;
 
+    public WeaponController CurrentWeaponController => currentWeaponController;
     public bool IsSwitching { get; private set; }
 
     void Awake()

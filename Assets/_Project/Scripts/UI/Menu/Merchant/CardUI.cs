@@ -52,6 +52,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     //Initialize
     private MerchantUI merchantUI;
     private WeaponBuilder weaponBuilder;
+    private PlayerArmory playerArmory;
 
     private RectTransform rectTransform;
     private Quaternion targetRotation;
@@ -103,13 +104,14 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         LookAtMouse();
     }
 
-    public void Initialize(MerchantUI merchantUI, WeaponBuilder weaponBuilder, int slotIndex, Action<CardUI> onCardClicked)
+    public void Initialize(MerchantUI merchantUI, PlayerArmory playerArmory, WeaponBuilder weaponBuilder, int slotIndex, Action<CardUI> onCardClicked)
     {
         SlotIndex = slotIndex;
 
         this.merchantUI = merchantUI;
         this.onCardClicked = onCardClicked;
         this.weaponBuilder = weaponBuilder;
+        this.playerArmory = playerArmory;
 
         weaponRender.uvRect = merchantUI.RenderRects[SlotIndex];
 
@@ -138,7 +140,8 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
         foreach (StatType statType in weaponData.Stats.Keys)
         {
-            cardStats.SetStat(statType, WeaponController.GetStat(statType));
+            //Set the Stats and if Weapon Type of the Card matches with the Type of the Players Current Weapon then compare
+            cardStats.SetStat(statType, playerArmory.CurrentWeaponController.GetStat(statType), WeaponController.GetStat(statType));
         }
 
         //Price Number
@@ -162,7 +165,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     {
         if (pointerEntered)
         {
-            //Mouse Position relative to the Card center (-1 to +1)
+            //Mouse Position on the Canvas
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 rectTransform,
                 pointerPosition,
@@ -193,7 +196,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         cardVisual.localRotation = Quaternion.Lerp(cardVisual.localRotation, targetRotation, Time.unscaledDeltaTime * smoothSpeed);
     }
 
-    public void FlipCard()
+    public void FlipCard(Action<int, bool> onSetAnimating)
     {
         float targetAngle = isFlipped ? 0f : 180f;
 
@@ -210,6 +213,9 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
                 LeanTween.rotateY(cardVisual.gameObject, targetAngle, flipDuration)
                     .setOnComplete(() =>
                     {
+                        //Set isAnimating false
+                        onSetAnimating(SlotIndex, false);
+
                         //Move Price Tag down
                         LeanTween.move(priceContainer.gameObject, priceContainerPivot, 0.5f)
                             .setEase(easeType)

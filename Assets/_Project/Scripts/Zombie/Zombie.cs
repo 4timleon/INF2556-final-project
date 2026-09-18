@@ -289,11 +289,15 @@ public class Zombie : MonoBehaviour
 
         SetIdle();
 
-        //Set the direction towards the barricade
-        agent.updateRotation = false;
-        Vector3 dir = (barricade.transform.position - transform.position).normalized;
-        dir.y = 0;
-        transform.rotation = Quaternion.LookRotation(dir);
+        Vector3 dir = Vector3.zero;
+        if (barricade != null)
+        {
+            //Set the direction towards the barricade
+            agent.updateRotation = false;
+            dir = (barricade.transform.position - transform.position).normalized;
+            dir.y = 0;
+            transform.rotation = Quaternion.LookRotation(dir);
+        }
 
         //Debug.Log((offMeshLinkCoroutine != null) + " | " + isAttackingBarricade + " | " + cancelOffMeshLink);
         //Wait and Attack the Barricade until it is broken up completely or gets canceled
@@ -324,10 +328,13 @@ public class Zombie : MonoBehaviour
         //Teleport the AI to the start position to prepare for the Window Climb
         agent.Warp(link.startPos);
 
-        //Set the direction towards the barricade
-        dir = (barricade.transform.position - transform.position).normalized;
-        dir.y = 0;
-        transform.rotation = Quaternion.LookRotation(dir);
+        if (barricade != null)
+        {
+            //Set the direction towards the barricade
+            dir = (barricade.transform.position - transform.position).normalized;
+            dir.y = 0;
+            transform.rotation = Quaternion.LookRotation(dir);
+        }
 
         //Finish everything up
         zombieAnimations.SetWindowAttack(false);
@@ -424,7 +431,6 @@ public class Zombie : MonoBehaviour
         if (CheckPlayerInRange() && !pauseMovement)
         {
             //Stop and Attack
-            StopAgent();
             SetIdle();
             if (Time.time >= nextAttackTime && !isAttacking)
             {
@@ -488,7 +494,6 @@ public class Zombie : MonoBehaviour
                     zombieAnimations.SetWindowAttack(false);
                     isAttackingPlayerBarricade = false;
                     isAttackingBarricade = false;
-                    barricade = null;
                     cancelOffMeshLink = true;
                     agent.updateRotation = true;
 
@@ -658,7 +663,7 @@ public class Zombie : MonoBehaviour
         GameEventSystem.OnEnemyKilled?.Invoke(this);
         GameEventSystem.OnPointsAdded?.Invoke(deathPoints);
 
-        StartCoroutine(StartRagdoll(1f));
+        StartCoroutine(StartRagdoll(2f));
     }
 
     public void Dissolve()
@@ -699,7 +704,10 @@ public class Zombie : MonoBehaviour
     public void SetIdle()
     {
         StopAgent();
-        tempMovementState = CurrentMovementState;
+        if (CurrentMovementState != MovementState.Idle)
+        {
+            tempMovementState = CurrentMovementState;
+        }
         CurrentMovementState = MovementState.Idle;
     }
 

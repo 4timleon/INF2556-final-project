@@ -13,10 +13,13 @@ public class MerchantCardStats : MonoBehaviour
     [SerializeField] private TextMeshProUGUI firerate;
     [SerializeField] private TextMeshProUGUI magazine;
 
+    [SerializeField] private Color goodColor = Color.green;
+    [SerializeField] private Color badColor = Color.red;
+
     float damageValue;
     float bulletAmount = 1;
 
-    public void SetStat(StatType statType, float value)
+    public void SetStat(StatType statType, float currentValue, float value)
     {
         if (statType == StatType.Damage)
             damageValue = value;
@@ -35,6 +38,7 @@ public class MerchantCardStats : MonoBehaviour
             };
 
             ChangeText(text, value);
+            CompareWeapons(text, currentValue, value);
             return;
         }
 
@@ -44,5 +48,11 @@ public class MerchantCardStats : MonoBehaviour
     void ChangeText(TextMeshProUGUI text, float value)
     {
         text.text = value.ToString("F2");
+    }
+
+    public void CompareWeapons(TextMeshProUGUI statText, float currentValue, float cardValue)
+    {
+        if (cardValue > currentValue) statText.color = goodColor;
+        else statText.color = badColor;
     }
 }

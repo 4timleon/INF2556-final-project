@@ -79,7 +79,7 @@ public class MerchantUI : MonoBehaviour
         LeanTween.cancelAll();
     }
 
-    private void Oestroy()
+    private void OnDestroy()
     {
         rerollButton.onClick.RemoveListener(RerollWeaponCards);
     }
@@ -118,7 +118,7 @@ public class MerchantUI : MonoBehaviour
 
         if (isAnimating.All(a => a)) return;
 
-        SetAllSelected(false);
+        //SetAllSelected(false);
 
         for (int i = 0; i < cardPivots.Length; i++)
         {
@@ -148,7 +148,7 @@ public class MerchantUI : MonoBehaviour
 
         previousCards[index] = cardInstance;
 
-        cardInstance.Initialize(this, weaponBuilder, index, BuyWeapon);
+        cardInstance.Initialize(this, playerArmory, weaponBuilder, index, BuyWeapon);
 
         SetChildrenLayer(cardInstance.WeaponController.transform, uiRenderLayer);
 
@@ -190,7 +190,7 @@ public class MerchantUI : MonoBehaviour
             {
                 isAnimating[slotIndex] = false;
                 card.SetAnimate(false);
-                card.FlipCard();
+                card.FlipCard(SetIsAnimating);
             })
             .setIgnoreTimeScale(true);
 
@@ -211,9 +211,14 @@ public class MerchantUI : MonoBehaviour
                 previousCards[i].transform.rotation = cardPivots[i].transform.rotation;
 
                 if (isAnimating[i])
-                    card.FlipCard();
+                    card.FlipCard(SetIsAnimating);
             }
         }
+    }
+
+    private void SetIsAnimating(int slotIndex, bool state)
+    {
+        if (slotIndex >= 0 && slotIndex < 3) isAnimating[slotIndex] = state;
     }
 
     public bool GetIsSelected(int slotIndex)
@@ -226,7 +231,7 @@ public class MerchantUI : MonoBehaviour
         return false;
     }
 
-    private void SetSelected(int slotIndex)
+    /* private void SetSelected(int slotIndex)
     {
         SetAllSelected(false);
 
@@ -246,5 +251,5 @@ public class MerchantUI : MonoBehaviour
         {
             isSelected[i] = state;
         }
-    }
+    } */
 }
