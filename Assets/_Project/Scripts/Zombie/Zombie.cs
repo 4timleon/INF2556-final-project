@@ -425,6 +425,7 @@ public class Zombie : MonoBehaviour
         {
             //Stop and Attack
             StopAgent();
+            SetIdle();
             if (Time.time >= nextAttackTime && !isAttacking)
             {
                 Attack(player.transform);
@@ -434,7 +435,7 @@ public class Zombie : MonoBehaviour
         else
         {
             //Set Target
-            StartAgent(CurrentMovementState);
+            ResetMovementAfterAttack();
             isAttacking = false;
 
             CheckNextPosition(player.transform.position, speed);

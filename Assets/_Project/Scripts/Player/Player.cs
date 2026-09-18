@@ -54,11 +54,13 @@ public class Player : MonoBehaviour
     private void OnEnable()
     {
         GameEventSystem.OnGamePause += GameEventSystem_OnGamePause;
+        GameEventSystem.OnPlayerPreDeath += GameEventSystem_OnPlayerPreDeath;
     }
 
     private void OnDisable()
     {
         GameEventSystem.OnGamePause -= GameEventSystem_OnGamePause;
+        GameEventSystem.OnPlayerPreDeath -= GameEventSystem_OnPlayerPreDeath;
     }
 
     // testing -> weaponBuilder.BuildWeapon(true) -> 'true' für -> start with Pistol.
@@ -145,15 +147,19 @@ public class Player : MonoBehaviour
         //Sends the time in PreDeath once
         OnPreDeathCounter?.Invoke(preDeathTimer);
 
-        LeanTween.value(gameObject, Time.timeScale, 0.3f, 2f)
+        Time.timeScale = 0.1f;
+        Time.fixedDeltaTime = 0.01f * Time.timeScale;
+
+        LeanTween.value(gameObject, 0.1f, 0.5f, 6f)
             .setOnUpdate((float value) =>
             {
                 Time.timeScale = value;
+                Time.fixedDeltaTime = 0.01f * Time.timeScale;
             })
             .setIgnoreTimeScale(true);
 
         //If Timer runs out the Player revives
-        yield return new WaitForSeconds(preDeathTimer);
+        yield return new WaitUntil(() => !IsInPreDeath);
 
         //Stand Up
         Health = MaxHealth;
@@ -161,7 +167,7 @@ public class Player : MonoBehaviour
         lowHpAudioSource.Stop();
         globalVolume.profile = globalVolumeProfile;
         revive = false;
-        IsInPreDeath = false;
+
         Time.timeScale = 1f;
         SoundManager.Instance?.PlayPlayerRevivedSound(reviveSoundSource);
     }
@@ -186,6 +192,11 @@ public class Player : MonoBehaviour
         Time.timeScale = 0.3f;
 
         GameEventSystem.OnPlayerDeath?.Invoke(deathCounter);
+    }
+
+    private void GameEventSystem_OnPlayerPreDeath(bool state)
+    {
+        if (!state) IsInPreDeath = false;
     }
 
     private void GameEventSystem_OnGamePause(bool state)

@@ -41,6 +41,7 @@ public class PreDeathTimerCounter : MonoBehaviour
                 counterTextMesh.text = Mathf.CeilToInt(remainingTime).ToString();
             })
             .setEase(LeanTweenType.linear)
+            .setIgnoreTimeScale(true)
             .setOnComplete(() =>
             {
                 container.SetActive(false);
