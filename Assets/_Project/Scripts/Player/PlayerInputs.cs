@@ -32,6 +32,9 @@ public class PlayerInputs : MonoBehaviour
 
         inputActions.Player.Inspect.started += Input_Inspect;
 
+        inputActions.Player.Interact.started += Input_InteractStarted;
+        inputActions.Player.Interact.canceled += Input_InteractEnded;
+
         inputActions.Player.Jump.started += Input_Jump;
 
         inputActions.Player.MouseWheel.performed += Input_WeaponScroll;
@@ -65,4 +68,6 @@ public class PlayerInputs : MonoBehaviour
     private void Input_AimCanceled(InputAction.CallbackContext context) => GameEventSystem.OnPlayerAimEnded?.Invoke();
     private void Input_ReloadStarted(InputAction.CallbackContext context) => GameEventSystem.OnPlayerReloadStarted?.Invoke();
     private void Input_Inspect(InputAction.CallbackContext context) => GameEventSystem.OnPlayerInspect?.Invoke();
+    private void Input_InteractStarted(InputAction.CallbackContext context) => GameEventSystem.OnPlayerInteractStarted?.Invoke();
+    private void Input_InteractEnded(InputAction.CallbackContext context) => GameEventSystem.OnPlayerInteractEnded?.Invoke();
 }

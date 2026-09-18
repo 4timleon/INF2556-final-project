@@ -22,6 +22,9 @@ public static class GameEventSystem
     public static Action<int> OnPointsAdded;
 
     // -- Interact --
+    public static Action<IInteractable> OnInteractionEnter;
+    public static Action OnInteractionExit;
+
     public static Action<float> OnShowPriceText;
     public static Action OnHidePriceText;
     public static Action<bool> OnShowRepairText;
@@ -37,6 +40,9 @@ public static class GameEventSystem
 
     public static Action<bool> OnPlayerPreDeath;
     public static Action<float> OnPlayerDeath;
+
+    public static Action OnPlayerInteractStarted;
+    public static Action OnPlayerInteractEnded;
 
     public static Action<float, float> OnPlayerHealthChanged; // (current, max)
 
