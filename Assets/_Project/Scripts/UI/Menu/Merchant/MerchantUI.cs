@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using EditorAttributes;
 using UnityEngine;
@@ -58,7 +58,7 @@ public class MerchantUI : MonoBehaviour
         };
     }
 
-    void Start()
+    private void Start()
     {
         rerollButton.onClick.AddListener(() => RerollWeaponCards());
         GameEventSystem.OnWaveStarted += Event_WaveStarted;
@@ -71,6 +71,7 @@ public class MerchantUI : MonoBehaviour
 
     private void Event_WaveStarted()
     {
+        System.Array.Clear(isAnimating, 0, isAnimating.Length);
         RerollWeaponCards(true);
     }
 
