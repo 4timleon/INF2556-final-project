@@ -42,8 +42,10 @@ public class Player : MonoBehaviour
     //Event
     public static event Action<float> OnPreDeathCounter;
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return null;
+
         MaxHealth = maxHealth;
         Health = MaxHealth;
 
@@ -51,7 +53,8 @@ public class Player : MonoBehaviour
 
         deathCounter = 0f;
 
-        Invoke("GiveFirstWeapon", 1f);
+        playerArmory.AddWeapon(weaponBuilder.BuildWeapon(true));
+        GameData.Money += 1000;
     }
 
     private void OnEnable()
@@ -62,13 +65,6 @@ public class Player : MonoBehaviour
     private void OnDisable()
     {
         GameEventSystem.OnGamePause -= GameEventSystem_OnGamePause;
-    }
-
-    // testing -> weaponBuilder.BuildWeapon(true) -> 'true' für -> start with Pistol.
-    private void GiveFirstWeapon()
-    {
-        playerArmory.AddWeapon(weaponBuilder.BuildWeapon(true));
-        GameData.Money += 20000;
     }
 
     public void ToggleReviveStatus(bool toggle) => revive = toggle;
