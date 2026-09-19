@@ -18,6 +18,11 @@ public class InteractUI : MonoBehaviour
         GameEventSystem.OnInteractionExit -= Event_InteractionExit;
     }
 
+    private void Start()
+    {
+        interactText.gameObject.SetActive(false);
+    }
+
     private void Event_InteractionEnter(IInteractable interactable)
     {
         interactText.gameObject.SetActive(true);

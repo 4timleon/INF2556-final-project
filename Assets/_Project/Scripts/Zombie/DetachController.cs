@@ -51,7 +51,11 @@ public class DetachController : MonoBehaviour
     {
         if (bodyPart.IsDetached || zombie.IsDead) return;
 
-        zombie.TakeDamage(damageValue);
+        if (bodyPart.BodyPartType != BodyPartType.Head)
+        {
+            zombie.TakeDamage(damageValue);
+        }
+
         bodyPart.TakeBodyPartDamage(damageValue);
         zombieAnimations.SetIsHit();
 
@@ -64,6 +68,7 @@ public class DetachController : MonoBehaviour
                     zombie.SetNoHead();
                     collider.enabled = false;
                 }
+                zombie.TakeDamage(damageValue * 1.5f);
                 GameData.Money += headPoints;
                 GameEventSystem.OnMoneyUpdated?.Invoke();
                 return;

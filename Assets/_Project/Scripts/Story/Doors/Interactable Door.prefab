@@ -249,11 +249,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bacabcf67c0dca409b0b8abc283bfdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
+  obstacle: {fileID: 4341211653981771769}
   doorId: 
   cost: 500
   rotationObject: {fileID: 8691059835588132536}
   closedEuler: {x: 0, y: -90, z: 0}
   openedEuler: {x: 0, y: 0, z: 0}
+  spawnPoints: []
 --- !u!208 &4341211653981771769
 NavMeshObstacle:
   m_ObjectHideFlags: 0

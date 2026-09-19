@@ -1,8 +1,12 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(BoxCollider))]
 public class DoorController : MonoBehaviour, IInteractable
 {
+
+    [SerializeField] private NavMeshObstacle obstacle;
+
     [Header("Door Settings")]
     [SerializeField] private string doorId;
     [SerializeField] private int cost = 500;
@@ -10,9 +14,13 @@ public class DoorController : MonoBehaviour, IInteractable
     [SerializeField] private Vector3 closedEuler = new Vector3(0, -90, 0f);
     [SerializeField] private Vector3 openedEuler = new Vector3(0, 0f, 0f);
 
+    [Header("SpawnPoints References")]
+    public SpawnPoint[] spawnPoints;
+
     void Awake()
     {
         ToggleDoor(false);
+        obstacle.enabled = true;
     }
 
     public void OnInteractStarted() => TryOpenDoor();
@@ -31,7 +39,8 @@ public class DoorController : MonoBehaviour, IInteractable
     private void OpenDoor()
     {
         ToggleDoor(true);
-        GameEventSystem.OnDoorOpened?.Invoke(doorId);
+        GameEventSystem.OnDoorOpened?.Invoke(this);
+        obstacle.enabled = false;
     }
 
     private void ToggleDoor(bool toggle)

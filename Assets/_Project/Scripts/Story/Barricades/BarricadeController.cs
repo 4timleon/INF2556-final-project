@@ -110,7 +110,7 @@ public class BarricadeController : MonoBehaviour, IInteractable
         if (plankAnimators != null && index < plankAnimators.Length && plankAnimators[index] != null)
         {
             plankAnimators[index].SetTrigger("Repair");
-            GameEventSystem.OnPointsAdded?.Invoke(10);
+            GameData.Money += 10;
         }
 
     }

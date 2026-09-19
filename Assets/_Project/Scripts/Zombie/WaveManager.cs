@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class WaveManager : MonoBehaviour, IInititalizeStart
@@ -60,6 +62,12 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
     private void GameEventSystem_OnWaveStarted()
     {
         StartNextWave();
+    }
+
+    private void GameEventSystem_OnDoorOpened(DoorController controller)
+    {
+        if (controller.spawnPoints.Length > 0)
+            spawnPoints.AddRange(controller.spawnPoints);
     }
 
     //Can be used to Start the next Wave after all Zombies got killed
@@ -170,11 +178,13 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
     private void OnEnable()
     {
         GameEventSystem.OnEnemyKilled += RemoveZombieFromList;
+        GameEventSystem.OnDoorOpened += GameEventSystem_OnDoorOpened;
     }
 
     private void OnDisable()
     {
         GameEventSystem.OnEnemyKilled -= RemoveZombieFromList;
         GameEventSystem.OnWaveStarted -= GameEventSystem_OnWaveStarted;
+        GameEventSystem.OnDoorOpened -= GameEventSystem_OnDoorOpened;
     }
 }

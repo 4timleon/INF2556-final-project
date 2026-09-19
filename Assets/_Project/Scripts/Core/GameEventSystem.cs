@@ -9,7 +9,7 @@ public static class GameEventSystem
     public static Action<bool> OnGamePause;
 
     // -- Story --
-    public static Action<string> OnDoorOpened; // string = doorId, z.B. "Door_A1"
+    public static Action<DoorController> OnDoorOpened; // string = doorId, z.B. "Door_A1"
     public static Action<bool> OnPowerChanged;
 
     // -- Mystery Box --
