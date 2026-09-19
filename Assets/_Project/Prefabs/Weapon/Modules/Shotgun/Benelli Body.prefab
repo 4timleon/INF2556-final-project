@@ -465,6 +465,8 @@ MonoBehaviour:
   HasHighestPoint: 1
   HasIronSight: 1
   HighestPoint: {fileID: 2046186084566014504}
+  HasMuzzlePoint: 0
+  MuzzlePoint: {fileID: 0}
   StatModifiers:
   - StatType: 0
     Value: 1.5
@@ -473,7 +475,7 @@ MonoBehaviour:
   - StatType: 2
     Value: 25
   - StatType: 3
-    Value: 1.25
+    Value: 0.25
   - StatType: 4
     Value: 2
   - StatType: 5
