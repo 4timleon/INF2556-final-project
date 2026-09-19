@@ -7,7 +7,7 @@ public class BarricadeController : MonoBehaviour, IInteractable
 {
     [Header("Settings")]
     [SerializeField] private int plankCount = 5;
-    // [SerializeField] private float repairAnimationDuration = 1f;
+    [SerializeField] private float repairAnimationDuration = 1f;
     [SerializeField] private float breakForce = 2.5f;
 
     [Header("References")]
@@ -78,6 +78,9 @@ public class BarricadeController : MonoBehaviour, IInteractable
             PlayerIsRepairing = false;
             return;
         }
+
+        RepairPlank(targetIndex);
+        cooldownTimer = repairAnimationDuration;
     }
 
     private int GetLowestBrokenPlankIndex()

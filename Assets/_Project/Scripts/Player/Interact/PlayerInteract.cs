@@ -51,6 +51,7 @@ public class PlayerInteract : MonoBehaviour
 
         if (currentInteractable != null)
         {
+            currentInteractable.OnInteractEnded();
             GameEventSystem.OnInteractionExit?.Invoke();
         }
 
