@@ -53,6 +53,11 @@ public class PlayerInputs : MonoBehaviour
 
         inputActions.Player.Reload.started -= Input_ReloadStarted;
 
+        inputActions.Player.Inspect.started -= Input_Inspect;
+
+        inputActions.Player.Interact.started -= Input_InteractStarted;
+        inputActions.Player.Interact.canceled -= Input_InteractEnded;
+
         inputActions.Player.Jump.started -= Input_Jump;
 
         inputActions.Player.MouseWheel.performed -= Input_WeaponScroll;
