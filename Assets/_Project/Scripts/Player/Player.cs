@@ -52,8 +52,6 @@ public class Player : MonoBehaviour
         deathCounter = 0f;
 
         Invoke("GiveFirstWeapon", 1f);
-
-        GameEventSystem.OnPerkAquired?.Invoke(PerkType.Revive);
     }
 
     private void OnEnable()
@@ -70,6 +68,7 @@ public class Player : MonoBehaviour
     private void GiveFirstWeapon()
     {
         playerArmory.AddWeapon(weaponBuilder.BuildWeapon(true));
+        GameData.Money += 20000;
     }
 
     public void ToggleReviveStatus(bool toggle) => revive = toggle;
