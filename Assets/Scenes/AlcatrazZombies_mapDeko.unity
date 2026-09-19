@@ -393,6 +393,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2670510297131189919, guid: 780b9727cf44b6a4880ac06bde077a6f, type: 3}
+      propertyPath: m_VertexColorAlwaysGammaSpace
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3293392676660539496, guid: 780b9727cf44b6a4880ac06bde077a6f, type: 3}
       propertyPath: playerInputHandler
       value: 
@@ -1909,6 +1913,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1564560650
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1564560652}
+  - component: {fileID: 1564560651}
+  m_Layer: 11
+  m_Name: SmokeTrip Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1564560651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564560650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: cfb25e4c67c6ac748b04a63db261b6f1, type: 2}
+--- !u!4 &1564560652
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564560650}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.37138307, y: 12.535301, z: 398.9631}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1647480676
 GameObject:
   m_ObjectHideFlags: 0
@@ -2038,6 +2091,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1541311416199840911, guid: ddd6c806110be2741a25f49c006b8eec, type: 3}
+      propertyPath: m_RenderPostProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1541311416199840911, guid: ddd6c806110be2741a25f49c006b8eec, type: 3}
+      propertyPath: m_VolumeLayerMask.m_Bits
+      value: 2049
+      objectReference: {fileID: 0}
     - target: {fileID: 1726291542415004711, guid: ddd6c806110be2741a25f49c006b8eec, type: 3}
       propertyPath: hitMask.m_Bits
       value: 65
@@ -2053,6 +2114,10 @@ PrefabInstance:
     - target: {fileID: 3477339832508144912, guid: ddd6c806110be2741a25f49c006b8eec, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4626398246188846645, guid: ddd6c806110be2741a25f49c006b8eec, type: 3}
+      propertyPath: m_VolumeLayerMask.m_Bits
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6102574486275773440, guid: ddd6c806110be2741a25f49c006b8eec, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2094,7 +2159,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7203514115803807115, guid: ddd6c806110be2741a25f49c006b8eec, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -15697,6 +15763,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 925641885}
   - {fileID: 1647480678}
+  - {fileID: 1564560652}
   - {fileID: 1933897235477463590}
   - {fileID: 364684625971850676}
   - {fileID: 3861597145014289152}
