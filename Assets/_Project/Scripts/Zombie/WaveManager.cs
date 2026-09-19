@@ -12,7 +12,7 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
 
     [Header("Spawn Settings")]
     [SerializeField] private GameObject zombiePrefab;
-    [SerializeField] private SpawnPoint[] spawnPoints;
+    [SerializeField] private List<SpawnPoint> spawnPoints;
     [SerializeField] private float timeBetweenSpawns = 1.0f;
 
     [Header("Wave Scaling")]
@@ -66,7 +66,7 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
 
     private void GameEventSystem_OnDoorOpened(DoorController controller)
     {
-        if (controller.spawnPoints.Length > 0)
+        if (controller.spawnPoints.Count > 0)
             spawnPoints.AddRange(controller.spawnPoints);
     }
 
@@ -140,7 +140,7 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
 
     private void SpawnZombie(Zombie.MovementState type)
     {
-        SpawnPoint spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        SpawnPoint spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
         Vector3 randomSpawnPoint = spawnPoint.GetRandomSpawnPosition();
 
         Zombie zombie = Instantiate(zombiePrefab, randomSpawnPoint, Quaternion.identity).GetComponent<Zombie>();

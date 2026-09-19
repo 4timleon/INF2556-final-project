@@ -158,7 +158,7 @@ public class SoundManager : MonoBehaviour
         PlaySound(audioSource, audioClipRefsSO.revivedSound, audioClipRefsSO.revivedSoundVolume);
     }
 
-    public void PlayReloadEjectSound(AudioSource audioSource, WeaponType weaponType)
+    public void PlayReloadEjectSound(AudioSource audioSource, Vector3 position, WeaponType weaponType)
     {
         AudioClip clip = null;
         float volume = 0f;
@@ -186,15 +186,15 @@ public class SoundManager : MonoBehaviour
                 break;
         }
 
-        PlaySound(audioSource, clip, volume);
+        PlaySound(audioSource, clip, position, volume);
     }
 
-    public void PlayReloadPocketSound(AudioSource audioSource)
+    public void PlayReloadPocketSound(AudioSource audioSource, Vector3 position)
     {
-        PlaySound(audioSource, audioClipRefsSO.pocketSearchSound, audioClipRefsSO.pocketSearchSoundVolume);
+        PlaySound(audioSource, audioClipRefsSO.pocketSearchSound, position, audioClipRefsSO.pocketSearchSoundVolume);
     }
 
-    public void PlayReloadHomeSound(AudioSource audioSource, WeaponType weaponType)
+    public void PlayReloadHomeSound(AudioSource audioSource, Vector3 position, WeaponType weaponType)
     {
         AudioClip clip = null;
         float volume = 0f;
@@ -222,7 +222,7 @@ public class SoundManager : MonoBehaviour
                 break;
         }
 
-        PlaySound(audioSource, clip, volume);
+        PlaySound(audioSource, clip, position, volume);
     }
     #endregion
 
@@ -258,6 +258,15 @@ public class SoundManager : MonoBehaviour
     //Play one Clip once
     private void PlaySound(AudioSource audioSource, AudioClip audioClip, float volumeMultiplier = 1f)
     {
+        audioSource.clip = audioClip;
+        audioSource.volume = volumeMultiplier * volume;
+        audioSource.Play();
+    }
+
+    //Play one Clip once at a certain Location
+    private void PlaySound(AudioSource audioSource, AudioClip audioClip, Vector3 position, float volumeMultiplier = 1f)
+    {
+        audioSource.transform.position = position;
         audioSource.clip = audioClip;
         audioSource.volume = volumeMultiplier * volume;
         audioSource.Play();

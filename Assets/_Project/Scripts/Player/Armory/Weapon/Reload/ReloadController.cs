@@ -94,13 +94,13 @@ public class ReloadController : MonoBehaviour
         switch (index)
         {
             case 0:
-                SoundManager.Instance?.PlayReloadEjectSound(reloadAudioSource, weaponController.WeaponData.TotalType);
+                SoundManager.Instance?.PlayReloadEjectSound(reloadAudioSource, BulletPouchSocket.position, weaponController.WeaponData.TotalType);
                 break;
             case 1:
-                SoundManager.Instance?.PlayReloadPocketSound(reloadAudioSource);
+                SoundManager.Instance?.PlayReloadPocketSound(reloadAudioSource, BulletPouchSocket.position);
                 break;
             case 2:
-                SoundManager.Instance?.PlayReloadHomeSound(reloadAudioSource, weaponController.WeaponData.TotalType);
+                SoundManager.Instance?.PlayReloadHomeSound(reloadAudioSource, BulletPouchSocket.position, weaponController.WeaponData.TotalType);
                 break;
         }
     }
