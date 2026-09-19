@@ -13,6 +13,9 @@ public class PlayerArmory : MonoBehaviour
     [SerializeField] private string holsterAnimationName;
     [SerializeField] private string movementAnimationName;
     [SerializeField] private int rightLayer;
+    [Space]
+    [Title("Weapon Layer:", 14)]
+    [SerializeField] private int weaponLayer;
 
     private WeaponController currentWeaponController;
     private int currentIndex;
@@ -149,6 +152,7 @@ public class PlayerArmory : MonoBehaviour
 
         Transform weaponTransform = weaponController.transform;
 
+        SetChildrenLayer(weaponTransform, weaponLayer);
         weaponTransform.SetParent(rightHandSocket);
         weaponTransform.localPosition = Vector3.zero;
         weaponTransform.localRotation = Quaternion.identity;
@@ -226,5 +230,14 @@ public class PlayerArmory : MonoBehaviour
         Destroy(weaponToDestroy.gameObject);
         currentWeaponController = null;
         IsSwitching = false;
+    }
+
+    void SetChildrenLayer(Transform root, int layer)
+    {
+        var children = root.GetComponentsInChildren<Transform>(includeInactive: true);
+        foreach (var child in children)
+        {
+            child.gameObject.layer = layer;
+        }
     }
 }
