@@ -1,38 +1,23 @@
 using UnityEngine;
 
-public class GeneratorController : MonoBehaviour
+[RequireComponent(typeof(BoxCollider))]
+public class GeneratorController : MonoBehaviour, IInteractable
 {
     [Header("Settings")]
-    [SerializeField] private int generatorCost = 500;
+    [SerializeField] private int cost = 500;
 
-    [Header("References")]
-    [SerializeField] private Animator generatorAnimator;
-
-    private bool playerInRange;
-    private bool hasBeenPaid;   // einmal bezahlt, danach frei schaltbar
-
-    private void Update()
-    {
-        if (!playerInRange) return;
-
-        if (GameControls.GetInputActions().Player.Interact.WasPressedThisFrame())
-        {
-            TryToggle();
-        }
-    }
+    private bool hasBeenPaid;
 
     private void TryToggle()
     {
-        // Beim ersten Mal muss bezahlt werden
         if (!hasBeenPaid)
         {
-            if (GameData.Money < generatorCost)
+            if (GameData.Money < cost)
             {
-                // TODO: UI Feedback "Nicht genug Geld"
                 return;
             }
 
-            GameData.Money -= generatorCost;
+            GameData.Money -= cost;
             hasBeenPaid = true;
         }
 
@@ -43,21 +28,14 @@ public class GeneratorController : MonoBehaviour
     {
         GameData.IsPowerOn = state;
 
-        if (generatorAnimator != null)
-            generatorAnimator.SetBool("IsOn", state);
-
         GameEventSystem.OnPowerChanged?.Invoke(state);
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-            playerInRange = true;
-    }
+    public void OnInteractStarted() => TryToggle();
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-            playerInRange = false;
-    }
+    public string GetText() => hasBeenPaid
+    ? $"Press <sprite name=\"keyboard_e\"> to turn Power {ToggleString()}"
+    : $"Press <sprite name=\"keyboard_e\"> to unlock Generator | {cost}$";
+
+    string ToggleString() => GameData.IsPowerOn ? "off" : "on";
 }
