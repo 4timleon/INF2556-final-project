@@ -633,7 +633,8 @@ public class Zombie : MonoBehaviour
         zombieAnimations.SetDeath();
 
         GameEventSystem.OnEnemyKilled?.Invoke(this);
-        GameEventSystem.OnPointsAdded?.Invoke(deathPoints);
+        GameData.Money += deathPoints;
+        GameEventSystem.OnMoneyUpdated?.Invoke();
 
         StartCoroutine(StartRagdoll(1f));
     }

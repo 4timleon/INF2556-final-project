@@ -3,7 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DeathScreen : MonoBehaviour {
+public class DeathScreen : MonoBehaviour
+{
     [SerializeField] private Image background;
     [SerializeField] private CanvasGroup titleCanvasGroup;
     [SerializeField] private CanvasGroup scoreBoardCanvasGroup;
@@ -20,18 +21,21 @@ public class DeathScreen : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI killsTextMesh;
     [SerializeField] private TextMeshProUGUI deathsTextMesh;
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         endingScreenContainer.SetActive(false);
         ResetAlpha();
         GameEventSystem.OnPlayerDeath += ShowDeathScreen;
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         LeanTween.cancel(gameObject);
         GameEventSystem.OnPlayerDeath -= ShowDeathScreen;
     }
 
-    private void ResetAlpha() {
+    private void ResetAlpha()
+    {
         //Set every alpha to 0
         Color bgColor = background.color;
         bgColor.a = 0f;
@@ -42,12 +46,13 @@ public class DeathScreen : MonoBehaviour {
         buttonsCanvasGroup.alpha = 0f;
     }
 
-    private void ShowDeathScreen(float deathCounter) {
+    private void ShowDeathScreen(float deathCounter)
+    {
         endingScreenContainer.SetActive(true);
         LeanTween.cancel(gameObject);
 
         //Update text
-        pointsTextMesh.text = pointsUI.Points.ToString();
+        pointsTextMesh.text = GameData.Money.ToString();
         //killsTextMesh.text = ;
         deathsTextMesh.text = deathCounter.ToString();
 
