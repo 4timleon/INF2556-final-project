@@ -29,8 +29,8 @@ public class Player : MonoBehaviour
     [SerializeField] private WeaponBuilder weaponBuilder;
     [SerializeField] private PlayerArmory playerArmory;
 
-    public float Health { get; private set; } = 100f;
-    public float MaxHealth => maxHealth;
+    public float Health { get; private set; }
+    public float MaxHealth { get; private set; }
     public bool IsInPreDeath { get; private set; } = false;
     public bool IsDead { get; private set; } = false;
 
@@ -44,6 +44,11 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        MaxHealth = maxHealth;
+        Health = MaxHealth;
+
+        revive = false;
+
         deathCounter = 0f;
 
         Invoke("GiveFirstWeapon", 1f);
@@ -65,6 +70,20 @@ public class Player : MonoBehaviour
     private void GiveFirstWeapon()
     {
         playerArmory.AddWeapon(weaponBuilder.BuildWeapon(true));
+    }
+
+    public void ToggleReviveStatus(bool toggle) => revive = toggle;
+
+    public void IncreaseMaxHealth(float amount)
+    {
+        MaxHealth = amount;
+        Health = amount;
+    }
+
+    public void ResetMaxHealth()
+    {
+        MaxHealth = maxHealth;
+        Health = MaxHealth;
     }
 
     public void TakeDamage(float value)
