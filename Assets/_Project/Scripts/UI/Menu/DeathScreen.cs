@@ -3,7 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DeathScreen : MonoBehaviour {
+public class DeathScreen : MonoBehaviour
+{
     [SerializeField] private Image background;
     [SerializeField] private CanvasGroup titleCanvasGroup;
     [SerializeField] private CanvasGroup scoreBoardCanvasGroup;
@@ -20,18 +21,25 @@ public class DeathScreen : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI killsTextMesh;
     [SerializeField] private TextMeshProUGUI deathsTextMesh;
 
-    private void OnEnable() {
+    private float kills = 0f;
+
+    private void OnEnable()
+    {
         endingScreenContainer.SetActive(false);
         ResetAlpha();
         GameEventSystem.OnPlayerDeath += ShowDeathScreen;
+        GameEventSystem.OnEnemyKilled += GameEventSystem_OnEnemyKilled;
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         LeanTween.cancel(gameObject);
         GameEventSystem.OnPlayerDeath -= ShowDeathScreen;
+        GameEventSystem.OnEnemyKilled -= GameEventSystem_OnEnemyKilled;
     }
 
-    private void ResetAlpha() {
+    private void ResetAlpha()
+    {
         //Set every alpha to 0
         Color bgColor = background.color;
         bgColor.a = 0f;
@@ -42,13 +50,14 @@ public class DeathScreen : MonoBehaviour {
         buttonsCanvasGroup.alpha = 0f;
     }
 
-    private void ShowDeathScreen(float deathCounter) {
+    private void ShowDeathScreen(float deathCounter)
+    {
         endingScreenContainer.SetActive(true);
         LeanTween.cancel(gameObject);
 
         //Update text
         pointsTextMesh.text = pointsUI.Points.ToString();
-        //killsTextMesh.text = ;
+        killsTextMesh.text = kills.ToString();
         deathsTextMesh.text = deathCounter.ToString();
 
         //Change background Alpha
@@ -66,6 +75,10 @@ public class DeathScreen : MonoBehaviour {
         LeanTween.alphaCanvas(buttonsCanvasGroup, 1f, alphaDurationDeathScreen)
             .setDelay(alphaDurationDeathScreen * 2f)
             .setIgnoreTimeScale(true);
+    }
 
+    private void GameEventSystem_OnEnemyKilled(Zombie zombie)
+    {
+        kills++;
     }
 }

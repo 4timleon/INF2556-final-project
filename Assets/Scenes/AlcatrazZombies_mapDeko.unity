@@ -2427,6 +2427,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1726291542415004711, guid: ddd6c806110be2741a25f49c006b8eec, type: 3}
+      propertyPath: hitMask.m_Bits
+      value: 65
+      objectReference: {fileID: 0}
     - target: {fileID: 3052086341947123293, guid: ddd6c806110be2741a25f49c006b8eec, type: 3}
       propertyPath: globalVolume
       value: 
@@ -10275,6 +10279,30 @@ PrefabInstance:
       propertyPath: m_BoundingSphereOverride.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5902958904403219272, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
+      propertyPath: m_Size.x
+      value: 1.3873427
+      objectReference: {fileID: 0}
+    - target: {fileID: 5902958904403219272, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
+      propertyPath: m_Size.y
+      value: 3.702666
+      objectReference: {fileID: 0}
+    - target: {fileID: 5902958904403219272, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
+      propertyPath: m_Size.z
+      value: 1.6279081
+      objectReference: {fileID: 0}
+    - target: {fileID: 5902958904403219272, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
+      propertyPath: m_Center.x
+      value: -0.19673511
+      objectReference: {fileID: 0}
+    - target: {fileID: 5902958904403219272, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
+      propertyPath: m_Center.y
+      value: 1.7540332
+      objectReference: {fileID: 0}
+    - target: {fileID: 5902958904403219272, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
+      propertyPath: m_Center.z
+      value: 0.54670376
+      objectReference: {fileID: 0}
     - target: {fileID: 5905181709335225190, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
       propertyPath: m_BoundingSphereOverride.w
       value: -2.7506879e-17
@@ -11718,6 +11746,18 @@ PrefabInstance:
     - target: {fileID: 7009220184235919442, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
       propertyPath: m_BoundingSphereOverride.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7016042535484306998, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7016042535484306998, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7016042535484306998, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7031512493696911441, guid: 99bee82c7c9a2fc47a0dcd5d6b281037, type: 3}
       propertyPath: m_BoundingSphereOverride.w
@@ -14723,11 +14763,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3745317732543632013, guid: 1a67ae3422fcf054d9f666cedbd294b3, type: 3}
       propertyPath: currentWave
-      value: 20
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3745317732543632013, guid: 1a67ae3422fcf054d9f666cedbd294b3, type: 3}
       propertyPath: baseZombieCount
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3745317732543632013, guid: 1a67ae3422fcf054d9f666cedbd294b3, type: 3}
       propertyPath: playerReference

@@ -43,6 +43,8 @@ public class PlayerShoot : MonoBehaviour
     private bool isAuto;
     private bool isAiming;
 
+    private bool isPlayerDead = false;
+
     void OnEnable()
     {
         GameEventSystem.OnPlayerWeaponDraw += Event_WeaponDraw;
@@ -50,6 +52,7 @@ public class PlayerShoot : MonoBehaviour
         GameEventSystem.OnPlayerAttackStarted += Event_AttackStarted;
         GameEventSystem.OnPlayerAttackEnded += Event_AttackEnded;
         GameEventSystem.OnPlayerInSight += Event_PlayerInSight;
+        GameEventSystem.OnPlayerDeath += Event_OnPlayerDeath;
     }
 
     void OnDisable()
@@ -59,6 +62,7 @@ public class PlayerShoot : MonoBehaviour
         GameEventSystem.OnPlayerAttackStarted -= Event_AttackStarted;
         GameEventSystem.OnPlayerAttackEnded -= Event_AttackEnded;
         GameEventSystem.OnPlayerInSight -= Event_PlayerInSight;
+        GameEventSystem.OnPlayerDeath -= Event_OnPlayerDeath;
     }
 
     void Event_WeaponDraw(WeaponController weaponController)
@@ -97,6 +101,11 @@ public class PlayerShoot : MonoBehaviour
         }
     }
 
+    private void Event_OnPlayerDeath(float deathCounter)
+    {
+        isPlayerDead = true;
+    }
+
     void Update()
     {
         if (weaponController == null)
@@ -111,7 +120,7 @@ public class PlayerShoot : MonoBehaviour
             return;
         }
 
-        if (weaponController.IsReloading || weaponController.IsLocked)
+        if (weaponController.IsReloading || weaponController.IsLocked || isPlayerDead)
         {
             weaponController.IsShooting = false;
             return;

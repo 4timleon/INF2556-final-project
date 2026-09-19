@@ -210,7 +210,8 @@ public class Zombie : MonoBehaviour
             }
         }
 
-        //Random Zombie Soundsd
+        //Debug.Log("Head: " + noHead + ", Dead?: " + IsDead + ", isAttacking: " + isAttacking);
+        //Random Zombie Sound
         if (!noHead && !IsDead && !isAttacking)
         {
             randomWait -= Time.deltaTime;
@@ -650,7 +651,8 @@ public class Zombie : MonoBehaviour
         if (IsDead) return;
         IsDead = true;
 
-        foreach (var collider in colliders) collider.excludeLayers += playerLayer;
+        gameObject.layer = LayerMask.NameToLayer("DeadZombie");
+        foreach (var collider in colliders) collider.gameObject.layer = LayerMask.NameToLayer("DeadZombie");
 
         int deathIndex = Random.Range(0, 3);
 
