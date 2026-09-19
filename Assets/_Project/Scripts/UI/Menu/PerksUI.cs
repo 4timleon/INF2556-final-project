@@ -4,21 +4,24 @@ using UnityEngine.InputSystem;
 
 public enum PerkType
 {
-    Juggernaut,
-    Skull,
+    Health,
+    Stamina,
     Revive,
-    Quick_Reload,
+    ThridHand,
 }
 
 public class PerksUI : MonoBehaviour
 {
 
-    [SerializeField] private PerkVisual juggernaut;
-    [SerializeField] private PerkVisual skull;
+    [SerializeField] private PerkVisual health;
+    [SerializeField] private PerkVisual stamina;
     [SerializeField] private PerkVisual revive;
-    [SerializeField] private PerkVisual quickReload;
+    [SerializeField] private PerkVisual thirdHand;
 
+    private GameObject healthPerkInstance;
+    private GameObject staminaPerkInstance;
     private GameObject revivePerkInstance;
+    private GameObject thirdHandPerkInstance;
 
     private void OnEnable()
     {
@@ -39,34 +42,34 @@ public class PerksUI : MonoBehaviour
 
     private void GameEventSystem_OnPlayerPreDeath(bool state)
     {
-        RemoveRevivePerk();
+        RemovePerks();
     }
 
     private void ApplyPerkAnimation(PerkType perk)
     {
         switch (perk)
         {
-            case PerkType.Juggernaut:
-                juggernaut.SpawnAndAnimatePerk(transform);
+            case PerkType.Health:
+                healthPerkInstance = health.SpawnAndAnimatePerk(transform);
                 break;
-            case PerkType.Skull:
-                skull.SpawnAndAnimatePerk(transform);
+            case PerkType.Stamina:
+                staminaPerkInstance = stamina.SpawnAndAnimatePerk(transform);
                 break;
             case PerkType.Revive:
                 revivePerkInstance = revive.SpawnAndAnimatePerk(transform);
                 break;
-            case PerkType.Quick_Reload:
-                quickReload.SpawnAndAnimatePerk(transform);
+            case PerkType.ThridHand:
+                thirdHandPerkInstance = thirdHand.SpawnAndAnimatePerk(transform);
                 break;
         }
     }
 
-    private void RemoveRevivePerk()
+    private void RemovePerks()
     {
-        if (revivePerkInstance != null)
-        {
-            Destroy(revivePerkInstance);
-        }
+        if (healthPerkInstance != null) Destroy(healthPerkInstance);
+        if (staminaPerkInstance != null) Destroy(staminaPerkInstance);
+        if (revivePerkInstance != null) Destroy(revivePerkInstance);
+        if (thirdHandPerkInstance != null) Destroy(thirdHandPerkInstance);
     }
 
 }

@@ -4,57 +4,28 @@ using UnityEngine;
 
 public class InteractUI : MonoBehaviour
 {
-    [Header("Price")]
-    [SerializeField] private GameObject priceContainer;
-    [SerializeField] private TextMeshProUGUI priceText;
-
-    [Header("Repair")]
-    [SerializeField] private GameObject repairContainer;
-
-    private void Start()
-    {
-        priceContainer.SetActive(false);
-        repairContainer.SetActive(false);
-    }
+    [SerializeField] private TextMeshProUGUI interactText;
 
     private void OnEnable()
     {
-        GameEventSystem.OnShowRepairText += GameEventSystem_OnShowRepairText;
-        GameEventSystem.OnShowPriceText += GameEventSystem_OnShowPriceText;
-        GameEventSystem.OnHidePriceText += GameEventSystem_OnHidePriceText;
+        GameEventSystem.OnInteractionEnter += Event_InteractionEnter;
+        GameEventSystem.OnInteractionExit += Event_InteractionExit;
     }
 
     private void OnDisable()
     {
-        GameEventSystem.OnShowRepairText -= GameEventSystem_OnShowRepairText;
-        GameEventSystem.OnShowPriceText -= GameEventSystem_OnShowPriceText;
-        GameEventSystem.OnHidePriceText -= GameEventSystem_OnHidePriceText;
+        GameEventSystem.OnInteractionEnter -= Event_InteractionEnter;
+        GameEventSystem.OnInteractionExit -= Event_InteractionExit;
     }
 
-    private void GameEventSystem_OnShowRepairText(bool state)
+    private void Event_InteractionEnter(IInteractable interactable)
     {
-        ShowRepair(state);
+        interactText.gameObject.SetActive(true);
+        interactText.text = interactable.GetText();
     }
 
-    private void GameEventSystem_OnShowPriceText(float amount)
+    private void Event_InteractionExit()
     {
-        ShowPrice(true);
-        priceText.text = amount.ToString();
+        interactText.gameObject.SetActive(false);
     }
-
-    private void GameEventSystem_OnHidePriceText()
-    {
-        ShowPrice(false);
-    }
-
-    private void ShowRepair(bool state)
-    {
-        repairContainer.SetActive(state);
-    }
-
-    private void ShowPrice(bool state)
-    {
-        priceContainer.SetActive(state);
-    }
-
 }

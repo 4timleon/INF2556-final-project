@@ -4,7 +4,7 @@ using EditorAttributes;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class MysteryBox : MonoBehaviour
+public class MysteryBox : MonoBehaviour, IInteractable
 {
     [Title("References:", 14)]
     [SerializeField] private WeaponBuilder weaponBuilder;
@@ -16,7 +16,7 @@ public class MysteryBox : MonoBehaviour
     [SerializeField] private Vector3 closedEuler = new Vector3(-90f, 0f, 0f);
     [SerializeField] private Vector3 openedEuler = new Vector3(-175f, 0f, 0f);
     [Space]
-    [SerializeField] private float cost = 0;
+    [SerializeField] private int cost = 750;
     [SerializeField] private float waitPerWeapon = 0.5f;
     [Space]
     [Title("Transforms:", 14)]
@@ -26,7 +26,7 @@ public class MysteryBox : MonoBehaviour
     public Transform SpawnPoint { get; set; }
 
     private bool canOpen;
-    private bool canOptain;
+    private bool canObtain;
 
     private GameObject currentVisible;
 
@@ -34,41 +34,46 @@ public class MysteryBox : MonoBehaviour
 
     private Coroutine currentBoxRoutine;
 
-    private bool playerInRange;
-
     void Start()
     {
         weaponPool = new();
         canOpen = true;
-        canOptain = false;
+        canObtain = false;
         currentVisible = null;
         currentBoxRoutine = null;
         djKhaled.SetActive(false);
     }
 
-    private void Update()
+    public void OnInteractStarted()
     {
-        if (!playerInRange) return;
-
-        if (GameControls.GetInputActions().Player.Interact.WasPressedThisFrame())
+        if (canObtain)
         {
-            if (canOpen) TryBuyBox();
-            if (canOptain) OptainWeapon();
+            ObtainWeapon();
+        }
+        else
+        {
+            TryBuyBox();
         }
     }
 
-    public void TryBuyBox()
+    public string GetText() => canObtain
+    ? "Press <sprite name=\"keyboard_e\"> to obtain Weapon"
+    : $"Press <sprite name=\"keyboard_e\"> to open Mysterybox | {cost}$";
+
+    void TryBuyBox()
     {
         if (GameData.Money < cost || canOpen == false) return;
 
         GenerateWeapons();
 
         currentBoxRoutine = StartCoroutine(BoxRoutine());
+
+        GameData.Money -= cost;
     }
 
-    public void OptainWeapon()
+    void ObtainWeapon()
     {
-        if (canOptain == false || currentVisible == null) return;
+        if (canObtain == false || currentVisible == null) return;
 
         playerArmory.AddWeapon(currentVisible.GetComponent<WeaponController>());
         weaponPool.Remove(currentVisible);
@@ -121,7 +126,7 @@ public class MysteryBox : MonoBehaviour
             yield break;
         }
 
-        canOptain = true;
+        canObtain = true;
 
         bool optainDelay = false;
 
@@ -158,7 +163,7 @@ public class MysteryBox : MonoBehaviour
         djKhaled.SetActive(false);
 
         canOpen = true;
-        canOptain = false;
+        canObtain = false;
 
         GenerateWeapons();
     }
@@ -201,23 +206,5 @@ public class MysteryBox : MonoBehaviour
             {
                 lidObject.transform.localRotation = Quaternion.Slerp(startRot, targetRot, t);
             });
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerInRange = true;
-            GameEventSystem.OnShowPriceText?.Invoke(cost);
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerInRange = false;
-            GameEventSystem.OnHidePriceText?.Invoke();
-        }
     }
 }

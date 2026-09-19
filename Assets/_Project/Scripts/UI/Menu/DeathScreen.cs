@@ -56,7 +56,7 @@ public class DeathScreen : MonoBehaviour
         LeanTween.cancel(gameObject);
 
         //Update text
-        pointsTextMesh.text = pointsUI.Points.ToString();
+        pointsTextMesh.text = GameData.Money.ToString();
         killsTextMesh.text = kills.ToString();
         deathsTextMesh.text = deathCounter.ToString();
 

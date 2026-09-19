@@ -16,12 +16,15 @@ public static class GameEventSystem
     public static Action<Transform> OnMysteryBoxDisappear;
 
     // -- Perks --
-    public static Action<PerkType> OnPerkAquired;//Entfernen in Player Start Funktion (Debug)
+    public static Action<PerkType> OnPerkAquired;
 
     // -- Points --
-    public static Action<int> OnPointsAdded;
+    public static Action OnMoneyUpdated;
 
     // -- Interact --
+    public static Action<IInteractable> OnInteractionEnter;
+    public static Action OnInteractionExit;
+
     public static Action<float> OnShowPriceText;
     public static Action OnHidePriceText;
     public static Action<bool> OnShowRepairText;
@@ -32,11 +35,14 @@ public static class GameEventSystem
     public static Action OnWaveEnded;
 
     // -- Player Events --
-    public static Action OnPlayerSmokeJointStarted; // <----- hier muss noch Perk übergeben werden!
-    public static Action OnPlayerSmokeJointEnded; // <----- hier muss noch Perk übergeben werden!
+    public static Action OnPlayerSmokeJointStarted;
+    public static Action OnPlayerSmokeJointEnded;
 
     public static Action<bool> OnPlayerPreDeath;
     public static Action<float> OnPlayerDeath;
+
+    public static Action OnPlayerInteractStarted;
+    public static Action OnPlayerInteractEnded;
 
     public static Action<float, float> OnPlayerHealthChanged; // (current, max)
 

@@ -60,7 +60,7 @@ public class MerchantUI : MonoBehaviour
 
     void Start()
     {
-        rerollButton.onClick.AddListener(RerollWeaponCards);
+        rerollButton.onClick.AddListener(() => RerollWeaponCards());
         GameEventSystem.OnWaveStarted += Event_WaveStarted;
     }
 
@@ -71,7 +71,7 @@ public class MerchantUI : MonoBehaviour
 
     private void Event_WaveStarted()
     {
-        RerollWeaponCards();
+        RerollWeaponCards(true);
     }
 
     private void OnDisable()
@@ -81,7 +81,7 @@ public class MerchantUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        rerollButton.onClick.RemoveListener(RerollWeaponCards);
+        rerollButton.onClick.RemoveListener(() => RerollWeaponCards());
     }
 
     private void BuyWeapon(CardUI cardUI)
@@ -109,9 +109,9 @@ public class MerchantUI : MonoBehaviour
         SpawnCard(slotIndex);
     }
 
-    public void RerollWeaponCards()
+    public void RerollWeaponCards(bool free = false)
     {
-        if (GameData.Money < 500)
+        if (!free && GameData.Money < 500)
         {
             return;
         }
@@ -136,7 +136,7 @@ public class MerchantUI : MonoBehaviour
             SpawnCard(i);
         }
 
-        GameData.Money -= 500;
+        if (!free) GameData.Money -= 500;
     }
 
     private CardUI SpawnCard(int index)

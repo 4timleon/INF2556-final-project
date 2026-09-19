@@ -30,27 +30,27 @@ public class PlayerSmoke : MonoBehaviour
 
     void OnEnable()
     {
-        GameEventSystem.OnPlayerSmokeJointStarted += Event_SmokeJointStarted;
         GameEventSystem.OnPlayerWeaponDraw += Event_WeaponDraw;
     }
 
     void OnDisable()
     {
-        GameEventSystem.OnPlayerSmokeJointStarted -= Event_SmokeJointStarted;
         GameEventSystem.OnPlayerWeaponDraw -= Event_WeaponDraw;
     }
 
     private void Event_WeaponDraw(WeaponController weaponController) => this.weaponController = weaponController;
 
-    void Event_SmokeJointStarted()
+    public void SmokeJoint(Action onComplete)
     {
         if (weaponController == null || weaponController.IsLocked) return;
 
-        StartCoroutine(SmokeJoint());
+        StartCoroutine(JointRoutine(onComplete));
     }
 
-    IEnumerator SmokeJoint()
+    IEnumerator JointRoutine(Action onComplete)
     {
+        GameEventSystem.OnPlayerSmokeJointStarted?.Invoke();
+
         smokeParticles.Stop();
         weaponController.IsLocked = true;
 
@@ -74,6 +74,7 @@ public class PlayerSmoke : MonoBehaviour
 
         yield return new WaitUntil(() => smokeFinished);
 
+        onComplete?.Invoke();
         GameEventSystem.OnPlayerSmokeJointEnded?.Invoke();
 
         animator.CrossFadeInFixedTime(idleAnimationHash, .15f, animationLayer);

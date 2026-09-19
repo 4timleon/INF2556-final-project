@@ -25,6 +25,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpHeight = 4f;
     [SerializeField] private float gravity = 20f;
     [Space]
+    [Title("Stamina:", 14)]
+    [SerializeField] private float maxStamina = 100f;
+    [SerializeField] private float staminaDrainRate = 15f;
+    [SerializeField] private float staminaRegenRate = 10f;
+    [SerializeField] private float jumpStaminaCost = 20f;
+    [SerializeField] private float sprintStaminaThreshold = 25f;
+    [Space]
     [Title("Camera:", 14)]
     [SerializeField] private Transform cameraRigTransform;
     [SerializeField] private Transform cameraTransform;
@@ -79,7 +86,11 @@ public class PlayerMovement : MonoBehaviour
     private float fallDamage = 0f;
     private bool takeFallDamage = false;
 
-    //Pause
+    private bool isExhausted = false;
+
+    public float CurrentStamina { get; private set; }
+    public float MaxStamina { get; private set; }
+
     private bool isPaused = false;
 
     private void Start()
@@ -95,6 +106,9 @@ public class PlayerMovement : MonoBehaviour
         isInStanceHash = Animator.StringToHash("isInStance");
         isSprintingHash = Animator.StringToHash("isSprinting");
         isWalkingHash = Animator.StringToHash("isWalking");
+
+        CurrentStamina = maxStamina;
+        MaxStamina = maxStamina;
     }
 
     private void OnEnable()
@@ -144,9 +158,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void Event_Jump()
     {
-        if (characterController.isGrounded)
+        if (characterController.isGrounded && CurrentStamina >= jumpStaminaCost)
         {
             velocity.y = Mathf.Sqrt(2f * jumpHeight * gravity);
+            CurrentStamina -= jumpStaminaCost;
+
+            if (CurrentStamina <= 0f)
+            {
+                CurrentStamina = 0f;
+                isExhausted = true;
+            }
         }
     }
 
@@ -165,6 +186,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isPaused || player.IsDead) return;
 
+        UpdateStamina();
         BodyMovement();
         LeanMovement();
         AnimationMovement();
@@ -175,6 +197,45 @@ public class PlayerMovement : MonoBehaviour
         if (isPaused || player.IsDead) return;
 
         CameraMovement();
+    }
+
+    public void IncreaseMaxStamina(float amount)
+    {
+        MaxStamina = amount;
+        CurrentStamina = amount;
+    }
+
+    public void ResetMaxStamina()
+    {
+        MaxStamina = maxStamina;
+        CurrentStamina = maxStamina;
+    }
+
+    private void UpdateStamina()
+    {
+        if (isSprinting && new Vector2(characterController.velocity.x, characterController.velocity.z).sqrMagnitude > 0.1f)
+        {
+            CurrentStamina -= staminaDrainRate * Time.deltaTime;
+            if (CurrentStamina <= 0f)
+            {
+                CurrentStamina = 0f;
+                isSprinting = false;
+                isExhausted = true;
+            }
+        }
+        else
+        {
+            if (CurrentStamina < MaxStamina)
+            {
+                CurrentStamina += staminaRegenRate * Time.deltaTime;
+                if (CurrentStamina > MaxStamina) CurrentStamina = MaxStamina;
+            }
+
+            if (isExhausted && CurrentStamina >= sprintStaminaThreshold)
+            {
+                isExhausted = false;
+            }
+        }
     }
 
     private void BodyMovement()
@@ -215,7 +276,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (velocity.y < 0)
             {
-                velocity.y = -2f;
+                velocity.y = -8f;
             }
         }
         else
@@ -226,6 +287,11 @@ public class PlayerMovement : MonoBehaviour
 
         velocity.x = horizontalVelocity.x;
         velocity.z = horizontalVelocity.z;
+
+        if ((characterController.collisionFlags & CollisionFlags.Above) != 0 && velocity.y > 0)
+        {
+            velocity.y = 0f;
+        }
 
         if (!characterController.isGrounded)
         {
@@ -307,6 +373,8 @@ public class PlayerMovement : MonoBehaviour
 
     private bool CanSprint()
     {
+        if (isExhausted || CurrentStamina <= 0f) return false;
+
         if (weaponController != null)
         {
             if (weaponController.IsReloading) return false;
@@ -346,5 +414,4 @@ public class PlayerMovement : MonoBehaviour
     {
         sensitivity = value;
     }
-
 }

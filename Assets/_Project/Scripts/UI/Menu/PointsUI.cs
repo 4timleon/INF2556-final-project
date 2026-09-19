@@ -25,8 +25,7 @@ public class PointsUI : MonoBehaviour
 
     private readonly StringBuilder stringBuilder = new StringBuilder(16);
 
-    private int points = 0;
-    public int Points => points;
+    private int lastPoints = 0;
 
     //Pool
     private IObjectPool<GameObject> textPool;
@@ -46,24 +45,12 @@ public class PointsUI : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEventSystem.OnPointsAdded += GameEventSystem_OnPointsAdded;
+        GameEventSystem.OnMoneyUpdated += Event_MoneyUpdated;
     }
 
     private void OnDisable()
     {
-        GameEventSystem.OnPointsAdded -= GameEventSystem_OnPointsAdded;
-    }
-
-    public void ApplyPoints(int value)
-    {
-        if (value <= 0f) return;
-
-        stringBuilder.Clear();
-        points += value;
-        stringBuilder.Append(points);
-        pointsText.SetText(stringBuilder);
-
-        SpawnVisual(value);
+        GameEventSystem.OnMoneyUpdated -= Event_MoneyUpdated;
     }
 
     private void SpawnVisual(int value)
@@ -77,7 +64,7 @@ public class PointsUI : MonoBehaviour
 
         //Set the amount of points as text
         stringBuilder.Clear();
-        stringBuilder.Append('+');
+        if (value > 0) stringBuilder.Append('+');
         stringBuilder.Append(value);
         fadingNumberText.SetText(stringBuilder);
 
@@ -105,9 +92,14 @@ public class PointsUI : MonoBehaviour
             });
     }
 
-    private void GameEventSystem_OnPointsAdded(int addedPoints)
+    private void Event_MoneyUpdated()
     {
-        ApplyPoints(addedPoints);
+        int diff = GameData.Money - lastPoints;
+
+        SpawnVisual(diff);
+        pointsText.SetText(GameData.Money.ToString());
+
+        lastPoints = GameData.Money;
     }
 
     private void OnDestroy()

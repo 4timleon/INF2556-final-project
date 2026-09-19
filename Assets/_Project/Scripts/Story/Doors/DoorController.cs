@@ -1,62 +1,51 @@
 using UnityEngine;
 
-public class DoorController : MonoBehaviour
+[RequireComponent(typeof(BoxCollider))]
+public class DoorController : MonoBehaviour, IInteractable
 {
     [Header("Door Settings")]
-    [SerializeField] private string doorId;      // eindeutige ID, z.B. "Door_A1"
+    [SerializeField] private string doorId;
     [SerializeField] private int cost = 500;
+    [SerializeField] private GameObject rotationObject;
+    [SerializeField] private Vector3 closedEuler = new Vector3(0, -90, 0f);
+    [SerializeField] private Vector3 openedEuler = new Vector3(0, 0f, 0f);
 
-    [Header("References")]
-    [SerializeField] private Collider blockingCollider; // der Mesh Collider vom Tuerblatt
-    [SerializeField] private Animator doorAnimator;
-
-    private bool playerInRange;
-    private bool isOpen;
-
-    private void Update()
+    void Awake()
     {
-        if (isOpen || !playerInRange) return;
-
-        if (GameControls.GetInputActions().Player.Interact.WasPressedThisFrame())
-        {
-            TryOpenDoor();
-        }
+        ToggleDoor(false);
     }
+
+    public void OnInteractStarted() => TryOpenDoor();
+
+    public string GetText() => $"Press <sprite name=\"keyboard_e\"> to open Door | {cost}$";
 
     private void TryOpenDoor()
     {
-        if (GameData.Money < cost)
-        {
-            // TODO: UI Feedback "Nicht genug Geld"
-            return;
-        }
+        if (GameData.Money < cost) return;
 
         GameData.Money -= cost;
+        gameObject.layer = 0;
         OpenDoor();
     }
 
     private void OpenDoor()
     {
-        isOpen = true;
-
-        if (doorAnimator != null)
-            doorAnimator.SetTrigger("Open");
-
-        if (blockingCollider != null)
-            blockingCollider.enabled = false;
-
+        ToggleDoor(true);
         GameEventSystem.OnDoorOpened?.Invoke(doorId);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void ToggleDoor(bool toggle)
     {
-        if (other.CompareTag("Player"))
-            playerInRange = true;
-    }
+        rotationObject.LeanCancel();
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-            playerInRange = false;
+        Quaternion startRot = rotationObject.transform.localRotation;
+        Quaternion targetRot = Quaternion.Euler(toggle ? openedEuler : closedEuler);
+
+        LeanTween.value(rotationObject, 0f, 1f, 1f)
+            .setEase(LeanTweenType.easeInOutQuad)
+            .setOnUpdate((float t) =>
+            {
+                rotationObject.transform.localRotation = Quaternion.Slerp(startRot, targetRot, t);
+            });
     }
 }

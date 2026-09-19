@@ -64,7 +64,8 @@ public class DetachController : MonoBehaviour
                     zombie.SetNoHead();
                     collider.enabled = false;
                 }
-                GameEventSystem.OnPointsAdded?.Invoke(headPoints);
+                GameData.Money += headPoints;
+                GameEventSystem.OnMoneyUpdated?.Invoke();
                 return;
             case BodyPartType.LLegCalf or BodyPartType.RLegCalf:
                 if (bodyPart.DamageTaken >= legThreshold && !hasLostLeg)
@@ -95,7 +96,8 @@ public class DetachController : MonoBehaviour
                 break;
         }
 
-        GameEventSystem.OnPointsAdded?.Invoke(normalPoints);
+        GameData.Money += normalPoints;
+        GameEventSystem.OnMoneyUpdated?.Invoke();
     }
 
     public void DissolveZombie()

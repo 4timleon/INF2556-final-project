@@ -6,6 +6,7 @@ public class PlayerADS : MonoBehaviour
 {
     [Title("Camera & Rig:", 14)]
     [SerializeField] private Camera playerCamera;
+    [SerializeField] private Camera weaponCamera;
     [SerializeField] private IKDisplacementHandler ikDisplacementHandler;
     [Space]
     [Title("Animation:", 14)]
@@ -89,10 +90,12 @@ public class PlayerADS : MonoBehaviour
 
         weaponController.IsAiming = true;
 
-        TweenFOV(adsFOV, () =>
+        TweenFOV(adsFOV, weaponCamera, () =>
         {
             GameEventSystem.OnPlayerInSight?.Invoke(true);
         });
+        TweenFOV(adsFOV, playerCamera);
+
         animator.CrossFadeInFixedTime(aimAnimationHash, adsSpeed, animationLayer);
         ikDisplacementHandler.StartADS(adsSpeed);
     }
@@ -104,7 +107,8 @@ public class PlayerADS : MonoBehaviour
         if (weaponController.IsAiming)
         {
             ikDisplacementHandler.EndADS(adsSpeed);
-            TweenFOV(idleFOV);
+            TweenFOV(idleFOV, weaponCamera);
+            TweenFOV(idleFOV, playerCamera);
             if (returnToNormal) animator.CrossFadeInFixedTime(idleAnimationHash, adsSpeed, animationLayer);
             GameEventSystem.OnPlayerInSight?.Invoke(false);
         }
@@ -112,12 +116,12 @@ public class PlayerADS : MonoBehaviour
         weaponController.IsAiming = false;
     }
 
-    void TweenFOV(float to, Action onComplete = null)
+    void TweenFOV(float to, Camera tweenCamera, Action onComplete = null)
     {
-        LeanTween.cancel(playerCamera.gameObject);
-        fovTween = LeanTween.value(playerCamera.gameObject, playerCamera.fieldOfView, to, adsSpeed).setOnUpdate((value) =>
+        LeanTween.cancel(tweenCamera.gameObject);
+        fovTween = LeanTween.value(tweenCamera.gameObject, tweenCamera.fieldOfView, to, adsSpeed).setOnUpdate((value) =>
         {
-            playerCamera.fieldOfView = value;
+            tweenCamera.fieldOfView = value;
         }).setOnComplete(() =>
         {
             onComplete?.Invoke();
