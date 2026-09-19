@@ -276,7 +276,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (velocity.y < 0)
             {
-                velocity.y = -2f;
+                velocity.y = -8f;
             }
         }
         else
@@ -287,6 +287,11 @@ public class PlayerMovement : MonoBehaviour
 
         velocity.x = horizontalVelocity.x;
         velocity.z = horizontalVelocity.z;
+
+        if ((characterController.collisionFlags & CollisionFlags.Above) != 0 && velocity.y > 0)
+        {
+            velocity.y = 0f;
+        }
 
         if (!characterController.isGrounded)
         {
