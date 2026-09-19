@@ -6,6 +6,7 @@ public abstract class PerkBase : MonoBehaviour, IInteractable
 {
     [Title("General:", 14)]
     [SerializeField] protected string perkName;
+    [SerializeField] protected PerkType perkType;
     [SerializeField] protected int cost;
     [Space]
     [Title("Materials:", 14)]
@@ -63,6 +64,8 @@ public abstract class PerkBase : MonoBehaviour, IInteractable
         {
             playerSmoke.SmokeJoint(ApplyPerk);
             WasConsumed = true;
+            GameData.Money -= cost;
+            GameEventSystem.OnPerkAquired?.Invoke(perkType);
         }
     }
 
