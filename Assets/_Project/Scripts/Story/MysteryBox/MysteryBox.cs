@@ -16,7 +16,7 @@ public class MysteryBox : MonoBehaviour, IInteractable
     [SerializeField] private Vector3 closedEuler = new Vector3(-90f, 0f, 0f);
     [SerializeField] private Vector3 openedEuler = new Vector3(-175f, 0f, 0f);
     [Space]
-    [SerializeField] private float cost = 0;
+    [SerializeField] private int cost = 750;
     [SerializeField] private float waitPerWeapon = 0.5f;
     [Space]
     [Title("Transforms:", 14)]
@@ -67,6 +67,8 @@ public class MysteryBox : MonoBehaviour, IInteractable
         GenerateWeapons();
 
         currentBoxRoutine = StartCoroutine(BoxRoutine());
+
+        GameData.Money -= cost;
     }
 
     void ObtainWeapon()
