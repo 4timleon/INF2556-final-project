@@ -23,7 +23,7 @@ public class PlayerADS : MonoBehaviour
     [SerializeField] private float adsSpeed = 0.25f;
 
     private LTDescr fovTween;
-    private LTDescr stockTween;
+    private LTDescr fadeTween;
 
     private bool isSprinting;
     private bool isSwitching;
@@ -32,25 +32,20 @@ public class PlayerADS : MonoBehaviour
     private int idleAnimationHash;
 
     private WeaponController weaponController;
+    private List<GameObject> stockParts;
+    private List<Renderer> stockRenderers;
 
-    private GameObject weaponStock;
-    private MeshRenderer[] stockRenderers;
-    private readonly List<StockMaterialData> stockMaterials = new List<StockMaterialData>();
-    private float currentStockFade = 1f;
-
-    private class StockMaterialData
-    {
-        public Material material;
-        public int colorPropId;
-        public int smoothnessPropId;
-        public float originalAlpha;
-        public float originalSmoothness;
-    }
+    private static readonly int FadePropertyId = Shader.PropertyToID("_Fade");
+    private MaterialPropertyBlock propertyBlock;
+    private float currentFade = 1f;
 
     void Start()
     {
         aimAnimationHash = Animator.StringToHash(aimAnimationName);
         idleAnimationHash = Animator.StringToHash(idleAnimationName);
+        stockParts = new();
+        stockRenderers = new();
+        propertyBlock = new();
     }
 
     void OnEnable()
@@ -67,8 +62,6 @@ public class PlayerADS : MonoBehaviour
 
     void OnDisable()
     {
-        if (weaponStock != null) LeanTween.cancel(weaponStock);
-
         GameEventSystem.OnPlayerAimStarted -= Event_AimStarted;
         GameEventSystem.OnPlayerAimEnded -= Event_AimEnded;
 
@@ -85,21 +78,37 @@ public class PlayerADS : MonoBehaviour
     void Event_AimStarted() => StartADS();
     void Event_AimEnded() => EndADS();
 
-    void Event_WeaponHolster()
-    {
-        isSwitching = true;
-        if (weaponStock != null) LeanTween.cancel(weaponStock);
-    }
+    void Event_WeaponHolster() => isSwitching = true;
 
     void Event_WeaponDraw(WeaponController weaponController)
     {
         this.weaponController = weaponController;
         isSwitching = false;
 
-        if (weaponStock != null) LeanTween.cancel(weaponStock);
+        stockParts.Clear();
+        stockRenderers.Clear();
 
-        weaponStock = weaponController.GetModule(ModuleType.Stock)?.gameObject;
-        CacheStockMaterials();
+        Transform stock = weaponController.GetModule(ModuleType.Stock)?.transform;
+
+        if (stock == null) return;
+
+        stockParts.Add(stock.gameObject);
+
+        foreach (Transform t in stock)
+        {
+            stockParts.Add(t.gameObject);
+        }
+
+        for (int i = 0; i < stockParts.Count; i++)
+        {
+            if (stockParts[i] != null && stockParts[i].TryGetComponent(out Renderer r))
+            {
+                stockRenderers.Add(r);
+            }
+        }
+
+        currentFade = 1f;
+        ApplyStockFade(currentFade);
     }
 
     void Update()
@@ -118,13 +127,13 @@ public class PlayerADS : MonoBehaviour
 
         weaponController.IsAiming = true;
 
-        TweenStockFade(0f);
-
         TweenFOV(adsFOV, weaponCamera, () =>
         {
             GameEventSystem.OnPlayerInSight?.Invoke(true);
         });
         TweenFOV(adsFOV, playerCamera);
+
+        TweenStockFade(0f);
 
         animator.CrossFadeInFixedTime(aimAnimationHash, adsSpeed, animationLayer);
         ikDisplacementHandler.StartADS(adsSpeed);
@@ -134,13 +143,14 @@ public class PlayerADS : MonoBehaviour
     {
         if (weaponController == null) return;
 
-        TweenStockFade(1f);
-
         if (weaponController.IsAiming)
         {
             ikDisplacementHandler.EndADS(adsSpeed);
             TweenFOV(idleFOV, weaponCamera);
             TweenFOV(idleFOV, playerCamera);
+
+            TweenStockFade(1f);
+
             if (returnToNormal) animator.CrossFadeInFixedTime(idleAnimationHash, adsSpeed, animationLayer);
             GameEventSystem.OnPlayerInSight?.Invoke(false);
         }
@@ -162,85 +172,32 @@ public class PlayerADS : MonoBehaviour
 
     void TweenStockFade(float to, Action onComplete = null)
     {
-        if (weaponStock == null || stockMaterials.Count == 0) return;
+        if (stockRenderers.Count == 0) return;
 
-        LeanTween.cancel(weaponStock);
-        stockTween = LeanTween.value(weaponStock, currentStockFade, to, adsSpeed).setOnUpdate((value) =>
+        LeanTween.cancel(gameObject);
+        fadeTween = LeanTween.value(gameObject, currentFade, to, adsSpeed).setOnUpdate((value) =>
         {
-            currentStockFade = value;
-            ApplyStockFade(value);
+            currentFade = value;
+            ApplyStockFade(currentFade);
         }).setOnComplete(() =>
         {
+            currentFade = to;
+            ApplyStockFade(currentFade);
             onComplete?.Invoke();
         });
     }
 
-    private void ApplyStockFade(float progress)
+    void ApplyStockFade(float fadeValue)
     {
-        for (int i = 0; i < stockMaterials.Count; i++)
+        if (propertyBlock == null) propertyBlock = new MaterialPropertyBlock();
+
+        for (int i = 0; i < stockRenderers.Count; i++)
         {
-            var data = stockMaterials[i];
-            if (data.material == null) continue;
+            if (stockRenderers[i] == null) continue;
 
-            if (data.material.HasProperty(data.colorPropId))
-            {
-                Color color = data.material.GetColor(data.colorPropId);
-                color.a = Mathf.Lerp(0f, data.originalAlpha, progress);
-                data.material.SetColor(data.colorPropId, color);
-            }
-
-            if (data.material.HasProperty(data.smoothnessPropId))
-            {
-                float smoothness = Mathf.Lerp(0f, data.originalSmoothness, progress);
-                data.material.SetFloat(data.smoothnessPropId, smoothness);
-            }
-        }
-    }
-
-    private void CacheStockMaterials()
-    {
-        stockMaterials.Clear();
-        currentStockFade = 1f;
-
-        if (weaponStock == null)
-        {
-            stockRenderers = null;
-            return;
-        }
-
-        stockRenderers = weaponStock.GetComponentsInChildren<MeshRenderer>(true);
-
-        for (int i = 0; i < stockRenderers.Length; i++)
-        {
-            var r = stockRenderers[i];
-            if (r == null) continue;
-
-            Material[] mats = r.materials;
-            for (int j = 0; j < mats.Length; j++)
-            {
-                Material mat = mats[j];
-                if (mat == null) continue;
-
-                int colorProp = mat.HasProperty("_BaseColor")
-                    ? Shader.PropertyToID("_BaseColor")
-                    : Shader.PropertyToID("_Color");
-
-                int smoothnessProp = mat.HasProperty("_Smoothness")
-                    ? Shader.PropertyToID("_Smoothness")
-                    : Shader.PropertyToID("_Glossiness");
-
-                float origAlpha = mat.HasProperty(colorProp) ? mat.GetColor(colorProp).a : 1f;
-                float origSmoothness = mat.HasProperty(smoothnessProp) ? mat.GetFloat(smoothnessProp) : 0f;
-
-                stockMaterials.Add(new StockMaterialData
-                {
-                    material = mat,
-                    colorPropId = colorProp,
-                    smoothnessPropId = smoothnessProp,
-                    originalAlpha = origAlpha,
-                    originalSmoothness = origSmoothness
-                });
-            }
+            stockRenderers[i].GetPropertyBlock(propertyBlock);
+            propertyBlock.SetFloat(FadePropertyId, fadeValue);
+            stockRenderers[i].SetPropertyBlock(propertyBlock);
         }
     }
 }

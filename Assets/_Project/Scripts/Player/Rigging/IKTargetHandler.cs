@@ -28,7 +28,7 @@ public class IKTargetHandler : MonoBehaviour
 
     private void Event_WeaponTransform(WeaponController weaponController) => SetHandTarget(weaponController.LeftHandTarget);
 
-    private void Update()
+    private void LateUpdate()
     {
         if (activeHandTarget == null || isTransitioning)
         {

@@ -3,7 +3,7 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BarricadeController : MonoBehaviour, IInteractable
+public class BarricadeController : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] private int plankCount = 5;

@@ -119,6 +119,7 @@ Transform:
   - {fileID: 4559042883095205261}
   - {fileID: 6352545064281370746}
   - {fileID: 1951329067724114899}
+  - {fileID: 320268095932534688}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3978566737605262359
@@ -148,6 +149,7 @@ MonoBehaviour:
   - {fileID: 6106273650359133468}
   - {fileID: 11358493608139399}
   - {fileID: 6487928455719751126}
+  navMeshLink: {fileID: 0}
 --- !u!65 &9080514320199782337
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -866,6 +868,73 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.16739355, y: 1.1482999, z: 0.084522404}
   m_Center: {x: 0, y: 0, z: 0.042261202}
+--- !u!1 &7152608686415779358
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 320268095932534688}
+  - component: {fileID: 1159544692870184123}
+  - component: {fileID: 2728437751453175481}
+  m_Layer: 18
+  m_Name: Interact
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &320268095932534688
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7152608686415779358}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8992167222964670239}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1159544692870184123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7152608686415779358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 430e19114fb79c34d9915b0e900ee341, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BarricadeInteract
+  barricadeController: {fileID: 3978566737605262359}
+--- !u!65 &2728437751453175481
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7152608686415779358}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 0.31}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8783097974678038104
 GameObject:
   m_ObjectHideFlags: 0

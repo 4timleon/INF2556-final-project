@@ -174,6 +174,8 @@ public class MenuManager : MonoBehaviour
         pauseMenuController.StopTime(false);
         merchantMenuContainer.gameObject.SetActive(false);
         merchantUI.SetCardPositionAndRotation();
+        GameEventSystem.OnPlayerAttackStarted?.Invoke();
+        GameEventSystem.OnPlayerAttackEnded?.Invoke();
         MenuState = Menus.InGame;
     }
 

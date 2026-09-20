@@ -33,7 +33,7 @@ public class IKDisplacementHandler : MonoBehaviour
     {
         float idleZ = Mathf.Clamp((-1f) * weaponController.LeftHandGripDistance, minIdleZ, maxIdleZ);
         float aimY = Mathf.Clamp(idleOffset.y + weaponController.HighestModuleDistance, minAimY, maxAimY);
-        float aimZ = idleZ > (minIdleZ / 2f) ? adsOffset.z / 2f : adsOffset.z;
+        float aimZ = idleZ > ((minIdleZ / 2f) + 0.05f) ? adsOffset.z / 2f : adsOffset.z;
 
         idlePosition = new Vector3(idleOffset.x, idleOffset.y, idleZ);
         aimPosition = new Vector3(adsOffset.x, aimY, aimZ);
