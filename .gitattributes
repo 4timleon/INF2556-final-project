@@ -27,6 +27,9 @@
 *.uss                   text diff=css linguist-language=css
 *.uxml                  text linguist-language=xml linguist-detectable
 
+# Terrains explicitly as binary to prevent auto-merging corruptions
+*[Tt]errain*.asset binary
+
 # Unity YAML files
 *.anim                  unity-yaml
 *.asset                 unity-yaml

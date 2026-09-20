@@ -8,8 +8,7 @@ public static class GameControls
     {
         if (inputActions == null)
         {
-            inputActions = new InputSystem_Actions();
-            inputActions.Enable();
+            inputActions = GeneralInputHandler.Instance.GetInputActions();
         }
 
         return inputActions;

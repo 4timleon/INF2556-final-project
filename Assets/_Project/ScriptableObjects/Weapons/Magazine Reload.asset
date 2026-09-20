@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cac0fbd7ba226348811e975cb3525db, type: 3}
+  m_Name: Magazine Reload
+  m_EditorClassIdentifier: Assembly-CSharp::MagazineReload
+  weightGrabMag: 0.21
+  weightEjectMag: 0.16
+  weightPouchDelay: 0.18
+  weightInsertMag: 0.26
+  weightReturnToGrip: 0.19
+  timingVariance: 0.15
+  reloadDuration: 1.5
+  magEjectDistance: 5
