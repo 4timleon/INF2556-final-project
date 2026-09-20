@@ -127,4 +127,7 @@
 	- *"german Cigarette machine"* von The Latest Shit: https://sketchfab.com/3d-models/german-cigarette-machine-07d5c355c88a4583a3c965422937da96 (CC Attribution)
 	- *"Dj Khaled"* von Mr. PooPoo: https://sketchfab.com/3d-models/dj-khaled-bda3f0e290db4de5b9ed3a9a22e44499 (CC Attribution)
 	- *"Fat Joint"* von 3D Crackhouse: https://sketchfab.com/3d-models/fat-joint-5b7dcea4012d4843a4c2baac027c7e78 (CC Attribution)
+    - *"3December 2020 - Not Poker"* von Jack Kelly: https://sketchfab.com/3d-models/3december-2020-not-poker-ec291518d1cc4f36957bd951d80456dd (CC Attribution)
+    - *"Russian Soldier"* von Chernov-Egor: https://sketchfab.com/3d-models/russian-soldier-16037daadcfe4715a4ebce0f2fc6f675 (CC Attribution)
+    - *"Industrial Asset Pack"* von vmatthew: https://sketchfab.com/3d-models/industrial-asset-pack-0edba07309ef4ff98e5bb4d0b858952c (CC Attribution)
 
