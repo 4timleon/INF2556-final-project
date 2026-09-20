@@ -58,9 +58,13 @@ public class MysteryBox : MonoBehaviour, IInteractable
         }
     }
 
-    public string GetText() => canObtain
-    ? "Press <sprite name=\"keyboard_e\"> to obtain Weapon"
-    : $"Press <sprite name=\"keyboard_e\"> to open Mysterybox | {cost}$";
+    public string GetText()
+    {
+        if (canObtain) return "Press <sprite name=\"keyboard_e\"> to obtain Weapon";
+        if (!canOpen) return "Rolling Weapon...";
+
+        return $"Press <sprite name=\"keyboard_e\"> to open Mysterybox | {cost}$";
+    }
 
     void TryBuyBox()
     {
