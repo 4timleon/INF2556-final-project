@@ -67,7 +67,10 @@ public class MysteryBox : MonoBehaviour, IInteractable
         if (GameData.Money < cost || canOpen == false) return;
 
         GenerateWeapons();
-        SoundManager.Instance?.PlayMysteryBoxRollSound(rollAudioSource);
+        if (!rollAudioSource.isPlaying)
+        {
+            SoundManager.Instance?.PlayMysteryBoxRollSound(rollAudioSource);
+        }
 
         currentBoxRoutine = StartCoroutine(BoxRoutine());
 
@@ -119,7 +122,7 @@ public class MysteryBox : MonoBehaviour, IInteractable
             }
         }
         rollAudioSource.Stop();
-        //SoundManager.Instance?.PlayMysteryBoxRollFinishedSound(acquiredAudioSource);
+        SoundManager.Instance?.PlayMysteryBoxRollFinishedSound(acquiredAudioSource);
 
         yield return new WaitForSeconds(0.1f);
 
