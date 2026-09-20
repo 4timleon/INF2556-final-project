@@ -74,6 +74,8 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     private Vector3 targetScale = new Vector3(1.1f, 1.1f, 1.1f);
     private float scaleDuration = 0.2f;
 
+    private LTDescr scaleTween;
+
     //Callback Function
     private Action<CardUI> onCardClicked;
 
@@ -95,6 +97,8 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
         frontSide.SetActive(isFlipped);
         backSide.SetActive(!isFlipped);
+
+        scaleTween = null;
     }
 
     private void Update()
@@ -274,15 +278,25 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
     private void SetScale()
     {
-        LeanTween.cancel(cardVisual.gameObject);
-        LeanTween.scale(cardVisual.gameObject, targetScale, scaleDuration)
+        if (scaleTween != null)
+        {
+            LeanTween.cancel(scaleTween.uniqueId);
+            scaleTween = null;
+        }
+
+        scaleTween = LeanTween.scale(cardVisual.gameObject, targetScale, scaleDuration)
             .setIgnoreTimeScale(true);
     }
 
     public void ResetScale()
     {
-        LeanTween.cancel(cardVisual.gameObject);
-        LeanTween.scale(cardVisual.gameObject, Vector3.one, scaleDuration)
+        if (scaleTween != null)
+        {
+            LeanTween.cancel(scaleTween.uniqueId);
+            scaleTween = null;
+        }
+
+        scaleTween = LeanTween.scale(cardVisual.gameObject, Vector3.one, scaleDuration)
             .setIgnoreTimeScale(true);
     }
 

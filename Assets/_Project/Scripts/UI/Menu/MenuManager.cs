@@ -82,14 +82,6 @@ public class MenuManager : MonoBehaviour
         playerInputHandler.OnCancelAction -= PlayerInputHandler_OnCancelAction;
     }
 
-    private void Update()
-    {
-        if (Keyboard.current.digit5Key.wasPressedThisFrame)
-        {
-            OpenMerchantMenu();
-        }
-    }
-
     private void PlayerInputHandler_OnCancelAction()
     {
         switch (MenuState)
@@ -182,6 +174,8 @@ public class MenuManager : MonoBehaviour
         pauseMenuController.StopTime(false);
         merchantMenuContainer.gameObject.SetActive(false);
         merchantUI.SetCardPositionAndRotation();
+        GameEventSystem.OnPlayerAttackStarted?.Invoke();
+        GameEventSystem.OnPlayerAttackEnded?.Invoke();
         MenuState = Menus.InGame;
     }
 

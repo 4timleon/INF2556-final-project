@@ -66,8 +66,10 @@ public class WaveManager : MonoBehaviour, IInititalizeStart
 
     private void GameEventSystem_OnDoorOpened(DoorController controller)
     {
-        if (controller.spawnPoints.Count > 0)
+        if (controller.spawnPoints != null && controller.spawnPoints.Count > 0)
+        {
             spawnPoints.AddRange(controller.spawnPoints);
+        }
     }
 
     //Can be used to Start the next Wave after all Zombies got killed

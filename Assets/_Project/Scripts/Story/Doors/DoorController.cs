@@ -16,7 +16,7 @@ public class DoorController : MonoBehaviour, IInteractable
     [SerializeField] private Vector3 openedEuler = new Vector3(0, 0f, 0f);
 
     [Header("SpawnPoints References")]
-    public List<SpawnPoint> spawnPoints;
+    public List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
 
     void Awake()
     {

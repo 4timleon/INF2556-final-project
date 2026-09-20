@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using EditorAttributes;
 using UnityEngine;
+using WeaponNamespace;
 
 public class PlayerADS : MonoBehaviour
 {
@@ -21,6 +23,7 @@ public class PlayerADS : MonoBehaviour
     [SerializeField] private float adsSpeed = 0.25f;
 
     private LTDescr fovTween;
+    private LTDescr fadeTween;
 
     private bool isSprinting;
     private bool isSwitching;
@@ -29,11 +32,20 @@ public class PlayerADS : MonoBehaviour
     private int idleAnimationHash;
 
     private WeaponController weaponController;
+    private List<GameObject> stockParts;
+    private List<Renderer> stockRenderers;
+
+    private static readonly int FadePropertyId = Shader.PropertyToID("_Fade");
+    private MaterialPropertyBlock propertyBlock;
+    private float currentFade = 1f;
 
     void Start()
     {
         aimAnimationHash = Animator.StringToHash(aimAnimationName);
         idleAnimationHash = Animator.StringToHash(idleAnimationName);
+        stockParts = new();
+        stockRenderers = new();
+        propertyBlock = new();
     }
 
     void OnEnable()
@@ -72,6 +84,31 @@ public class PlayerADS : MonoBehaviour
     {
         this.weaponController = weaponController;
         isSwitching = false;
+
+        stockParts.Clear();
+        stockRenderers.Clear();
+
+        Transform stock = weaponController.GetModule(ModuleType.Stock)?.transform;
+
+        if (stock == null) return;
+
+        stockParts.Add(stock.gameObject);
+
+        foreach (Transform t in stock)
+        {
+            stockParts.Add(t.gameObject);
+        }
+
+        for (int i = 0; i < stockParts.Count; i++)
+        {
+            if (stockParts[i] != null && stockParts[i].TryGetComponent(out Renderer r))
+            {
+                stockRenderers.Add(r);
+            }
+        }
+
+        currentFade = 1f;
+        ApplyStockFade(currentFade);
     }
 
     void Update()
@@ -96,6 +133,8 @@ public class PlayerADS : MonoBehaviour
         });
         TweenFOV(adsFOV, playerCamera);
 
+        TweenStockFade(0f);
+
         animator.CrossFadeInFixedTime(aimAnimationHash, adsSpeed, animationLayer);
         ikDisplacementHandler.StartADS(adsSpeed);
     }
@@ -109,6 +148,9 @@ public class PlayerADS : MonoBehaviour
             ikDisplacementHandler.EndADS(adsSpeed);
             TweenFOV(idleFOV, weaponCamera);
             TweenFOV(idleFOV, playerCamera);
+
+            TweenStockFade(1f);
+
             if (returnToNormal) animator.CrossFadeInFixedTime(idleAnimationHash, adsSpeed, animationLayer);
             GameEventSystem.OnPlayerInSight?.Invoke(false);
         }
@@ -126,5 +168,36 @@ public class PlayerADS : MonoBehaviour
         {
             onComplete?.Invoke();
         });
+    }
+
+    void TweenStockFade(float to, Action onComplete = null)
+    {
+        if (stockRenderers.Count == 0) return;
+
+        LeanTween.cancel(gameObject);
+        fadeTween = LeanTween.value(gameObject, currentFade, to, adsSpeed).setOnUpdate((value) =>
+        {
+            currentFade = value;
+            ApplyStockFade(currentFade);
+        }).setOnComplete(() =>
+        {
+            currentFade = to;
+            ApplyStockFade(currentFade);
+            onComplete?.Invoke();
+        });
+    }
+
+    void ApplyStockFade(float fadeValue)
+    {
+        if (propertyBlock == null) propertyBlock = new MaterialPropertyBlock();
+
+        for (int i = 0; i < stockRenderers.Count; i++)
+        {
+            if (stockRenderers[i] == null) continue;
+
+            stockRenderers[i].GetPropertyBlock(propertyBlock);
+            propertyBlock.SetFloat(FadePropertyId, fadeValue);
+            stockRenderers[i].SetPropertyBlock(propertyBlock);
+        }
     }
 }
