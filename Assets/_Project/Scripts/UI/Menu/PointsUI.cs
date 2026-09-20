@@ -98,7 +98,7 @@ public class PointsUI : MonoBehaviour
     {
         int diff = GameData.Money - lastPoints;
 
-        SpawnVisual(diff);
+        if (diff != 0) SpawnVisual(diff);
 
         pointsText.SetText(GameData.Money.ToString());
 

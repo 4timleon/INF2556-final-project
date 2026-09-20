@@ -12,6 +12,9 @@ public static class GameData
         get => _money;
         set
         {
+            if (_money == value)
+                return;
+
             _money = value;
             GameEventSystem.OnMoneyUpdated?.Invoke();
         }
