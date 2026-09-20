@@ -29,6 +29,9 @@ public class Player : MonoBehaviour
     [SerializeField] private WeaponBuilder weaponBuilder;
     [SerializeField] private PlayerArmory playerArmory;
 
+    [Header("Money")]
+    [SerializeField] private int money = 10000;
+
     public float Health { get; private set; }
     public float MaxHealth { get; private set; }
     public bool IsInPreDeath { get; private set; } = false;
@@ -54,7 +57,7 @@ public class Player : MonoBehaviour
         deathCounter = 0f;
 
         playerArmory.AddWeapon(weaponBuilder.BuildWeapon(true));
-        GameData.Money = 1000;
+        GameData.Money = money;
     }
 
     private void OnEnable()

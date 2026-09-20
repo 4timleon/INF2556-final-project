@@ -80,7 +80,8 @@ public class PointsUI : MonoBehaviour
 
         //Tween to the calculated random position
         LeanTween.move(fadingNumberGameObject, targetPosition, duration)
-            .setEase(easeType);
+            .setEase(easeType)
+            .setIgnoreTimeScale(true);
 
         //Make it fade out with tween
         LeanTween.alphaText(fadingNumberText.rectTransform, 0f, duration)
@@ -89,7 +90,8 @@ public class PointsUI : MonoBehaviour
             {
                 LeanTween.cancel(fadingNumberGameObject);
                 textPool.Release(fadingNumberGameObject);
-            });
+            })
+            .setIgnoreTimeScale(true);
     }
 
     private void Event_MoneyUpdated()
@@ -97,6 +99,7 @@ public class PointsUI : MonoBehaviour
         int diff = GameData.Money - lastPoints;
 
         SpawnVisual(diff);
+
         pointsText.SetText(GameData.Money.ToString());
 
         lastPoints = GameData.Money;

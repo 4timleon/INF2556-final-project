@@ -36728,6 +36728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 359694700047479632}
@@ -40131,6 +40132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 319315129533091153}
@@ -63475,6 +63477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 565768821788989805}
@@ -67167,6 +67170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 537012971357231586}
@@ -186064,6 +186068,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 1536424900528727248}
@@ -201331,6 +201336,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 1679003779289823608}
@@ -228263,6 +228269,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3190106145692570034, guid: b932664b86362434ab999e710aa04a88, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4309721646100182397, guid: b932664b86362434ab999e710aa04a88, type: 3}
+      propertyPath: collectionCheck
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4309721646100182397, guid: b932664b86362434ab999e710aa04a88, type: 3}
@@ -284582,6 +284592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 2393827452317616473}
@@ -291564,6 +291575,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 2477512256930126730}
@@ -375251,6 +375263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 3314283640185303110}
@@ -493676,6 +493689,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 4130242743944350255}
@@ -923152,6 +923166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 7854784741600221922}
@@ -934721,6 +934736,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 8034751600003728260}
@@ -967723,6 +967739,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 8148613517342469280}
@@ -1024654,6 +1024671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarricadeController
   plankCount: 5
+  repairAnimationDuration: 1
   breakForce: 2.5
   plankAnimators:
   - {fileID: 8609484690460821175}
