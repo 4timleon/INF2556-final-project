@@ -36,6 +36,10 @@ public class MerchantUI : MonoBehaviour
     [SerializeField] private float duration = 0.8f;
     [SerializeField] private LeanTweenType easeType = LeanTweenType.easeOutQuad;
 
+    [Space]
+    [Header("Sound")]
+    [SerializeField] private AudioSource buyAudioSource;
+
     private CardUI[] previousCards;
 
     private bool[] isAnimating;
@@ -104,6 +108,10 @@ public class MerchantUI : MonoBehaviour
 
         ClearPreviousCard(slotIndex);
         menuManager.CloseMerchantMenu();
+
+        if (buyAudioSource.isPlaying)
+            buyAudioSource.Stop();
+        SoundManager.Instance?.PlayMerchantPaidSound(buyAudioSource);
 
         GameData.Money -= weaponController.WeaponData.TotalCost;
 

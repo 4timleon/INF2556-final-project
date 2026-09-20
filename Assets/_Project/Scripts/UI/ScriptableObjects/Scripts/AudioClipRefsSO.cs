@@ -64,4 +64,35 @@ public class AudioClipRefsSO : ScriptableObject
 
     public AudioClip pocketSearchSound;
     public float pocketSearchSoundVolume;
+
+    [Space]
+    [Header("Smoke")]
+    public AudioClip smokeSound;
+    public float smokeSoundVolume;
+
+    [Space]
+    [Header("Perk Machine")]
+    public AudioClip machineHumSound;
+    public float machineHumSoundVolume;
+    public AudioClip perkTakeSound;
+    public float perkTakeSoundVolume;
+
+    [Space]
+    [Header("Generator")]
+    public AudioClip generatorOn;
+    public float generatorOnVolume;
+    public AudioClip generatorLoop;
+    public float generatorLoopVolume;
+
+    [Space]
+    [Header("Merchant")]
+    public AudioClip merchantPaid;
+    public float merchantPaidVolume;
+
+    [Space]
+    [Header("Mystery Box")]
+    public AudioClip mysteryBoxRollSound;
+    public float mysteryBoxRollSoundVolume;
+    public AudioClip mysteryBoxRollFinishedSound;
+    public float mysteryBoxRollFinishedSoundVolume;
 }

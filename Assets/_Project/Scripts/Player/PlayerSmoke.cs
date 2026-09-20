@@ -40,14 +40,14 @@ public class PlayerSmoke : MonoBehaviour
 
     private void Event_WeaponDraw(WeaponController weaponController) => this.weaponController = weaponController;
 
-    public void SmokeJoint(Action onComplete)
+    public void SmokeJoint(Action onComplete, AudioSource audioSource)
     {
         if (weaponController == null || weaponController.IsLocked) return;
 
-        StartCoroutine(JointRoutine(onComplete));
+        StartCoroutine(JointRoutine(onComplete, audioSource));
     }
 
-    IEnumerator JointRoutine(Action onComplete)
+    IEnumerator JointRoutine(Action onComplete, AudioSource audioSource)
     {
         GameEventSystem.OnPlayerSmokeJointStarted?.Invoke();
 
@@ -65,7 +65,15 @@ public class PlayerSmoke : MonoBehaviour
         jointInstance.SetActive(true);
         weaponController.gameObject.SetActive(false);
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.5f);
+
+        if (audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+        SoundManager.Instance?.PlaySmokeSound(audioSource);
+
+        yield return new WaitForSeconds(1.5f);
 
         ToggleRigs(1f);
 

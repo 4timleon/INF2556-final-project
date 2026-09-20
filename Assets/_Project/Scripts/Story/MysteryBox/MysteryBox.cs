@@ -11,6 +11,8 @@ public class MysteryBox : MonoBehaviour, IInteractable
     [SerializeField] private PlayerArmory playerArmory;
     [SerializeField] private GameObject djKhaled;
     [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioSource rollAudioSource;
+    [SerializeField] private AudioSource acquiredAudioSource;
     [Space]
     [Title("Settings:", 14)]
     [SerializeField] private Vector3 closedEuler = new Vector3(-90f, 0f, 0f);
@@ -65,6 +67,7 @@ public class MysteryBox : MonoBehaviour, IInteractable
         if (GameData.Money < cost || canOpen == false) return;
 
         GenerateWeapons();
+        SoundManager.Instance?.PlayMysteryBoxRollSound(rollAudioSource);
 
         currentBoxRoutine = StartCoroutine(BoxRoutine());
 
@@ -115,6 +118,8 @@ public class MysteryBox : MonoBehaviour, IInteractable
                 yield return new WaitForSeconds(waitPerWeapon);
             }
         }
+        rollAudioSource.Stop();
+        //SoundManager.Instance?.PlayMysteryBoxRollFinishedSound(acquiredAudioSource);
 
         yield return new WaitForSeconds(0.1f);
 

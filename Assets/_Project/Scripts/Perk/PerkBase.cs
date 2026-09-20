@@ -16,6 +16,11 @@ public abstract class PerkBase : MonoBehaviour, IInteractable
     [Space]
     [Title("References:", 14)]
     [SerializeField] protected PlayerSmoke playerSmoke;
+    [Space]
+    [Header("Sound")]
+    [SerializeField] private AudioSource smokeAudioSource;
+    [SerializeField] private AudioSource perkTakeAudioSource;
+    [SerializeField] private AudioSource machineHumAudioSource;
 
     protected bool HasPower { get; private set; } = false;
     protected bool WasConsumed { get; private set; } = false;
@@ -37,14 +42,24 @@ public abstract class PerkBase : MonoBehaviour, IInteractable
         GameEventSystem.OnPlayerPreDeath -= Event_PlayerPreDeath;
     }
 
-    void Event_PowerChanged(bool obj)
+    void Event_PowerChanged(bool state)
     {
-        HasPower = obj;
+        HasPower = state;
 
-        mainMeshRenderer.sharedMaterial = obj ? poweredMaterial : unpoweredMaterial;
+        mainMeshRenderer.sharedMaterial = state ? poweredMaterial : unpoweredMaterial;
+
+        if (!HasPower)
+        {
+            machineHumAudioSource.Stop();
+        }
+        else
+        {
+            SoundManager.Instance?.PlayMachineHumSound(machineHumAudioSource);
+        }
+
     }
 
-    void Event_PlayerPreDeath(bool obj)
+    void Event_PlayerPreDeath(bool state)
     {
         RevertPerk();
         WasConsumed = false;
@@ -62,10 +77,16 @@ public abstract class PerkBase : MonoBehaviour, IInteractable
     {
         if (!WasConsumed && GameData.Money >= cost && HasPower)
         {
-            playerSmoke.SmokeJoint(ApplyPerk);
+            playerSmoke.SmokeJoint(ApplyPerk, smokeAudioSource);
             WasConsumed = true;
             GameData.Money -= cost;
             GameEventSystem.OnPerkAquired?.Invoke(perkType);
+
+            if (perkTakeAudioSource.isPlaying)
+            {
+                perkTakeAudioSource.Stop();
+            }
+            SoundManager.Instance?.PlayPerkTakeSound(perkTakeAudioSource);
         }
     }
 

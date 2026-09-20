@@ -157,7 +157,51 @@ public class SoundManager : MonoBehaviour
     {
         PlaySound(audioSource, audioClipRefsSO.revivedSound, audioClipRefsSO.revivedSoundVolume);
     }
+    #endregion
 
+    #region Player Additions
+    public void PlaySmokeSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.smokeSound, audioClipRefsSO.smokeSoundVolume);
+    }
+
+    public void PlayGeneratorOnSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.generatorOn, audioClipRefsSO.generatorOnVolume);
+    }
+
+    public void PlayGeneratorLoopSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.generatorLoop, audioClipRefsSO.generatorLoopVolume);
+    }
+
+    public void PlayMerchantPaidSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.merchantPaid, audioClipRefsSO.merchantPaidVolume);
+    }
+
+    public void PlayPerkTakeSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.perkTakeSound, audioClipRefsSO.perkTakeSoundVolume);
+    }
+
+    public void PlayMachineHumSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.machineHumSound, audioClipRefsSO.machineHumSoundVolume);
+    }
+
+    public void PlayMysteryBoxRollSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.mysteryBoxRollSound, audioClipRefsSO.mysteryBoxRollSoundVolume);
+    }
+
+    public void PlayMysteryBoxRollFinishedSound(AudioSource audioSource)
+    {
+        PlaySound(audioSource, audioClipRefsSO.mysteryBoxRollFinishedSound, audioClipRefsSO.mysteryBoxRollFinishedSoundVolume);
+    }
+    #endregion
+
+    #region Reload Sound
     public void PlayReloadEjectSound(AudioSource audioSource, Vector3 position, WeaponType weaponType)
     {
         AudioClip clip = null;
