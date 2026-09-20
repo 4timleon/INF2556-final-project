@@ -54,7 +54,7 @@ public class Player : MonoBehaviour
         deathCounter = 0f;
 
         playerArmory.AddWeapon(weaponBuilder.BuildWeapon(true));
-        GameData.Money = 100000;
+        GameData.Money = 1000;
     }
 
     private void OnEnable()
