@@ -17,12 +17,12 @@ public class SpawnPoint : MonoBehaviour
 
     public bool OutOfGround => outOfGround;
 
-    private void OnValidate()
+    /* private void OnValidate()
     {
         if (Application.isPlaying) return;
 
         UnityEditor.EditorApplication.delayCall += UpdateCollider;
-    }
+    } */
 
     private void UpdateCollider()
     {
